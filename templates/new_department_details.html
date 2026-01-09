@@ -1,0 +1,307 @@
+{% extends 'Created_base.html' %}
+
+{% block title %}Department Details{% endblock %}
+
+{% block content %}
+{% include "tracker.html" %}
+<div class="col-span-1 lg:col-span-9">
+  <!-- Messages -->
+  {% if messages %}
+  <div class="mb-6 space-y-2">
+    {% for message in messages %}
+    <div
+      class="p-4 rounded-lg text-sm font-medium {% if message.tags == 'error' %}bg-red-50 text-red-600{% elif message.tags == 'success' %}bg-green-50 text-green-600{% else %}bg-blue-50 text-blue-600{% endif %}">
+      {{ message }}
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- Content Block -->
+  <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+    <form method="post" enctype="multipart/form-data" action="{% url 'department_details' admission.pk %}" id="departmentForm">
+  {% csrf_token %}
+  <input type="hidden" name="pk" value="{% if admission %}{{ admission.pk }}{% endif %}">
+
+  <!-- Department Details -->
+  <div class="card">
+    <h2>2. Department Details</h2>
+    <label>Level:<span style="color: red;">*</span></label>
+    <select id="levelSelect" name="level" onchange="updateDepartment()" required>
+      <option value="">Select Level</option>
+      <option value="ug" {% if admission and admission.level == 'ug' %}selected{% endif %}>UG - Under Graduate</option>
+      <option value="pg" {% if admission and admission.level == 'pg' %}selected{% endif %}>PG - Post Graduate</option>
+      <option value="le" {% if admission and admission.level == 'le' %}selected{% endif %}>LE - Lateral Entry</option>
+    </select>
+    <span class="error-message" id="level_error"></span>
+    <div id="departmentContainer"></div>
+    <span class="error-message" id="department_error"></span>
+    <div class="flex justify-evenly mt-8">
+      <button type="button"
+              onclick="window.location.href='{% url 'personal_details' admission.id %}'"
+              class="px-6 py-2 border rounded hover:bg-gray-100">
+        Previous
+      </button>
+
+      <button type="submit"
+              class="bg-orange-600 text-white px-6 py-2 rounded hover:bg-orange-700">
+        Next
+      </button>
+    </div>
+  </div>
+</form>
+  </div>
+</div>
+
+<script>
+  const levelSelect = document.getElementById('levelSelect');
+  const departmentContainer = document.getElementById('departmentContainer');
+
+  function updateDepartment() {
+    const level = levelSelect.value;
+    departmentContainer.innerHTML = ''; // clear previous content
+
+    if (level === 'ug' || level === 'le') {
+      // === UG & Lateral Department List ===
+      let ugDepts = [
+        'B.TECH (AI & DS) - Artificial Intelligence and Data Science',
+        'B.TECH (IT) - Information Technology',
+        'B.TECH (CH) - Chemical Engineering',
+        'B.TECH (AE) - Agricultural Engineering',
+        'B.TECH (BT) - Bio Technology',
+        'B.E (ME) - Mechanical Engineering (Tamil Medium)',
+        'B.E (ME) - Mechanical Engineering (English Medium)',
+        'B.E (BME) - Biomedical Engineering',
+        'B.E (CSE(IOT)) - Computer Science and Engineering (Internet Of Things)',
+        'B.E (CSE) - Computer Science and Engineering',
+        'B.E (CSD) - Computer Science and Design',
+        'B.E (CSE(AI & ML)) - Computer Science and Engineering (AI & ML)',
+        'B.E (CSE(CS)) - Computer Science and Engineering (Cyber Security)',
+        'B.E (ECE) - Electronics and Communication Engineering',
+        'B.E (CE) - Civil Engineering',
+        'B.E (EEE) - Electrical and Electronics Engineering',
+        'B.E (RAE) - Robotics & Automation',
+        'B.E (EIE) - Electronics and Instrumentation Engineering'
+      ];
+
+      // Add 5-year Integrated course only for UG (not for lateral)
+      if (level === 'ug') {
+        ugDepts.push('M.Tech (CSE) 5 Years Integrated Course');
+      }
+
+      const title = document.createElement('p');
+      title.style.marginBottom = "10px";
+      title.textContent = level === 'le'
+        ? "Select your preferred departments for Lateral Entry (Diploma holders)."
+        : "Select your preferred departments for Regular UG Admission.";
+      departmentContainer.appendChild(title);
+
+      const deptList = document.createElement('div');
+      deptList.id = "deptList";
+      deptList.style.display = "flex";
+      deptList.style.flexDirection = "column";
+      deptList.style.gap = "10px";
+
+      ugDepts.forEach((dept, index) => {
+        const item = document.createElement('div');
+        item.className = "dept-item";
+        item.style.display = "flex";
+        item.style.alignItems = "center";
+        item.style.padding = "10px";
+        item.style.border = "1px solid #ccc";
+        item.style.borderRadius = "5px";
+        item.style.backgroundColor = "#f9f9f9";
+
+        // Checkbox (left corner, small space)
+        const checkbox = document.createElement('input');
+        checkbox.type = "checkbox";
+        checkbox.name = `${level}_dept`;
+        checkbox.value = dept;
+        checkbox.style.maxWidth = "20px";
+        // checkbox.style.flex = "0 0 auto";
+        checkbox.style.marginRight = "10px";
+        // checkbox.style.marginLeft = "0px";
+
+
+        // Department name (middle, more space)
+        const nameSpan = document.createElement('span');
+        nameSpan.textContent = dept;
+        nameSpan.style.flex = "1";
+        nameSpan.style.textAlign = "left";
+
+        // Up/Down buttons container (right corner)
+        const buttonContainer = document.createElement('div');
+        buttonContainer.style.display = "flex";
+        buttonContainer.style.gap = "5px";
+        buttonContainer.style.flex = "0 0 auto";
+
+        const upBtn = document.createElement('button');
+        upBtn.type = "button";
+        upBtn.textContent = "↑";
+        upBtn.onclick = () => moveItem(item, -1);
+
+        const downBtn = document.createElement('button');
+        downBtn.type = "button";
+        downBtn.textContent = "↓";
+        downBtn.onclick = () => moveItem(item, 1);
+
+        buttonContainer.appendChild(upBtn);
+        buttonContainer.appendChild(downBtn);
+
+        item.appendChild(checkbox);
+        item.appendChild(nameSpan);
+        item.appendChild(buttonContainer);
+        deptList.appendChild(item);
+      });
+
+      departmentContainer.appendChild(deptList);
+
+    } else if (level === 'pg') {
+      // === PG Department Dropdown ===
+      const pgDepts = [
+        'MBA',
+        'MCA',
+        'M.E. Computer Science',
+        'M.E. Applied Electronics',
+        'M.E. Manufacturing Engineering',
+        'M.E. Environmental Engineering',
+        'M.E. Power Electronics and Drives',
+        'M.E. Industrial Safety Engineering',
+        'M.E. Structural Engineering',
+        'M.TECH (CH) - Chemical Engineering'
+      ];
+
+      const label = document.createElement('label');
+      label.textContent = "Select Department:";
+      const select = document.createElement('select');
+      select.name = "pg_dept";
+      select.required = true;
+      select.innerHTML = `<option value="">Select PG Department</option>`;
+      pgDepts.forEach(d => {
+        const opt = document.createElement('option');
+        opt.textContent = d;
+        select.appendChild(opt);
+      });
+
+      const pgError = document.createElement('span');
+      pgError.className = "error-message";
+      pgError.id = "pg_dept_error";
+      pgError.style.display = "none";
+
+      departmentContainer.appendChild(label);
+      departmentContainer.appendChild(select);
+      departmentContainer.appendChild(pgError);
+    }
+  }
+
+  function moveItem(item, direction) {
+    const parent = item.parentNode;
+    if (direction === -1 && item.previousElementSibling) {
+      parent.insertBefore(item, item.previousElementSibling);
+    } else if (direction === 1 && item.nextElementSibling) {
+      parent.insertBefore(item.nextElementSibling, item);
+    }
+  }
+
+  updateDepartment();
+
+  // Pre-fill department preferences if available
+  let departmentPreferences = {};
+  {% if department_preferences %}
+  departmentPreferences = JSON.parse('{{ department_preferences|escapejs }}');
+  {% endif %}
+  if (Object.keys(departmentPreferences).length > 0) {
+    // Pre-fill checkboxes and order based on preferences
+    const items = Array.from(document.querySelectorAll('.dept-item'));
+    const sortedDepts = Object.keys(departmentPreferences).sort((a, b) => departmentPreferences[a] - departmentPreferences[b]);
+    sortedDepts.forEach(dept => {
+      const checkbox = items.find(item => item.querySelector('input').value === dept)?.querySelector('input');
+      if (checkbox) {
+        checkbox.checked = true;
+      }
+    });
+    // Reorder items based on preferences
+    const deptList = document.getElementById('deptList');
+    sortedDepts.forEach(dept => {
+      const item = items.find(item => item.querySelector('input').value === dept);
+      if (item) {
+        deptList.appendChild(item);
+      }
+    });
+  }
+
+  // Form validation
+  document.getElementById('departmentForm').addEventListener('submit', function (e) {
+    let isValid = true;
+    clearAllErrors();
+
+    const level = levelSelect.value;
+    if (!level) {
+      showError('level', 'Please select a level');
+      isValid = false;
+    }
+
+    if (level === 'ug' || level === 'le') {
+      // Collect checked departments in order
+      const checkedItems = Array.from(document.querySelectorAll('.dept-item input:checked'));
+      if (checkedItems.length === 0) {
+        showError('department', 'Please select at least one department');
+        isValid = false;
+      } else {
+        // Set hidden inputs for preferences
+        checkedItems.forEach((checkbox, index) => {
+          const hiddenInput = document.createElement('input');
+          hiddenInput.type = "hidden";
+          hiddenInput.name = `${level}_pref_${checkbox.value.replace(/\s+/g, '_').toLowerCase()}`;
+          hiddenInput.value = index + 1;
+          this.appendChild(hiddenInput);
+        });
+      }
+    } else if (level === 'pg') {
+      const pgDept = document.querySelector('[name="pg_dept"]').value;
+      if (!pgDept) {
+        const pgError = document.getElementById('pg_dept_error');
+        if (pgError) {
+          pgError.textContent = 'Please select a PG department';
+          pgError.style.color = 'red';
+          pgError.style.fontSize = '0.9em';
+          pgError.style.display = 'block';
+        }
+        isValid = false;
+      }
+    }
+
+    if (!isValid) {
+      e.preventDefault();
+    }
+  });
+
+  // Clear error on input
+  document.addEventListener('input', function (e) {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') {
+      const name = e.target.name;
+      const errorId = name + '_error';
+      const errorElement = document.getElementById(errorId);
+      if (errorElement) {
+        errorElement.textContent = '';
+      }
+    }
+  });
+
+  function showError(field, message) {
+    const errorElement = document.getElementById(field + '_error');
+    if (errorElement) {
+      errorElement.textContent = message;
+      errorElement.style.color = 'red';
+      errorElement.style.fontSize = '0.9em';
+    }
+  }
+
+  function clearAllErrors() {
+    document.querySelectorAll('.error-message').forEach(element => {
+      element.textContent = '';
+      element.style.display = 'none';
+    });
+  }
+</script>
+{% endblock %}

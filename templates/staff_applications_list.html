@@ -1,0 +1,597 @@
+{% extends 'new_base.html' %}
+{% load static %}
+
+{% block title %}Staff Dashboard - Student Applications{% endblock %}
+
+{% block content %}
+
+<!-- Add Bootstrap 5 CDN -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<style>
+    .filter-section {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+    .table-container {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        overflow: hidden;
+    }
+    .stats-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+    .export-buttons {
+        margin-bottom: 20px;
+    }
+    .pagination-container {
+        margin-top: 20px;
+    }
+    .filter-toggle {
+        cursor: pointer;
+        color: #007bff;
+    }
+    .table th {
+        background-color: #2c3e50;
+        color: white;
+        border: none;
+    }
+    .table-hover tbody tr:hover {
+        background-color: rgba(0,123,255,0.1);
+    }
+</style>
+
+<div class="container-fluid py-4">
+    <!-- Header and Stats -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="mb-0">
+                    <i class="fas fa-users me-2"></i>Student Applications
+                </h2>
+                <div class="stats-card">
+                    <small>Total Applications</small>
+                    <h4 class="mb-0">{{ page_obj.paginator.count }}</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <form method="GET" class="search-form">
+                <div class="input-group">
+                    <input type="text" class="form-control form-control-lg" name="search"
+                        placeholder="Search by name, email, register number, or application number..."
+                        value="{{ request.GET.search|default:'' }}">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="fas fa-search"></i> Search
+                    </button>
+                    <a href="{% url 'student_applications_list' %}" class="btn btn-outline-secondary btn-lg">
+                        <i class="fas fa-times"></i> Clear
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Filters Section -->
+    <div class="filter-section">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="mb-0">
+                <i class="fas fa-filter me-2"></i>Filters
+            </h5>
+            <span class="filter-toggle" data-bs-toggle="collapse" data-bs-target="#filterCollapse">
+                
+            </span>
+        </div>
+        
+        <div class="show" id="filterCollapse">
+            <form method="GET" id="filterForm">
+                <input type="hidden" name="search" value="{{ request.GET.search|default:'' }}">
+                
+                <div class="row g-3">
+                    <!-- Level Filter -->
+                    <div class="col-md-2">
+                        <label for="level" class="form-label fw-bold">Level</label>
+                        <select name="level" id="level" class="form-select">
+                            <option value="">All Levels</option>
+                            <option value="ug" {% if request.GET.level == "ug" %}selected{% endif %}>UG</option>
+                            <option value="pg" {% if request.GET.level == "pg" %}selected{% endif %}>PG</option>
+                            <option value="le" {% if request.GET.level == "le" %}selected{% endif %}>LE</option>
+                        </select>
+                    </div>
+
+                    <!-- Board Filter -->
+                    <div class="col-md-2">
+                        <label for="board" class="form-label fw-bold">Board</label>
+                        <select name="board" id="board" class="form-select">
+                            <option value="">All Boards</option>
+                            <option value="State Board" {% if request.GET.board == "State Board" %}selected{% endif %}>State Board</option>
+                            <option value="CBSE" {% if request.GET.board == "CBSE" %}selected{% endif %}>CBSE</option>
+                            <option value="ICSE" {% if request.GET.board == "ICSE" %}selected{% endif %}>ICSE</option>
+                            <option value="Matriculation" {% if request.GET.board == "Matriculation" %}selected{% endif %}>Matriculation</option>
+                            <option value="Diploma" {% if request.GET.board == "Diploma" %}selected{% endif %}>Diploma</option>
+                            <option value="Others" {% if request.GET.board == "Others" %}selected{% endif %}>Others</option>
+                        </select>
+                    </div>
+
+                    <!-- Department Filter -->
+                    <div class="col-md-3">
+                        <label for="dept" class="form-label">Department</label>
+<select name="dept" id="dept" class="form-select">
+    <option value="">All Departments</option>
+
+    <!-- UG Departments -->
+    <optgroup label="UG Departments">
+
+        <option value="B.TECH (AI & DS) - Artificial Intelligence and Data Science" {% if dept_filter == "B.TECH (AI & DS) - Artificial Intelligence and Data Science" %}selected{% endif %}>B.TECH AI & DS</option>
+
+        <option value="B.TECH (IT) - Information Technology" {% if dept_filter == "B.TECH (IT) - Information Technology" %}selected{% endif %}>B.TECH IT</option>
+
+        <option value="B.TECH (CH) - Chemical Engineering" {% if dept_filter == "B.TECH (CH) - Chemical Engineering" %}selected{% endif %}>B.TECH Chemical</option>
+
+        <option value="B.TECH (AE) - Agricultural Engineering" {% if dept_filter == "B.TECH (AE) - Agricultural Engineering" %}selected{% endif %}>B.TECH Agricultural</option>
+
+        <option value="B.TECH (BT) - Bio Technology" {% if dept_filter == "B.TECH (BT) - Bio Technology" %}selected{% endif %}>B.TECH Bio Tech</option>
+
+        <option value="B.E (ME) - Mechanical Engineering (Tamil Medium)" {% if dept_filter == "B.E (ME) - Mechanical Engineering (Tamil Medium)" %}selected{% endif %}>B.E Mech (Tamil)</option>
+
+        <option value="B.E (ME) - Mechanical Engineering (English Medium)" {% if dept_filter == "B.E (ME) - Mechanical Engineering (English Medium)" %}selected{% endif %}>B.E  Mech (English)</option>
+
+        <option value="B.E (BME) - Biomedical Engineering" {% if dept_filter == "B.E (BME) - Biomedical Engineering" %}selected{% endif %}>B.E Biomedical</option>
+
+        <option value="B.E (CSE(IOT)) - Computer Science and Engineering (Internet Of Things)" {% if dept_filter == "B.E (CSE(IOT)) - Computer Science and Engineering (Internet Of Things)" %}selected{% endif %}>B.E  CSE (IoT)</option>
+
+        <option value="B.E (CSE) - Computer Science and Engineering" {% if dept_filter == "B.E (CSE) - Computer Science and Engineering" %}selected{% endif %}>B.E  CSE</option>
+
+        <option value="B.E (CSD) - Computer Science and Design" {% if dept_filter == "B.E (CSD) - Computer Science and Design" %}selected{% endif %}>B.E CSD</option>
+
+        <option value="B.E (CSE(AI & ML)) - Computer Science and Engineering (AI & ML)" {% if dept_filter == "B.E (CSE(AI & ML)) - Computer Science and Engineering (AI & ML)" %}selected{% endif %}>B.E CSE (AI & ML)</option>
+
+        <option value="B.E (CSE(CS)) - Computer Science and Engineering (Cyber Security)" {% if dept_filter == "B.E (CSE(CS)) - Computer Science and Engineering (Cyber Security)" %}selected{% endif %}>B.E CSE (Cyber Sec)</option>
+
+        <option value="B.E (ECE) - Electronics and Communication Engineering" {% if dept_filter == "B.E (ECE) - Electronics and Communication Engineering" %}selected{% endif %}>B.E ECE</option>
+
+        <option value="B.E (CE) - Civil Engineering" {% if dept_filter == "B.E (CE) - Civil Engineering" %}selected{% endif %}>B.E Civil</option>
+
+        <option value="B.E (EEE) - Electrical and Electronics Engineering" {% if dept_filter == "B.E (EEE) - Electrical and Electronics Engineering" %}selected{% endif %}>B.E EEE</option>
+
+        <option value="B.E (RAE) - Robotics & Automation" {% if dept_filter == "B.E (RAE) - Robotics & Automation" %}selected{% endif %}>B.E Robotics</option>
+
+        <option value="B.E (EIE) - Electronics and Instrumentation Engineering" {% if dept_filter == "B.E (EIE) - Electronics and Instrumentation Engineering" %}selected{% endif %}>B.E EIE</option>
+
+    </optgroup>
+
+    <!-- PG Departments -->
+    <optgroup label="PG Departments">
+
+        <option value="MBA" {% if dept_filter == "MBA" %}selected{% endif %}>MBA</option>
+
+        <option value="MCA" {% if dept_filter == "MCA" %}selected{% endif %}>MCA</option>
+
+        <option value="M.E. Computer Science" {% if dept_filter == "M.E. Computer Science" %}selected{% endif %}>M.E. Computer Science</option>
+
+        <option value="M.E. Applied Electronics" {% if dept_filter == "M.E. Applied Electronics" %}selected{% endif %}>M.E. Applied Electronics</option>
+
+        <option value="M.E. Manufacturing Engineering" {% if dept_filter == "M.E. Manufacturing Engineering" %}selected{% endif %}>M.E. Manufacturing Engineering</option>
+
+        <option value="M.E. Environmental Engineering" {% if dept_filter == "M.E. Environmental Engineering" %}selected{% endif %}>M.E. Environmental Engineering</option>
+
+        <option value="M.E. Power Electronics and Drives" {% if dept_filter == "M.E. Power Electronics and Drives" %}selected{% endif %}>M.E. Power Electronics and Drives</option>
+
+        <option value="M.E. Industrial Safety Engineering" {% if dept_filter == "M.E. Industrial Safety Engineering" %}selected{% endif %}>M.E. Industrial Safety Engineering</option>
+
+        <option value="M.E. Structural Engineering" {% if dept_filter == "M.E. Structural Engineering" %}selected{% endif %}>M.E. Structural Engineering</option>
+
+        <option value="M.TECH (CH) - Chemical Engineering" {% if dept_filter == "M.TECH (CH) - Chemical Engineering" %}selected{% endif %}>M.TECH (CH) - Chemical Engineering</option>
+
+    </optgroup>
+</select>
+</div>
+<div class="col-md-2">
+    <label for="preference" class="form-label fw-bold">Preference</label>
+    <select name="preference" id="preference" class="form-select">
+    <option value="">No Preference</option>
+    <option value="1" {% if pref_filter == "1" %}selected{% endif %}>1st Preference</option>
+    <option value="2" {% if pref_filter == "2" %}selected{% endif %}>2nd Preference</option>
+    <option value="3" {% if pref_filter == "3" %}selected{% endif %}>3rd Preference</option>
+    <option value="3+" {% if pref_filter == "3+" %}selected{% endif %}>Above 3</option>
+    </select>
+</div>
+                    <!-- Community Filter -->
+                    <div class="col-md-2">
+                        <label for="community" class="form-label fw-bold">Community</label>
+                        <select name="community" id="community" class="form-select">
+                            <option value="">All Communities</option>
+                            <option value="OC" {% if request.GET.community == "OC" %}selected{% endif %}>OC</option>
+                            <option value="BC" {% if request.GET.community == "BC" %}selected{% endif %}>BC</option>
+                            <option value="MBC" {% if request.GET.community == "MBC" %}selected{% endif %}>MBC</option>
+                            <option value="DNC" {% if request.GET.community == "DNC" %}selected{% endif %}>DNC</option>
+                            <option value="BCM" {% if request.GET.community == "BCM" %}selected{% endif %}>BCM</option>
+                            <option value="SC" {% if request.GET.community == "SC" %}selected{% endif %}>SC</option>
+                            <option value="SCA" {% if request.GET.community == "SCA" %}selected{% endif %}>SCA</option>
+                            <option value="ST" {% if request.GET.community == "ST" %}selected{% endif %}>ST</option>
+                        </select>
+                    </div>
+
+                    <!-- Hostel & Bus Filters -->
+                    <div class="col-md-2">
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <label class="form-label fw-bold">Hostel</label>
+                                <select name="hostel_needed" class="form-select">
+                                    <option value="">All</option>
+                                    <option value="yes" {% if request.GET.hostel_needed == "yes" %}selected{% endif %}>Needed</option>
+                                    <option value="no" {% if request.GET.hostel_needed == "no" %}selected{% endif %}>Not Needed</option>
+                                </select>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label fw-bold">Bus</label>
+                                <select name="bus_needed" class="form-select">
+                                    <option value="">All</option>
+                                    <option value="yes" {% if request.GET.bus_needed == "yes" %}selected{% endif %}>Needed</option>
+                                    <option value="no" {% if request.GET.bus_needed == "no" %}selected{% endif %}>Not Needed</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cutoff Range -->
+                    <div class="col-md-2">
+                        <label class="form-label fw-bold">Cutoff Range</label>
+                        <div class="input-group">
+                            <input type="number" class="form-control" name="cutoff_from" placeholder="From" 
+                                value="{{ request.GET.cutoff_from|default:'' }}" step="0.01" min="0" max="200">
+                            <span class="input-group-text">to</span>
+                            <input type="number" class="form-control" name="cutoff_to" placeholder="To" 
+                                value="{{ request.GET.cutoff_to|default:'' }}" step="0.01" min="0" max="200">
+                        </div>
+                    </div>
+                    <!-- country -->
+                    <div class="col-md-{% if country_filter == 'India' %}3{% else %}3{% endif %}">
+                        <div class="row g-2">
+                            <div class="col-{% if country_filter == 'India' %}4{% else %}12{% endif %}">
+                                <label class="form-label fw-bold">Country</label>
+                                <select name="country_filter" class="form-select">
+                                    <option value="">All</option>
+                                    <option value="India" {% if country_filter == "India" %}selected{% endif %}>India</option>
+                                    <option value="Others" {% if country_filter == "Others" %}selected{% endif %}>Others</option>
+                                </select>
+                            </div>
+                            {% if country_filter == 'India' %}
+                            <div class="col-4">
+                                <label class="form-label fw-bold">State</label>
+                                <select name="state_filter" class="form-select">
+                                    <option value="">All</option>
+                                    {% for state in states %}
+                                    <option value="{{state}}" {% if request.GET.bus_needed == "{{state}}" %}selected{% endif %}>{{state}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-4">
+                                <label class="form-label fw-bold">District</label>
+                                <select name="district_filter" class="form-select">
+                                    <option value="">All</option>
+                                    {% for district in districts %}
+                                    <option value="{{district}}" {% if request.GET.bus_needed == "{{district}}" %}selected{% endif %}>{{district}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Date Range -->
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Application Date</label>
+                        <div class="input-group">
+                            <input type="date" name="date_from" class="form-control" 
+                                value="{{ request.GET.date_from|default:'' }}">
+                            <span class="input-group-text">to</span>
+                            <input type="date" name="date_to" class="form-control" 
+                                value="{{ request.GET.date_to|default:'' }}">
+                        </div>
+                    </div>
+
+                    <!-- Sorting -->
+                    <div class="col-md-2">
+                        <label for="sort" class="form-label fw-bold">Sort By</label>
+                        <select name="sort" id="sort" class="form-select">
+                            <option value="-created_at" {% if request.GET.sort == "-created_at" or not request.GET.sort %}selected{% endif %}>Latest First</option>
+                            <option value="created_at" {% if request.GET.sort == "created_at" %}selected{% endif %}>Oldest First</option>
+                            <option value="-cutoff_marks" {% if request.GET.sort == "-cutoff_marks" %}selected{% endif %}>Cutoff (High to Low)</option>
+                            <option value="cutoff_marks" {% if request.GET.sort == "cutoff_marks" %}selected{% endif %}>Cutoff (Low to High)</option>
+                            <option value="student_name" {% if request.GET.sort == "student_name" %}selected{% endif %}>Name (A-Z)</option>
+                            <option value="-student_name" {% if request.GET.sort == "-student_name" %}selected{% endif %}>Name (Z-A)</option>
+                        </select>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="col-md-12">
+                        <div class="d-flex gap-2 justify-content-end">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-check"></i> Apply Filters
+                            </button>
+                            <button type="button" onclick="clearFilters()" class="btn btn-outline-secondary">
+                                <i class="fas fa-broom"></i> Clear Filters
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Export Buttons -->
+    <div class="export-buttons">
+        <div class="btn-group">
+            <button onclick="exportToExcel()" class="btn btn-success">
+                <i class="fas fa-file-excel"></i> Export to Excel
+            </button>
+            <button onclick="printTable()" class="btn btn-info">
+                <i class="fas fa-print"></i> Print
+            </button>
+            <button onclick="exportToPDF()" class="btn btn-danger">
+                <i class="fas fa-file-pdf"></i> Export to PDF
+            </button>
+        </div>
+        <span class="ms-3 text-muted">
+            Showing {{ page_obj.start_index }} - {{ page_obj.end_index }} of {{ page_obj.paginator.count }} applications
+        </span>
+    </div>
+
+    <!-- Applications Table -->
+    <div class="table-container">
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>App No.</th>
+                        <th>Student Name</th>
+                        <th>Level</th>
+                        <th>12th %</th>
+                        <th>Cutoff</th>
+                        <th>1st Preference</th>
+                        <th>Community</th>
+                        <th>Applied On</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for admission in page_obj %}
+                    <tr>
+                        <td>
+                            <strong>{{ admission.Application_number|default:"N/A" }}</strong>
+                        </td>
+                        <td>
+                            <div class="fw-bold">{{ admission.student_name }}</div>
+                            <small class="text-muted">{{ admission.register_number|default:"No Reg No." }}</small>
+                        </td>
+                        
+                        <td>
+                            <span class="badge {% if admission.level == 'ug' %}bg-primary{% elif admission.level == 'pg' %}bg-success{% else %}bg-warning{% endif %}">
+                                {{ admission.get_level_display|upper }}
+                            </span>
+                        </td>
+                        
+                       
+                        <td>
+                            <span class="badge bg-light text-dark">{{ admission.twelfth_percentage|default:"0" }}%</span>
+                        </td>
+                        <td>
+                            <strong>{{ admission.cutoff_marks|default:"N/A" }}</strong>
+                        </td>
+                        <td>
+                            <small>{{ admission.first_preference_dept|default:"N/A"|upper }}</small>
+                        </td>
+                       
+                        <td>
+                            <span class="badge bg-info">{{ admission.community|default:"N/A" }}</span>
+                        </td>
+                        <td>{{ admission.created_at|date:"M d, Y" }}</td>
+                        <td>
+                            <span class="badge {% if admission.transaction_id %}bg-success{% else %}bg-warning{% endif %}">
+                                {% if admission.transaction_id %}Paid{% else %}Pending{% endif %}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <a href="{% url 'student_detail' admission.pk %}" 
+                                   class="btn btn-outline-primary" 
+                                   title="View Details">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{% url 'student_detail' admission.pk %}?edit=true" 
+                                   class="btn btn-outline-secondary" 
+                                   title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <button class="btn btn-outline-info" 
+                                        onclick="showQuickInfo({{ admission.pk }})"
+                                        title="Quick Info">
+                                    <i class="fas fa-info"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="14" class="text-center py-4">
+                            <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No applications found</h5>
+                            <p class="text-muted">Try adjusting your filters or search criteria</p>
+                            <a href="{% url 'student_applications_list' %}" class="btn btn-primary">
+                                Clear All Filters
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    {% if page_obj.has_other_pages %}
+    
+    {% endif %}
+</div>
+
+<!-- Hidden table for export -->
+<table id="exportTable" style="display: none;">
+    <thead>
+        <tr>
+            <th>Application Number</th>
+            <th>Student Name</th>
+            <th>Email</th>
+            <th>Level</th>
+            <th>Board</th>
+            <th>10th Percentage</th>
+            <th>12th Percentage</th>
+            <th>Cutoff Marks</th>
+
+            <th>Department Preference</th>
+            <th>Hostel Needed</th>
+            <th>Community</th>
+            <th>Guardian Name</th>
+            <th>Guardian Mobile</th>
+            <th>Register Number</th>
+            <th>Date of Birth</th>
+            <th>Application Date</th>
+            <th>Last School</th> 
+            <th>Year of Passing</th> 
+            
+        </tr>
+    </thead>
+    <tbody>
+        {% for admission in page_obj %}
+        <tr>
+            <td>{{ admission.Application_number|default:"N/A" }}</td>
+            <td>{{ admission.student_name }}</td>
+            <td>{{ admission.email }}</td>
+            <td>{{ admission.get_level_display }}</td>
+            <td>{{ admission.board|default:"N/A" }}</td>
+            <td>{{ admission.tenth_percentage|default:"N/A" }}</td>
+            <td>{{ admission.twelfth_percentage|default:"N/A" }}</td>
+            <td>{{ admission.cutoff_marks|default:"N/A" }}</td>
+            <td>
+                {% if admission.department_preferences %}
+                    [ {% for dept, rank in admission.department_preferences.items %}
+                        {{ dept }}:{{ rank }} -
+                    {% endfor %} ]
+                {% else %}N/A{% endif %}
+            </td>
+            <td>{{ admission.hostel_needed|title|default:"N/A" }}</td>
+            <td>{{ admission.community|default:"N/A" }}</td>
+            <td>{{ admission.guardian_name|default:"N/A" }}</td>
+            <td>{{ admission.guardian_mobile|default:"N/A" }}</td>
+            <td>{{ admission.register_number|default:"N/A" }}</td>
+            <td>{{ admission.dob|date:"Y-m-d" }}</td>
+            
+            <td>{{ admission.created_at|date:"Y-m-d" }}</td>
+            <td>{{admission.last_school}}</td>
+            <td>{{ admission.last_school }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<script>
+    // Export to Excel function
+    function exportToExcel() {
+        const table = document.getElementById('exportTable');
+        const worksheet = XLSX.utils.table_to_sheet(table);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Student Applications");
+        
+        const timestamp = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+        const filename = `Student_Applications_${timestamp}.xlsx`;
+        
+        XLSX.writeFile(workbook, filename);
+    }
+
+    // Export to PDF function
+    function exportToPDF() {
+        alert('PDF export functionality would be implemented here. This typically requires a server-side solution or additional libraries like jsPDF.');
+        // Implementation for PDF export would go here
+    }
+
+    // Print function
+    function printTable() {
+        const printWindow = window.open('', '_blank');
+        const tableContent = document.getElementById('exportTable').outerHTML;
+        
+        printWindow.document.write(`
+            <html>
+                <head>
+                    <title>Student Applications</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; }
+                        table { width: 100%; border-collapse: collapse; }
+                        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                        th { background-color: #f2f2f2; }
+                        tr:nth-child(even) { background-color: #f9f9f9; }
+                    </style>
+                </head>
+                <body>
+                    <h2>Student Applications - ${new Date().toLocaleDateString()}</h2>
+                    ${tableContent}
+                </body>
+            </html>
+        `);
+        printWindow.document.close();
+        printWindow.print();
+    }
+
+    // Clear filters function
+    function clearFilters() {
+        const form = document.getElementById('filterForm');
+        const inputs = form.querySelectorAll('select, input');
+        inputs.forEach(input => {
+            if (input.type !== 'hidden') {
+                input.value = '';
+            }
+        });
+        form.submit();
+    }
+
+    // Quick info function
+    function showQuickInfo(admissionId) {
+        // This would typically make an AJAX call to get quick info
+        alert(`Quick info for admission ID: ${admissionId}\nThis would show a modal with student summary.`);
+    }
+
+    // Auto-submit form when certain filters change
+    document.addEventListener('DOMContentLoaded', function() {
+        const autoSubmitFilters = ['level', 'board', 'community', 'sort'];
+        autoSubmitFilters.forEach(filter => {
+            const element = document.getElementById(filter);
+            if (element) {
+                element.addEventListener('change', function() {
+                    document.getElementById('filterForm').submit();
+                });
+            }
+        });
+
+        // Initialize tooltips
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[title]'));
+        const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,323 @@
+{% extends 'Created_base.html' %}
+
+{% block title %}Marks Obtained{% endblock %}
+
+{% block content %}
+{% include "tracker.html" %}
+<div class="col-span-1 lg:col-span-9">
+  <!-- Messages -->
+  {% if messages %}
+  <div class="mb-6 space-y-2">
+    {% for message in messages %}
+    <div
+      class="p-4 rounded-lg text-sm font-medium {% if message.tags == 'error' %}bg-red-50 text-red-600{% elif message.tags == 'success' %}bg-green-50 text-green-600{% else %}bg-blue-50 text-blue-600{% endif %}">
+      {{ message }}
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- Content Block -->
+  <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+<form method="post"
+      enctype="multipart/form-data"
+      action="{% url 'marks_obtained' admission.id %}"
+      id="marksForm">
+
+  {% csrf_token %}
+
+  <div class="max-w-5xl mx-auto bg-white shadow-lg rounded-xl p-8">
+
+    <h2 class="text-xl font-semibold mb-6 border-b pb-3">
+      3. Marks Obtained
+    </h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+      <!-- 10th Total -->
+      <div>
+        <label class="block font-medium mb-1">
+          10th Total Marks <span class="text-red-600">*</span>
+        </label>
+        <input type="text"
+               name="tenth_total"
+               required
+               placeholder="e.g. 450 / 500"
+               value="{% if admission %}{{ admission.tenth_total }}{% endif %}"
+               class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500">
+      </div>
+
+      <!-- 10th Percentage -->
+      <div>
+        <label class="block font-medium mb-1">
+          10th Percentage <span class="text-red-600">*</span>
+        </label>
+        <input type="text"
+               name="tenth_percentage"
+               required
+               placeholder="e.g. 90%"
+               value="{% if admission %}{{ admission.tenth_percentage }}{% endif %}"
+               class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500">
+      </div>
+
+      <!-- Qualification -->
+      <div>
+        <label class="block font-medium mb-1">
+          Qualification <span class="text-red-600">*</span>
+        </label>
+        <select name="qualification"
+                id="qualification"
+                required
+                class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500">
+          <option value="">Select Qualification</option>
+          <option value="12th"
+            {% if admission and admission.qualification == '12th' %}selected{% endif %}>
+            12th
+          </option>
+          <option value="Diploma"
+            {% if admission and admission.qualification == 'Diploma' %}selected{% endif %}>
+            Diploma
+          </option>
+        </select>
+      </div>
+
+    </div>
+
+    <!-- 12th Fields -->
+    <div id="twelfth_fields"
+         class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6
+         {% if admission and admission.qualification == '12th' %}{% else %}hidden{% endif %}">
+
+      <div>
+        <label class="block font-medium mb-1">
+          12th Total Marks <span class="text-red-600">*</span>
+        </label>
+        <input type="text"
+               name="twelfth_total"
+               placeholder="e.g. 400 / 600"
+               value="{% if admission %}{{ admission.twelfth_total }}{% endif %}"
+               class="w-full border border-gray-300 rounded px-3 py-2">
+      </div>
+
+      <div>
+        <label class="block font-medium mb-1">
+          Maths Mark <span class="text-red-600">*</span>
+        </label>
+        <input type="text"
+               name="maths_marks"
+               value="{% if admission %}{{ admission.maths_marks }}{% endif %}"
+               placeholder="e.g. 85"
+               class="w-full border border-gray-300 rounded px-3 py-2">
+      </div>
+
+      <div>
+        <label class="block font-medium mb-1">
+          Physics Mark <span class="text-red-600">*</span>
+        </label>
+        <input type="text"
+               name="physics_marks"
+               value="{% if admission %}{{ admission.physics_marks }}{% endif %}"
+               placeholder="e.g. 90"
+               class="w-full border border-gray-300 rounded px-3 py-2">
+      </div>
+
+      <div>
+        <label class="block font-medium mb-1">
+          Chemistry Mark <span class="text-red-600">*</span>
+        </label>
+        <input type="text"
+               name="chemistry_marks"
+               value="{% if admission %}{{ admission.chemistry_marks }}{% endif %}"
+               placeholder="e.g. 88"
+               class="w-full border border-gray-300 rounded px-3 py-2">
+      </div>
+
+      <div>
+        <label class="block font-medium mb-1">
+          Group <span class="text-red-600">*</span>
+        </label>
+        <select name="group_major"
+                class="w-full border border-gray-300 rounded px-3 py-2">
+          <option value="">Select Group</option>
+          <option value="Computer Science"
+            {% if admission and admission.group_major == 'Computer Science' %}selected{% endif %}>
+            Computer Science
+          </option>
+          <option value="Biology"
+            {% if admission and admission.group_major == 'Biology' %}selected{% endif %}>
+            Biology
+          </option>
+        </select>
+      </div>
+
+    </div>
+
+    <!-- Diploma Fields -->
+    <div id="diploma_fields"
+         class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6
+         {% if admission and admission.qualification == 'Diploma' %}{% else %}hidden{% endif %}">
+
+      <div>
+        <label class="block font-medium mb-1">
+          Diploma Total Marks <span class="text-red-600">*</span>
+        </label>
+        <input type="text"
+               name="diploma_total"
+               value="{% if admission %}{{ admission.diploma_total }}{% endif %}"
+               placeholder="e.g. 400 / 600"
+               class="w-full border border-gray-300 rounded px-3 py-2">
+      </div>
+
+      <div>
+        <label class="block font-medium mb-1">
+          Diploma Percentage <span class="text-red-600">*</span>
+        </label>
+        <input type="text"
+               name="diploma_percentage"
+               value="{% if admission %}{{ admission.diploma_percentage }}{% endif %}"
+               placeholder="e.g. 91.6%"
+               class="w-full border border-gray-300 rounded px-3 py-2">
+      </div>
+
+      <div class="md:col-span-2">
+        <label class="block font-medium mb-1">
+          Group / Major <span class="text-red-600">*</span>
+        </label>
+        <input type="text"
+               name="diploma_major"
+               value="{% if admission %}{{ admission.diploma_major }}{% endif %}"
+               placeholder="e.g. Computer Science / Vocational"
+               class="w-full border border-gray-300 rounded px-3 py-2">
+      </div>
+
+    </div>
+
+    <!-- Actions -->
+    <div class="flex justify-between mt-8">
+      <button type="button"
+              onclick="window.location.href='{% url 'department_details' admission.id %}'"
+              class="px-6 py-2 border rounded hover:bg-gray-100">
+        Previous
+      </button>
+
+      <button type="submit"
+              class="bg-orange-600 text-white px-6 py-2 rounded hover:bg-orange-700">
+        Next
+      </button>
+    </div>
+
+  </div>
+</form>
+
+  </div>
+</div>
+
+<script>
+
+  console.log(document.title);
+  document.getElementById('qualification').addEventListener('change', function () {
+    const qualification = this.value;
+    const twelfthFields = document.getElementById('twelfth_fields');
+    const diplomaFields = document.getElementById('diploma_fields');
+
+    if (qualification === '12th') {
+      twelfthFields.style.display = 'block';
+      diplomaFields.style.display = 'none';
+    } else if (qualification === 'Diploma') {
+      twelfthFields.style.display = 'none';
+      diplomaFields.style.display = 'block';
+    } else {
+      twelfthFields.style.display = 'none';
+      diplomaFields.style.display = 'none';
+    }
+  });
+
+  // Initialize on page load
+  document.addEventListener('DOMContentLoaded', function () {
+    const qualification = document.getElementById('qualification').value;
+    if (qualification) {
+      document.getElementById('qualification').dispatchEvent(new Event('change'));
+    }
+  });
+
+  document.getElementById('marksForm').addEventListener('submit', function (e) {
+    let isValid = true;
+    clearAllErrors();
+
+    // Required fields
+    const requiredFields = ['tenth_total', 'tenth_percentage', 'qualification'];
+    requiredFields.forEach(field => {
+      const element = document.querySelector(`[name="${field}"]`);
+      if (!element.value.trim()) {
+        showError(field, 'This field is required');
+        isValid = false;
+      }
+    });
+
+    const qualification = document.getElementById('qualification').value;
+    if (qualification === '12th') {
+      const twelfthRequired = ['maths_marks', 'physics_marks', 'chemistry_marks', 'group_major'];
+      twelfthRequired.forEach(field => {
+        const element = document.querySelector(`[name="${field}"]`);
+        if (!element.value.trim()) {
+          showError(field, 'This field is required');
+          isValid = false;
+        }
+      });
+    } else if (qualification === 'Diploma') {
+      const element = document.querySelector(`[name="group_major"]`);
+      if (!element.value.trim()) {
+        showError('group_major', 'This field is required');
+        isValid = false;
+      }
+    }
+
+    // Percentage validation (0-100)
+    const percentageFields = ['tenth_percentage', 'twelfth_percentage'];
+    percentageFields.forEach(field => {
+      const element = document.querySelector(`[name="${field}"]`);
+      const value = element.value.trim();
+      if (value) {
+        const percentage = parseFloat(value);
+        if (isNaN(percentage) || percentage < 0 || percentage > 100) {
+          showError(field, 'Percentage must be between 0 and 100');
+          isValid = false;
+        }
+      }
+    });
+
+    if (!isValid) {
+      e.preventDefault();
+    }
+  });
+
+  // Clear error on input
+  document.querySelectorAll('input, select').forEach(element => {
+    element.addEventListener('input', function () {
+      clearError(this.name);
+    });
+  });
+
+  function showError(field, message) {
+    const errorElement = document.getElementById(field + '_error');
+    if (errorElement) {
+      errorElement.textContent = message;
+      errorElement.style.color = 'red';
+      errorElement.style.fontSize = '0.9em';
+    }
+  }
+
+  function clearError(field) {
+    const errorElement = document.getElementById(field + '_error');
+    if (errorElement) {
+      errorElement.textContent = '';
+    }
+  }
+
+  function clearAllErrors() {
+    document.querySelectorAll('.error-message').forEach(element => {
+      element.textContent = '';
+    });
+  }
+</script>
+{% endblock %}

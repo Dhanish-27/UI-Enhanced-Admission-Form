@@ -1,0 +1,411 @@
+{% extends 'new_base.html' %}
+{% load static %}
+
+{% block title %}Staff Dashboard - Student Details{% endblock %}
+
+{% block content %}
+
+<!-- Add Bootstrap 5 CDN -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="mb-4">Student Details</h2>
+            <a href="{% url 'student_applications_list' %}" class="btn btn-secondary mb-4">Back to List</a>
+
+            {% if admission %}
+            <div class="card">
+                <div class="card-body">
+                    <!-- Personal Details -->
+                    <h4 class="card-title bg-primary text-white p-2">1. Personal Details</h4>
+                    <div class="row">
+                        <div class="col-md-3">
+                            {% if admission.photo %}
+                            <img src="{{ admission.photo.url }}" alt="Profile Photo" class="img-fluid rounded"
+                                style="max-width: 100%; height: auto;">
+                            {% else %}
+                            <div class="text-center p-3 bg-light rounded">No Photo Available</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-9">
+                            <table class="table table-bordered">
+                                <tbody>
+                                    <tr>
+                                        <td class="bg-light"><strong>Name</strong></td>
+                                        <td>{{ admission.student_name }}</td>
+                                        <td class="bg-light"><strong>Student Mobile</strong></td>
+                                        <td>{{ admission.student_mobile|default:"N/A" }}</td>
+
+
+
+                                    </tr>
+                                    <tr>
+                                        <td class="bg-light"><strong>Email</strong></td>
+                                        <td>{{ admission.email }}</td>
+                                        <td class="bg-light"><strong>Register Number</strong></td>
+                                        <td>{{ admission.register_number }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="bg-light"><strong>UMIS Number</strong></td>
+                                        <td>{{ admission.umis_number|default:"N/A" }}</td>
+                                        <td class="bg-light"><strong>Application Number</strong></td>
+                                        <td>{{ admission.Application_number|default:"N/A" }}</td>
+
+                                    </tr>
+                                    <tr>
+                                        <td class="bg-light"><strong>Father Name</strong></td>
+                                        <td>{{ admission.father_name }}</td>
+                                        <td class="bg-light"><strong>Father Mobile</strong></td>
+                                        <td>{{ admission.father_mobile|default:"N/A" }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="bg-light"><strong>Mother Name</strong></td>
+                                        <td>{{ admission.mother_name }}</td>
+                                        <td class="bg-light"><strong>Mother Mobile</strong></td>
+                                        <td>{{ admission.mother_mobile|default:"N/A" }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="bg-light"><strong>Guardian Name</strong></td>
+                                        <td>{{ admission.guardian_name|default:"N/A" }}</td>
+                                        <td class="bg-light"><strong>Guardian Mobile</strong></td>
+                                        <td>{{ admission.guardian_mobile|default:"N/A" }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="bg-light"><strong>DOB</strong></td>
+                                        <td>{{ admission.dob }}</td>
+                                        <td class="bg-light"><strong>Gender</strong></td>
+                                        <td>{{ admission.gender }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="bg-light"><strong>Community</strong></td>
+                                        <td>{{ admission.community|default:"N/A" }}</td>
+                                        <td class="bg-light"><strong>Address</strong></td>
+                                        <td>{{ admission.address }},{{ admission.district}}, {{admission.state}}</td>
+
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Marks Obtained -->
+                    <h4 class="card-title bg-primary text-white p-2 mt-4">2. Marks Obtained</h4>
+                    <table class="table table-bordered">
+                        <tbody>
+                            <tr>
+                                <td class="bg-light"><strong>10th Total</strong></td>
+                                <td>{{ admission.tenth_total }}</td>
+                                <td class="bg-light"><strong>10th Percentage</strong></td>
+                                <td>{{ admission.tenth_percentage }}%</td>
+                            </tr>
+                            {% if admission.twelfth_total %}
+                            <tr>
+                                <td class="bg-light"><strong>12th Total</strong></td>
+                                <td>{{ admission.twelfth_total }}</td>
+                                <td class="bg-light"><strong>12th Percentage</strong></td>
+                                <td>{{ admission.twelfth_percentage }}%</td>
+                            </tr>
+                            {% endif %}
+                            <tr>
+                                <td class="bg-light"><strong>Group Major</strong></td>
+                                <td>{{ admission.group_major }}</td>
+                                <td class="bg-light"><strong>Cutoff Marks</strong></td>
+                                <td>{{ admission.cutoff_marks|default:"N/A" }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Department Details -->
+                    <h4 class="card-title bg-primary text-white p-2 mt-4">3. Department Details</h4>
+                    <table class="table table-bordered">
+                        <tbody>
+                            <tr>
+                                <td class="bg-light"><strong>Level</strong></td>
+                                <td>{{ admission.get_level_display|upper }}</td>
+                                <td class="bg-light"><strong>Preferred Departments</strong></td>
+                                <td>
+                                    {% if admission.department_preferences %}
+                                    {% for dept, pref in admission.department_preferences.items %}
+                                    {{ pref }}:{{ dept }} <br> {% if not forloop.last %} {% endif %}
+                                    {% endfor %}
+                                    {% else %}
+                                    N/A
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% if admission.pg_dept %}
+                            <tr>
+                                <td class="bg-light"><strong>PG Department</strong></td>
+                                <td>{{ admission.pg_dept }}</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+
+                    <!-- Academic Information -->
+                    <h4 class="card-title bg-primary text-white p-2 mt-4">4. Academic Information</h4>
+                    <table class="table table-bordered">
+                        <tbody>
+                            <tr>
+                                <td class="bg-light"><strong>Last School</strong></td>
+                                <td>{{ admission.last_school }}</td>
+                                <td class="bg-light"><strong>Board</strong></td>
+                                <td>{{ admission.board }}</td>
+                            </tr>
+                            <tr>
+                                <td class="bg-light"><strong>Year of Passing</strong></td>
+                                <td>{{ admission.year_passing }}</td>
+                                <td class="bg-light"><strong>Medium</strong></td>
+                                <td>{{ admission.medium }}</td>
+                            </tr>
+                            {% if admission.vocational_stream %}
+                            <tr>
+                                <td class="bg-light"><strong>Vocational Stream</strong></td>
+                                <td>{{ admission.vocational_stream }}</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+
+                    <!-- Uploaded Documents -->
+                    <h4 id="certificates-section" class="card-title bg-primary text-white p-2 mt-4">5. Uploaded
+                        Documents</h4>
+                    <table class="table table-bordered">
+                        <tbody>
+                            {% if admission.tc %}
+                            <tr>
+                                <td class="bg-light"><strong>Transfer Certificate</strong></td>
+                                <td><a href="{{ admission.tc.url }}" target="_blank">View</a></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            {% endif %}
+                            {% if admission.community_cert %}
+                            <tr>
+                                <td class="bg-light"><strong>Community Certificate</strong></td>
+                                <td><a href="{{ admission.community_cert.url }}" target="_blank">View</a></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            {% endif %}
+                            {% if admission.aadhaar %}
+                            <tr>
+                                <td class="bg-light"><strong>Aadhaar Card</strong></td>
+                                <td><a href="{{ admission.aadhaar.url }}" target="_blank">View</a></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            {% endif %}
+                            {% if admission.tenth_marksheet %}
+                            <tr>
+                                <td class="bg-light"><strong>10th Marksheet</strong></td>
+                                <td><a href="{{ admission.tenth_marksheet.url }}" target="_blank">View</a></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            {% endif %}
+                            {% if admission.twelfth_marksheet %}
+                            <tr>
+                                <td class="bg-light"><strong>12th Marksheet</strong></td>
+                                <td><a href="{{ admission.twelfth_marksheet.url }}" target="_blank">View</a></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            {% endif %}
+                            {% if admission.photo %}
+                            <tr>
+                                <td class="bg-light"><strong>Photo</strong></td>
+                                <td><a href="{{ admission.photo.url }}" target="_blank">View</a></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            {% endif %}
+                            {% if admission.skill_proof %}
+                            <tr>
+                                <td class="bg-light"><strong>Vocational Skill Proof</strong></td>
+                                <td><a href="{{ admission.skill_proof.url }}" target="_blank">View</a></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            {% endif %}
+                            {% if admission.payment_screenshot %}
+                            <tr>
+                                <td class="bg-light"><strong>Payment Screenshot</strong></td>
+                                <td><a href="{{ admission.payment_screenshot.url }}" target="_blank">View</a></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+
+                    <!-- Fee Details -->
+                    <h4 class="card-title bg-primary text-white p-2 mt-4">6. Fee Details</h4>
+                    <table class="table table-bordered">
+                        <tbody>
+                            <tr>
+                                <td class="bg-light"><strong>Admission Fee</strong></td>
+                                <td>{{ admission.admission_fee }}</td>
+                                <td class="bg-light"><strong>Tuition Fee</strong></td>
+                                <td>{{ admission.tuition_fee }}</td>
+                            </tr>
+                            <tr>
+                                <td class="bg-light"><strong>College Fee</strong></td>
+                                <td>{{ admission.college_fee }}</td>
+                                <td class="bg-light"><strong>Hostel Fee</strong></td>
+                                <td>{{ admission.hostel_fee }}</td>
+                            </tr>
+                            <tr>
+                                <td class="bg-light"><strong>Bus Fee</strong></td>
+                                <td>{{ admission.bus_fee }}</td>
+                                <td class="bg-light"><strong>Transaction ID</strong></td>
+                                <td>{{ admission.transaction_id|default:"N/A" }}</td>
+                            </tr>
+                            <tr>
+                                <td class="bg-light"><strong>Transaction Date</strong></td>
+                                <td>{{ admission.transaction_date|default:"N/A" }}</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Hostel & Bus Information -->
+                    <h4 class="card-title bg-primary text-white p-2 mt-4">7. Hostel & Bus Information</h4>
+                    <table class="table table-bordered">
+                        <tbody>
+                            <tr>
+                                <td class="bg-light"><strong>Hostel Needed</strong></td>
+                                <td>{{ admission.hostel_needed|title }}</td>
+                                <td class="bg-light"><strong>Bus Needed</strong></td>
+                                <td>{{ admission.bus_needed|title }}</td>
+                            </tr>
+                            {% if admission.hostel_needed == 'yes' %}
+                            <tr>
+                                <td class="bg-light"><strong>Hostel Type</strong></td>
+                                <td>{{ admission.hostel_type }}</td>
+                                <td class="bg-light"><strong>Room Type</strong></td>
+                                <td>{{ admission.room_type }}</td>
+                            </tr>
+                            <tr>
+                                <td class="bg-light"><strong>Mess Type</strong></td>
+                                <td>{{ admission.mess_type }}</td>
+                                <td class="bg-light"><strong>Hostel Fee Amount</strong></td>
+                                <td>{{ admission.hostel_fee_amount }}</td>
+                            </tr>
+                            {% endif %}
+                            {% if admission.bus_needed == 'yes' %}
+                            <tr>
+                                <td class="bg-light"><strong>Boarding Point</strong></td>
+                                <td>{{ admission.boarding_point }}</td>
+                                <td class="bg-light"><strong>Bus Route</strong></td>
+                                <td>{{ admission.bus_route }}</td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+
+                    <!-- Reference Details -->
+                    <h4 class="card-title bg-primary text-white p-2 mt-4">8. Reference Details</h4>
+                    <table class="table table-bordered">
+                        <tbody>
+                            <tr>
+                                <td class="bg-light"><strong>Reference Name</strong></td>
+                                <td>{{ admission.reference_name }}</td>
+                                <td class="bg-light"><strong>Contact Number</strong></td>
+                                <td>{{ admission.contact_number }}</td>
+                            </tr>
+                            <tr>
+                                <td class="bg-light"><strong>Relationship</strong></td>
+                                <td>{{ admission.relationship }}</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+
+                </div>
+            </div>
+
+            <!-- Print PDF Button -->
+            <a href="{% url 'admission_report' admission.id %}" target="_blank" class="btn btn-primary">
+                Download Student PDF
+            </a>
+
+
+            {% else %}
+            <div class="alert alert-danger">Student not found.</div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- html2pdf library -->
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<script>
+    document.getElementById('print-pdf-btn').addEventListener('click', function () {
+        const cardElement = document.querySelector('.card');
+
+        // Clone the card
+        const clone = cardElement.cloneNode(true);
+
+        // Remove "Uploaded Documents" section (certificates)
+        const certificatesHeading = clone.querySelector('#certificates-section');
+        if (certificatesHeading) {
+            const certificatesTable = certificatesHeading.nextElementSibling;
+            certificatesHeading.remove();
+            if (certificatesTable) certificatesTable.remove();
+        }
+
+        // Temporary container
+        const tempContainer = document.createElement('div');
+        tempContainer.style.padding = '5px';
+        tempContainer.style.backgroundColor = '#fff';
+        tempContainer.appendChild(clone);
+
+        // Add Bootstrap styling link
+        const bootstrapLink = document.createElement('link');
+        bootstrapLink.rel = 'stylesheet';
+        bootstrapLink.href = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css';
+        tempContainer.prepend(bootstrapLink);
+
+        // Add to body temporarily (important for full rendering)
+        document.body.appendChild(tempContainer);
+
+        const options = {
+            margin: [0.2, 0.2, 0.2, 0.2],
+            filename: '{{admission.student_name}}_{{admission.admission_number}}_details.pdf',
+            image: { type: 'jpeg', quality: 1 },
+            html2canvas: {
+                scale: 2,
+                useCORS: true,
+                scrollY: 0, // prevents cropping due to scroll
+            },
+            jsPDF: {
+                unit: 'in',
+                format: 'a4',
+                orientation: 'portrait'
+            },
+            pagebreak: { mode: ['avoid-all', 'css', 'legacy'] } // allow multi-page
+        };
+
+        html2pdf()
+            .set(options)
+            .from(tempContainer)
+            .save()
+            .then(() => {
+                tempContainer.remove(); // clean up
+            });
+    });
+</script> -->
+
+
+{% endblock %}

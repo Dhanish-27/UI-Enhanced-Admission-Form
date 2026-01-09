@@ -1,0 +1,299 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>{{ admission.student_name }} - Student Report</title>
+
+  <style>
+    body {
+      background: #fff;
+      font-family: "Segoe UI", Arial, sans-serif;
+      font-size: 13px;
+      color: #000;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .header h3 {
+      font-weight: 700;
+      color: #0d6efd;
+      margin-bottom: 0;
+    }
+
+    .header small {
+      color: #555;
+      font-size: 12px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 1px solid #999;
+      margin-bottom: 10px;
+    }
+
+    td,
+    th {
+      border: 1px solid #999;
+      padding: 8px 12px;
+      vertical-align: top;
+      text-align: left;
+
+      font-style: italic;
+    }
+
+    th {
+      background-color: #f1f3f4;
+    }
+
+    td.label {
+      background-color: #f9f9f9;
+      text-transform: uppercase;
+      font-size: 12px;
+      font-weight: bold;
+      width: 25%;
+      font-style: normal;
+    }
+
+    .section-header {
+      background-color: #0d6efd;
+      color: white;
+      padding: 6px 8px;
+      font-weight: 600;
+      text-transform: uppercase;
+      border: 1px solid #0d6efd;
+    }
+
+    @page {
+      size: A4;
+      margin: 1cm;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="header">
+    <h3>{{ admission.student_name }} - {{ admission.Application_number }} Admission Report</h3>
+  </div>
+  <table>
+    <!-- 1. Personal Details -->
+    <tr>
+      <th colspan="4" class="section-header">1. Personal Details</th>
+    </tr>
+    <tr>
+      <td class="label">Student Name</td>
+      <td>{{ admission.student_name }}</td>
+      <td class="label">Application No</td>
+      <td>{{ admission.Application_number|default:"N/A" }}</td>
+    </tr>
+    <tr>
+      <td class="label">Email</td>
+      <td>{{ admission.email }}</td>
+      <td class="label">Student Mobile</td>
+      <td>{{ admission.student_mobile|default:"N/A" }}</td>
+    </tr>
+    <tr>
+      <td class="label">Father Name</td>
+      <td>{{ admission.father_name }}</td>
+      <td class="label">Father Mobile</td>
+      <td>{{ admission.father_mobile|default:"N/A" }}</td>
+    </tr>
+    <tr>
+      <td class="label">Mother Name</td>
+      <td>{{ admission.mother_name }}</td>
+      <td class="label">Mother Mobile</td>
+      <td>{{ admission.mother_mobile|default:"N/A" }}</td>
+    </tr>
+    {% if admission.guardian_name %}
+    <tr>
+      <td class="label">Guardian Name</td>
+      <td>{{ admission.guardian_name|default:"N/A" }}</td>
+      <td class="label">Guardian Mobile</td>
+      <td>{{ admission.guardian_mobile|default:"N/A" }}</td>
+    </tr>
+    {% endif %}
+    <tr>
+      <td class="label">Date of Birth</td>
+      <td>{{ admission.dob }}</td>
+      <td class="label">Gender</td>
+      <td>{{ admission.gender }}</td>
+    </tr>
+    <tr>
+      <td class="label">Community</td>
+      <td>{{ admission.get_community_display|default:"N/A" }}</td>
+      <td class="label">Address</td>
+      <td>{{ admission.address }},{{ admission.district}}, {{admission.state}}</td>
+    </tr>
+
+    <!-- 2. Marks Obtained -->
+    <tr>
+      <th colspan="4" class="section-header">2. Marks Obtained</th>
+    </tr>
+    <tr>
+      <td class="label">10th Total</td>
+      <td>{{ admission.tenth_total }}</td>
+      <td class="label">10th %</td>
+      <td>{{ admission.tenth_percentage }}%</td>
+    </tr>
+    {% if admission.twelfth_total %}
+    <tr>
+      <td class="label">12th Total</td>
+      <td>{{ admission.twelfth_total }}</td>
+      <td class="label">12th %</td>
+      <td>{{ admission.twelfth_percentage }}%</td>
+    </tr>
+    {% endif %}
+    <tr>
+      <td class="label">Group Major</td>
+      <td>{{ admission.group_major }}</td>
+      <td class="label">Cutoff Marks</td>
+      <td>{{ admission.cutoff_marks|default:"N/A" }}</td>
+    </tr>
+
+    <!-- 3. Academic Info -->
+    <tr>
+      <th colspan="4" class="section-header">3. Academic Information</th>
+    </tr>
+    <tr>
+      <td class="label">Last School</td>
+      <td>{{ admission.last_school }}</td>
+      <td class="label">Board</td>
+      <td>{{ admission.board }}</td>
+    </tr>
+    <tr>
+      <td class="label">Year of Passing</td>
+      <td>{{ admission.year_passing }}</td>
+      <td class="label">Medium</td>
+      <td>{{ admission.medium }}</td>
+    </tr>
+    {% if admission.vocational_stream %}
+    <tr>
+      <td class="label">Vocational Stream</td>
+      <td>{{ admission.vocational_stream }}</td>
+      <td class="label">Skill Proof</td>
+      <td>{% if admission.skill_proof %}<a href="{{ admission.skill_proof.url }}" target="_blank">View</a>{% else
+        %}N/A{% endif %}</td>
+    </tr>
+    {% endif %}
+
+    <!-- 4. Department Details -->
+    <tr>
+      <th colspan="4" class="section-header">4. Department Details</th>
+    </tr>
+    <tr>
+      <td class="label">Level</td>
+      <td colspan="3">{{ admission.get_level_display|upper }}</td>
+    </tr>
+
+    {% if admission.level == 'ug' %}
+    <tr>
+      <td class="label">UG Department Preferences</td>
+      <td colspan="3">
+        {% if admission.department_preferences %}
+        {% for dept, pref in admission.department_preferences.items %}
+        {{ pref }} : {{ dept }} <br> {% if not forloop.last %}{% endif %}
+        {% endfor %}
+        {% else %}
+        N/A
+        {% endif %}
+      </td>
+    </tr>
+    {% elif admission.level == 'pg' %}
+    <tr>
+      <td class="label">PG Department</td>
+      <td colspan="3">{{ admission.pg_dept|default:"N/A" }}</td>
+    </tr>
+    {% endif %}
+
+    <!-- 5. Fee Details -->
+    <tr>
+      <th colspan="4" class="section-header">5. Fee Details</th>
+    </tr>
+    <tr>
+      <td class="label">Admission Fee</td>
+      <td>{{ admission.admission_fee }}</td>
+      <td class="label">Tuition Fee</td>
+      <td>{{ admission.tuition_fee }}</td>
+    </tr>
+    <tr>
+      <td class="label">College Fee</td>
+      <td>{{ admission.college_fee }}</td>
+      <td class="label">Hostel Fee</td>
+      <td>{{ admission.hostel_fee }}</td>
+    </tr>
+    <tr>
+      <td class="label">Bus Fee</td>
+      <td>{{ admission.bus_fee }}</td>
+      <td class="label">Transaction ID</td>
+      <td>{{ admission.transaction_id|default:"N/A" }}</td>
+    </tr>
+    <tr>
+      <td class="label">Transaction Date</td>
+      <td>{{ admission.transaction_date|default:"N/A" }}</td>
+      <td class="label">Payment Screenshot</td>
+      <td>{% if admission.payment_screenshot %}<a href="{{ admission.payment_screenshot.url }}"
+          target="_blank">View</a>{% else %}N/A{% endif %}</td>
+    </tr>
+
+    <!-- 6. Hostel & Transport -->
+    <tr>
+      <th colspan="4" class="section-header">6. Hostel & Transport</th>
+    </tr>
+    <tr>
+      <td class="label">Hostel Needed</td>
+      <td>{{ admission.hostel_needed|title }}</td>
+      <td class="label">Bus Needed</td>
+      <td>{{ admission.bus_needed|title }}</td>
+    </tr>
+    {% if admission.hostel_needed == 'yes' %}
+    <tr>
+      <td class="label">Hostel Type</td>
+      <td>{{ admission.hostel_type }}</td>
+      <td class="label">Room Type</td>
+      <td>{{ admission.room_type }}</td>
+    </tr>
+    <tr>
+      <td class="label">Mess Type</td>
+      <td>{{ admission.mess_type }}</td>
+      <td class="label">Hostel Fee Amount</td>
+      <td>{{ admission.hostel_fee_amount }}</td>
+    </tr>
+    {% endif %}
+    {% if admission.bus_needed == 'yes' %}
+    <tr>
+      <td class="label">Boarding Point</td>
+      <td>{{ admission.boarding_point }}</td>
+      <td class="label">Bus Route</td>
+      <td>{{ admission.bus_route }}</td>
+    </tr>
+    {% endif %}
+
+    <!-- 7. Reference Details -->
+     {% if admission.reference_name %}
+    <tr>
+      <th colspan="4" class="section-header">7. Reference Details</th>
+    </tr>
+    <tr>
+      <td class="label">Reference Name</td>
+      <td>{{ admission.reference_name }}</td>
+      <td class="label">Contact Number</td>
+      <td>{{ admission.contact_number }}</td>
+    </tr>
+    <tr>
+      <td class="label">Relationship</td>
+      <td>{{ admission.relationship|default:"N/A" }}</td>
+      <td class="label">Department/Designation</td>
+      <td>{{ admission.reference_department|default:"N/A" }}/{{ admission.reference_designation|default:"N/A" }}</td>
+    </tr>
+    {% endif %}
+  </table>
+
+</body>
+
+</html>
