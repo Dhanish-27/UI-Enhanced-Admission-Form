@@ -1,5 +1,5 @@
 from django.urls import path
-from . import views
+from . import views,followup
 
 urlpatterns = [
     # To find the existing records
@@ -25,4 +25,11 @@ urlpatterns = [
     path('staff/applications/', views.student_applications_list, name='student_applications_list'),
     path('staff/student/<int:pk>/', views.student_detail, name='student_detail'),
     path('staff/student/pdf/<int:pk>/', views.admission_report, name='admission_report'),
+    # Followups
+    path('students/<int:student_id>/', followup.student_detail, name='student_detail'),
+    path('followups/create/<int:student_id>/', followup.create_followup, name='create_followup'),
+    path('followups/', followup.followup_list, name='followup_list'),
+    path('followups/complete/<int:followup_id>/', followup.complete_followup, name='complete_followup'),
+    path('fees/add/<int:student_id>/', followup.add_fee_payment, name='add_fee_payment'),
+    path('activities/<int:student_id>/', followup.student_activity_log, name='student_activity_log'),
 ]

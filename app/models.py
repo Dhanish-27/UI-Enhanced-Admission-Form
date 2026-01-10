@@ -3,6 +3,7 @@ from random import choices
 from django.db import models
 import json
 import os
+from django.contrib.auth.models import User
 
 def certificate_upload_path(instance, filename):
     # Create folder name as "Name-email"
@@ -181,3 +182,70 @@ class Admission(models.Model):
 class PaymentScreenshot(models.Model):
     admission = models.ForeignKey(Admission, on_delete=models.CASCADE, related_name="payment_screenshots")
     image = models.FileField(upload_to=payment_upload_path)
+
+
+
+
+#Below Models are for the followup Page
+class FollowUp(models.Model):
+    FOLLOWUP_TYPES = (
+        ('visit', 'College Visit'),
+        ('fee', 'Fee Payment'),
+    )
+
+    student = models.ForeignKey(
+        'Admission',
+        on_delete=models.CASCADE,
+        related_name='followups'
+    )
+    followup_type = models.CharField(max_length=10, choices=FOLLOWUP_TYPES)
+    expected_date = models.DateField()
+    remarks = models.TextField(blank=True)
+
+    completed = models.BooleanField(default=False)
+
+    created_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def is_overdue(self):
+        return not self.completed and self.expected_date < timezone.now().date()
+
+    def __str__(self):
+        return f"{self.student} - {self.followup_type}"
+
+class ActivityLog(models.Model):
+    student = models.ForeignKey(
+        'Admission',
+        on_delete=models.CASCADE,
+        related_name='activities'
+    )
+    action = models.CharField(max_length=255)
+    created_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.action
+
+
+class FeePayment(models.Model):
+    student = models.ForeignKey(
+        'Admission',
+        on_delete=models.CASCADE,
+        related_name='fee_payments'
+    )
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    payment_date = models.DateField()
+    payment_mode = models.CharField(max_length=50)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.student} - {self.amount}"

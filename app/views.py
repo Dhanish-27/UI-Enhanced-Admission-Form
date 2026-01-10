@@ -173,7 +173,7 @@ def personal_details(request, pk=None):
             # Validate required fields
             if not all([student_name, student_mobile, father_name, mother_name, dob, gender, address, country, state, district]):
                 messages.error(request, 'Please fill in all required fields.')
-                return render(request, 'personal_details.html', {'admission': admission, 'pk': pk , "steps": get_steps(),"current_step": 1})
+                return render(request, 'details_form/personal_details.html', {'admission': admission, 'pk': pk , "steps": get_steps(),"current_step": 1})
 
             # Validate email
             if email_input:
@@ -181,7 +181,7 @@ def personal_details(request, pk=None):
                     email_input = validate_email(email_input)
                 except ValidationError as e:
                     messages.error(request, f'Email validation error: {str(e)}')
-                    return render(request, 'personal_details.html', {'admission': admission, 'pk': pk , "steps": get_steps(),"current_step": 1})
+                    return render(request, 'details_form/personal_details.html', {'admission': admission, 'pk': pk , "steps": get_steps(),"current_step": 1})
             else:
                 email_input=f"{student_name}+{student_mobile}@samplemail.com"
 
@@ -197,7 +197,7 @@ def personal_details(request, pk=None):
                     guardian_mobile = validate_mobile_number(guardian_mobile)
             except ValidationError as e:
                 messages.error(request, f'Mobile number validation error: {str(e)}')
-                return render(request, 'personal_details.html', {'admission': admission, 'pk': pk , "steps": get_steps(),"current_step": 1})
+                return render(request, 'details_form/personal_details.html', {'admission': admission, 'pk': pk , "steps": get_steps(),"current_step": 1})
 
             # If no record found, try to fetch using register_number (in case email changed)
             if not admission and register_number:
@@ -276,22 +276,22 @@ def personal_details(request, pk=None):
             except IntegrityError as e:
                 logger.warning(f"Integrity error saving personal details: {str(e)}")
                 messages.error(request, 'Email or Register Number already exists.')
-                return render(request, 'personal_details.html', {'admission': admission, 'pk': pk , "steps": get_steps(),"current_step": 1})
+                return render(request, 'details_form/personal_details.html', {'admission': admission, 'pk': pk , "steps": get_steps(),"current_step": 1})
             except ValidationError as e:
                 logger.warning(f"Validation error in personal details: {str(e)}")
                 messages.error(request, f'Validation error: {str(e)}')
-                return render(request, 'personal_details.html', {'admission': admission, 'pk': pk , "steps": get_steps(),"current_step": 1})
+                return render(request, 'details_form/personal_details.html', {'admission': admission, 'pk': pk , "steps": get_steps(),"current_step": 1})
             except Exception as e:
                 logger.error(f"Unexpected error saving personal details: {str(e)}")
                 messages.error(request, 'An unexpected error occurred. Please try again.')
-                return render(request, 'personal_details.html', {'admission': admission, 'pk': pk , "steps": get_steps(),"current_step": 1})
+                return render(request, 'details_form/personal_details.html', {'admission': admission, 'pk': pk , "steps": get_steps(),"current_step": 1})
 
         context = {
             'admission': admission,
             'title': 'Personal Details',
             'pk': pk , "steps": get_steps(),"current_step": 1
         }
-        return render(request, 'personal_details.html', context)
+        return render(request, 'details_form/personal_details.html', context)
 
     except Exception as e:
         logger.error(f"Error in personal_details view: {str(e)}")
@@ -312,7 +312,7 @@ def department_details(request, pk):
             level = request.POST.get('level', '').strip()
             if not level:
                 messages.error(request, 'Please select a level.')
-                return render(request, 'new_department_details.html', {'admission': admission})
+                return render(request, 'details_form/new_department_details.html', {'admission': admission})
 
             department_preferences = {}
             if level in ['ug', 'le']:
@@ -323,16 +323,16 @@ def department_details(request, pk):
                             department_preferences[dept_name] = int(value)
                         except ValueError:
                             messages.error(request, 'Invalid preference value.')
-                            return render(request, 'new_department_details.html', {'admission': admission})
+                            return render(request, 'details_form/new_department_details.html', {'admission': admission})
 
                 if not department_preferences:
                     messages.error(request, 'Please select at least one department preference.')
-                    return render(request, 'new_department_details.html', {'admission': admission})
+                    return render(request, 'details_form/new_department_details.html', {'admission': admission})
 
             pg_dept = request.POST.get('pg_dept') if level == 'pg' else None
             if level == 'pg' and not pg_dept:
                 messages.error(request, 'Please select a PG department.')
-                return render(request, 'new_department_details.html', {'admission': admission})
+                return render(request, 'details_form/new_department_details.html', {'admission': admission})
 
             try:
                 admission.level = level
@@ -346,14 +346,14 @@ def department_details(request, pk):
             except ValidationError as e:
                 logger.warning(f"Validation error in department details: {str(e)}")
                 messages.error(request, f'Validation error: {str(e)}')
-                return render(request, 'new_department_details.html', {'admission': admission})
+                return render(request, 'details_form/new_department_details.html', {'admission': admission})
             except Exception as e:
                 logger.error(f"Error saving department details: {str(e)}")
                 messages.error(request, 'An error occurred while saving department details.')
-                return render(request, 'new_department_details.html', {'admission': admission})
+                return render(request, 'details_form/new_department_details.html', {'admission': admission})
 
         department_preferences = json.dumps(admission.department_preferences) if admission else '{}'
-        return render(request, 'new_department_details.html', {'admission': admission, 'department_preferences': department_preferences, "steps": get_steps(),"current_step": 2})
+        return render(request, 'details_form/new_department_details.html', {'admission': admission, 'department_preferences': department_preferences, "steps": get_steps(),"current_step": 2})
 
     except Exception as e:
         logger.error(f"Error in department_details view: {str(e)}")
@@ -382,27 +382,27 @@ def marks_obtained(request, pk):
             # Validate required fields
             if not all([tenth_total, tenth_percentage, qualification]):
                 messages.error(request, 'Please fill in all required fields.')
-                return render(request, 'marks_obtained.html', {'admission': admission})
+                return render(request, 'details_form/marks_obtained.html', {'admission': admission})
 
             # Validate qualification-specific fields
             if qualification == '12th':
                 if not all([twelfth_total, maths_marks, physics_marks, chemistry_marks, group_major]):
                     messages.error(request, 'Please fill in all 12th qualification fields.')
-                    return render(request, 'marks_obtained.html', {'admission': admission})
+                    return render(request, 'details_form/marks_obtained.html', {'admission': admission})
                 # Calculate cutoff for 12th
                 try:
                     cutoff_marks = (float(maths_marks) + float(physics_marks)/2 + float(chemistry_marks)/2)
                 except ValueError:
                     messages.error(request, 'Invalid marks entered for 12th.')
-                    return render(request, 'marks_obtained.html', {'admission': admission})
+                    return render(request, 'details_form/marks_obtained.html', {'admission': admission})
             elif qualification == 'Diploma':
                 if not group_major:
                     messages.error(request, 'Please fill in the Group / Major field for Diploma.')
-                    return render(request, 'marks_obtained.html', {'admission': admission})
+                    return render(request, 'details_form/marks_obtained.html', {'admission': admission})
                 cutoff_marks = 0  # No cutoff calculation for diploma
             else:
                 messages.error(request, 'Invalid qualification selected.')
-                return render(request, 'marks_obtained.html', {'admission': admission})
+                return render(request, 'details_form/marks_obtained.html', {'admission': admission})
 
             # Validate percentages
             try:
@@ -415,7 +415,7 @@ def marks_obtained(request, pk):
                         raise ValueError("Percentage must be between 0 and 100")
             except ValueError as e:
                 messages.error(request, f'Invalid percentage value: {str(e)}')
-                return render(request, 'marks_obtained.html', {'admission': admission})
+                return render(request, 'details_form/marks_obtained.html', {'admission': admission})
 
             try:
                 admission.tenth_total = tenth_total
@@ -436,13 +436,13 @@ def marks_obtained(request, pk):
             except ValidationError as e:
                 logger.warning(f"Validation error in marks obtained: {str(e)}")
                 messages.error(request, f'Validation error: {str(e)}')
-                return render(request, 'marks_obtained.html', {'admission': admission})
+                return render(request, 'details_form/marks_obtained.html', {'admission': admission})
             except Exception as e:
                 logger.error(f"Error saving marks obtained: {str(e)}")
                 messages.error(request, 'An error occurred while saving marks details.')
-                return render(request, 'marks_obtained.html', {'admission': admission})
+                return render(request, 'details_form/marks_obtained.html', {'admission': admission})
 
-        return render(request, 'marks_obtained.html', {'admission': admission, "steps": get_steps(), "current_step": 3})
+        return render(request, 'details_form/marks_obtained.html', {'admission': admission, "steps": get_steps(), "current_step": 3})
 
     except Exception as e:
         logger.error(f"Error in marks_obtained view: {str(e)}")
@@ -465,7 +465,7 @@ def academic_info(request, pk):
             # Validate required fields
             if not all([last_school, board, year_passing_str, medium]):
                 messages.error(request, 'Please fill in all required fields.')
-                return render(request, 'academic_info.html', {'admission': admission})
+                return render(request, 'details_form/academic_info.html', {'admission': admission})
 
             # Validate year
             try:
@@ -475,7 +475,7 @@ def academic_info(request, pk):
                     raise ValueError(f"Year must be between 2000 and {current_year + 1}")
             except ValueError as e:
                 messages.error(request, f'Invalid year: {str(e)}')
-                return render(request, 'academic_info.html', {'admission': admission})
+                return render(request, 'details_form/academic_info.html', {'admission': admission})
 
             try:
                 admission.last_school = last_school
@@ -490,13 +490,13 @@ def academic_info(request, pk):
             except ValidationError as e:
                 logger.warning(f"Validation error in academic info: {str(e)}")
                 messages.error(request, f'Validation error: {str(e)}')
-                return render(request, 'academic_info.html', {'admission': admission})
+                return render(request, 'details_form/academic_info.html', {'admission': admission})
             except Exception as e:
                 logger.error(f"Error saving academic info: {str(e)}")
                 messages.error(request, 'An error occurred while saving academic information.')
-                return render(request, 'academic_info.html', {'admission': admission})
+                return render(request, 'details_form/academic_info.html', {'admission': admission})
 
-        return render(request, 'academic_info.html', {'admission': admission, "steps": get_steps(), "current_step": 4})
+        return render(request, 'details_form/academic_info.html', {'admission': admission, "steps": get_steps(), "current_step": 4})
 
     except Exception as e:
         logger.error(f"Error in academic_info view: {str(e)}")
@@ -520,7 +520,7 @@ def vocational_details(request, pk):
                     validate_file(skill_proof)
                 except ValidationError as e:
                     messages.error(request, f'Skill proof file error: {str(e)}')
-                    return render(request, 'vocational_details.html', {'admission': admission})
+                    return render(request, 'details_form/vocational_details.html', {'admission': admission})
 
             try:
                 admission.vocational_stream = vocational_stream
@@ -534,13 +534,13 @@ def vocational_details(request, pk):
             except ValidationError as e:
                 logger.warning(f"Validation error in vocational details: {str(e)}")
                 messages.error(request, f'Validation error: {str(e)}')
-                return render(request, 'vocational_details.html', {'admission': admission})
+                return render(request, 'details_form/vocational_details.html', {'admission': admission})
             except Exception as e:
                 logger.error(f"Error saving vocational details: {str(e)}")
                 messages.error(request, 'An error occurred while saving vocational details.')
-                return render(request, 'vocational_details.html', {'admission': admission})
+                return render(request, 'details_form/vocational_details.html', {'admission': admission})
 
-        return render(request, 'vocational_details.html', {'admission': admission, "steps": get_steps(), "current_step": 5})
+        return render(request, 'details_form/vocational_details.html', {'admission': admission, "steps": get_steps(), "current_step": 5})
 
     except Exception as e:
         logger.error(f"Error in vocational_details view: {str(e)}")
@@ -565,13 +565,13 @@ def transport_details(request, pk):
             # Validate required fields
             if not bus_needed:
                 messages.error(request, 'Please specify if bus facility is needed.')
-                return render(request, 'transport_details.html', {'admission': admission})
+                return render(request, 'details_form/transport_details.html', {'admission': admission})
 
             # Validate bus details if needed
             if bus_needed == 'yes':
                 if not boarding_point or not bus_route:
                     messages.error(request, 'Please provide boarding point and bus route.')
-                    return render(request, 'transport_details.html', {'admission': admission})
+                    return render(request, 'details_form/transport_details.html', {'admission': admission})
 
             try:
                 admission.bus_needed = bus_needed
@@ -585,13 +585,13 @@ def transport_details(request, pk):
             except ValidationError as e:
                 logger.warning(f"Validation error in transport details: {str(e)}")
                 messages.error(request, f'Validation error: {str(e)}')
-                return render(request, 'transport_details.html', {'admission': admission})
+                return render(request, 'details_form/transport_details.html', {'admission': admission})
             except Exception as e:
                 logger.error(f"Error saving transport details: {str(e)}")
                 messages.error(request, 'An error occurred while saving transport details.')
-                return render(request, 'transport_details.html', {'admission': admission})
+                return render(request, 'details_form/transport_details.html', {'admission': admission})
 
-        return render(request, 'transport_details.html', {'admission': admission, "steps": get_steps(), "current_step": 6})
+        return render(request, 'details_form/transport_details.html', {'admission': admission, "steps": get_steps(), "current_step": 6})
 
     except Exception as e:
         logger.error(f"Error in transport_details view: {str(e)}")
@@ -615,13 +615,13 @@ def hostel_facilities(request, pk):
             # Validate required fields
             if not hostel_needed:
                 messages.error(request, 'Please specify if hostel accommodation is needed.')
-                return render(request, 'hostel_facilities.html', {'admission': admission})
+                return render(request, 'details_form/hostel_facilities.html', {'admission': admission})
 
             # Validate hostel details if needed
             if hostel_needed == 'yes':
                 if not all([hostel_type, room_type, mess_type]):
                     messages.error(request, 'Please provide all hostel details.')
-                    return render(request, 'hostel_facilities.html', {'admission': admission})
+                    return render(request, 'details_form/hostel_facilities.html', {'admission': admission})
 
             try:
                 admission.hostel_needed = hostel_needed
@@ -637,13 +637,13 @@ def hostel_facilities(request, pk):
             except ValidationError as e:
                 logger.warning(f"Validation error in hostel facilities: {str(e)}")
                 messages.error(request, f'Validation error: {str(e)}')
-                return render(request, 'hostel_facilities.html', {'admission': admission})
+                return render(request, 'details_form/hostel_facilities.html', {'admission': admission})
             except Exception as e:
                 logger.error(f"Error saving hostel facilities: {str(e)}")
                 messages.error(request, 'An error occurred while saving hostel facilities.')
-                return render(request, 'hostel_facilities.html', {'admission': admission})
+                return render(request, 'details_form/hostel_facilities.html', {'admission': admission})
 
-        return render(request, 'hostel_facilities.html', {'admission': admission, "steps": get_steps(), "current_step": 7})
+        return render(request, 'details_form/hostel_facilities.html', {'admission': admission, "steps": get_steps(), "current_step": 7})
 
     except Exception as e:
         logger.error(f"Error in hostel_facilities view: {str(e)}")
@@ -674,7 +674,7 @@ def fee_details(request, pk):
                         validate_file(screenshot)
                 except ValidationError as e:
                     messages.error(request, f'Payment screenshot error: {str(e)}')
-                    return render(request, 'fee_details.html', {'admission': admission})
+                    return render(request, 'details_form/fee_details.html', {'admission': admission})
 
             # Validate amounts are numeric
             try:
@@ -690,13 +690,13 @@ def fee_details(request, pk):
                     float(bus_fee)
             except ValueError:
                 messages.error(request, 'Fee amounts must be valid numbers.')
-                return render(request, 'fee_details.html', {'admission': admission})
+                return render(request, 'details_form/fee_details.html', {'admission': admission})
 
             # Parse transaction_date string to datetime or set None if empty
             transaction_date = parse_datetime(transaction_date_str) if transaction_date_str else None
             if transaction_date_str and not transaction_date:
                 messages.error(request, 'Transaction date format is invalid. Please use YYYY-MM-DD HH:MM[:ss[.uuuuuu]][TZ]')
-                return render(request, 'fee_details.html', {'admission': admission})
+                return render(request, 'details_form/fee_details.html', {'admission': admission})
 
             try:
                 admission.admission_fee = admission_fee
@@ -720,13 +720,13 @@ def fee_details(request, pk):
             except ValidationError as e:
                 logger.warning(f"Validation error in fee details: {str(e)}")
                 messages.error(request, f'Validation error: {str(e)}')
-                return render(request, 'fee_details.html', {'admission': admission})
+                return render(request, 'details_form/fee_details.html', {'admission': admission})
             except Exception as e:
                 logger.error(f"Error saving fee details: {str(e)}")
                 messages.error(request, 'An error occurred while saving fee details.')
-                return render(request, 'fee_details.html', {'admission': admission})
+                return render(request, 'details_form/fee_details.html', {'admission': admission})
 
-        return render(request, 'fee_details.html', {'admission': admission, "steps": get_steps(), "current_step": 8})
+        return render(request, 'details_form/fee_details.html', {'admission': admission, "steps": get_steps(), "current_step": 8})
 
     except Exception as e:
         logger.error(f"Error in fee_details view: {str(e)}")
@@ -755,7 +755,7 @@ def reference_details(request, pk):
                     validate_mobile_number(reference_mobile)
             except ValidationError as e:
                 messages.error(request, f'Contact number validation error: {str(e)}')
-                return render(request, 'reference_details.html', {'admission': admission})
+                return render(request, 'details_form/reference_details.html', {'admission': admission})
 
             try:
                 admission.reference_name = reference_name
@@ -772,13 +772,13 @@ def reference_details(request, pk):
             except ValidationError as e:
                 logger.warning(f"Validation error in reference details: {str(e)}")
                 messages.error(request, f'Validation error: {str(e)}')
-                return render(request, 'reference_details.html', {'admission': admission})
+                return render(request, 'details_form/reference_details.html', {'admission': admission})
             except Exception as e:
                 logger.error(f"Error saving reference details: {str(e)}")
                 messages.error(request, 'An error occurred while saving reference details.')
-                return render(request, 'reference_details.html', {'admission': admission})
+                return render(request, 'details_form/reference_details.html', {'admission': admission})
 
-        return render(request, 'reference_details.html', {'admission': admission, "steps": get_steps(), "current_step": 9})
+        return render(request, 'details_form/reference_details.html', {'admission': admission, "steps": get_steps(), "current_step": 9})
 
     except Exception as e:
         logger.error(f"Error in reference_details view: {str(e)}")
@@ -804,7 +804,7 @@ def certificate_checklist(request, pk):
             required_files = []
             if not all(required_files):
                 messages.error(request, 'Please upload all required certificates and photo.')
-                return render(request, 'certificate_checklist.html', {'admission': admission})
+                return render(request, 'details_form/certificate_checklist.html', {'admission': admission})
 
             # Validate all files
             files_to_validate = [
@@ -819,7 +819,7 @@ def certificate_checklist(request, pk):
                     validate_file(file_obj)
                 except ValidationError as e:
                     messages.error(request, f'{file_name.replace("_", " ").title()} error: {str(e)}')
-                    return render(request, 'certificate_checklist.html', {'admission': admission})
+                    return render(request, 'details_form/certificate_checklist.html', {'admission': admission})
 
             try:
                 if tc:
@@ -841,13 +841,13 @@ def certificate_checklist(request, pk):
             except ValidationError as e:
                 logger.warning(f"Validation error in certificate checklist: {str(e)}")
                 messages.error(request, f'Validation error: {str(e)}')
-                return render(request, 'certificate_checklist.html', {'admission': admission})
+                return render(request, 'details_form/certificate_checklist.html', {'admission': admission})
             except Exception as e:
                 logger.error(f"Error saving certificate checklist: {str(e)}")
                 messages.error(request, 'An error occurred while saving certificates.')
-                return render(request, 'certificate_checklist.html', {'admission': admission})
+                return render(request, 'details_form/certificate_checklist.html', {'admission': admission})
 
-        return render(request, 'certificate_checklist.html', {'admission': admission, "steps": get_steps(), "current_step": 10})
+        return render(request, 'details_form/certificate_checklist.html', {'admission': admission, "steps": get_steps(), "current_step": 10})
 
     except Exception as e:
         logger.error(f"Error in certificate_checklist view: {str(e)}")
@@ -859,7 +859,7 @@ def review(request, pk):
         if not admission:
             messages.error(request, 'Admission record not found.')
             return redirect('personal_details')
-        return render(request, 'review.html', {'admission': admission,"steps": get_steps(), "current_step": 11})
+        return render(request, 'details_form/review.html', {'admission': admission,"steps": get_steps(), "current_step": 11})
     except Exception as e:
         logger.error(f"Error loading review page: {str(e)}")
         messages.error(request, 'An error occurred while processing your request.')
@@ -875,7 +875,7 @@ def success(request, identifier):
             messages.error(request, 'Admission record not found.')
             return redirect('personal_details')
 
-        return render(request, 'success.html',{'id': admission.unique_id})
+        return render(request, 'details_form/success.html',{'id': admission.unique_id})
     except Exception as e:
         logger.error(f"Error loading success page: {str(e)}")
         messages.error(request, 'An error occurred while loading the success page.')
@@ -1065,7 +1065,7 @@ def student_applications_list(request):
             'sort_by': sort_by,
         }
 
-        return render(request, 'staff_applications_list.html', context)
+        return render(request, 'followup/application_list.html', context)
 
     except Exception as e:
         logger.error(f"Error in student_applications_list view: {str(e)}")
@@ -1080,7 +1080,7 @@ def student_detail(request, pk):
         context = {
             'admission': admission,
         }
-        return render(request, 'staff_student_detail.html', context)
+        return render(request, 'staff/staff_student_detail.html', context)
     except Exception as e:
         logger.error(f"Error in student_detail view for pk {pk}: {str(e)}")
         messages.error(request, 'An error occurred while loading student details.')
@@ -1092,7 +1092,7 @@ def student_detail(request, pk):
 def admission_report(request, pk):
     try:
         admission = get_object_or_404(Admission, pk=pk)
-        html_string = render_to_string('pdf_printing.html', {'admission': admission})
+        html_string = render_to_string('staff/pdf_printing.html', {'admission': admission})
         # Create PDF
         html = HTML(string=html_string)
         pdf = html.write_pdf()

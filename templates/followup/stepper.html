@@ -1,0 +1,41 @@
+<div class="flex flex-col gap-4">
+    <!-- Step 1: Student Detail -->
+    <a href="{% url 'student_detail' student.id %}"
+        class="flex items-center gap-4 p-4 rounded-xl border-2 transition-all {% if active_step == 'student_detail' %}step-active shadow-md{% else %}step-inactive hover:border-primary/30{% endif %}">
+        <div class="w-10 h-10 rounded-full flex items-center justify-center border-2 border-inherit font-bold">1</div>
+        <div>
+            <span class="font-semibold block">Student Detail</span>
+            <p class="text-xs opacity-70">View personal information</p>
+        </div>
+    </a>
+
+    <!-- Step 2: Add Followup -->
+    <a href="{% url 'create_followup' student.id %}"
+        class="flex items-center gap-4 p-4 rounded-xl border-2 transition-all {% if active_step == 'add_followup' %}step-active shadow-md{% else %}step-inactive hover:border-primary/30{% endif %}">
+        <div class="w-10 h-10 rounded-full flex items-center justify-center border-2 border-inherit font-bold">2</div>
+        <div>
+            <span class="font-semibold block">Add Followup</span>
+            <p class="text-xs opacity-70">Schedule college visit/fee</p>
+        </div>
+    </a>
+
+    <!-- Step 3: Add Fee Payment -->
+    <a href="{% url 'add_fee_payment' student.id %}"
+        class="flex items-center gap-4 p-4 rounded-xl border-2 transition-all {% if active_step == 'add_fee' %}step-active shadow-md{% else %}step-inactive hover:border-primary/30{% endif %}">
+        <div class="w-10 h-10 rounded-full flex items-center justify-center border-2 border-inherit font-bold">3</div>
+        <div>
+            <span class="font-semibold block">Add Fee Payment</span>
+            <p class="text-xs opacity-70">Record fee collection</p>
+        </div>
+    </a>
+
+    <!-- Step 4: Activity Log -->
+    <a href="{% url 'student_activity_log' student.id %}"
+        class="flex items-center gap-4 p-4 rounded-xl border-2 transition-all {% if active_step == 'activity_log' %}step-active shadow-md{% else %}step-inactive hover:border-primary/30{% endif %}">
+        <div class="w-10 h-10 rounded-full flex items-center justify-center border-2 border-inherit font-bold">4</div>
+        <div>
+            <span class="font-semibold block">Activity Log</span>
+            <p class="text-xs opacity-70">Track student interactions</p>
+        </div>
+    </a>
+</div>

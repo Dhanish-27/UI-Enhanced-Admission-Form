@@ -1,0 +1,88 @@
+{% extends 'followup/new_base.html' %}
+{% block title %}Add Followup - {{ student.student_name }}{% endblock %}
+
+{% block content %}
+<div class="flex flex-col lg:flex-row gap-8">
+    <!-- Sidebar Stepper -->
+    <div class="lg:w-1/4">
+        <div class="sticky top-24">
+            <h3 class="text-lg font-bold mb-4 text-gray-800 px-2">Follow-up Steps</h3>
+            {% include 'followup/stepper.html' %}
+        </div>
+    </div>
+
+    <!-- Main Form Content -->
+    <div class="lg:w-3/4">
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="p-6 bg-primary text-white">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h2 class="text-xl font-bold">Add Followup</h2>
+                        <p class="text-sm opacity-90">Schedule the next interaction with {{ student.student_name }}</p>
+                    </div>
+                    <div class="hidden md:block">
+                        <span class="bg-white/20 px-3 py-1 rounded-full text-xs font-medium border border-white/30">
+                            Reg: {{ student.register_number }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <form method="POST" class="p-8 space-y-6">
+                {% csrf_token %}
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                        <label class="block text-sm font-semibold text-gray-700">Followup Type</label>
+                        <select name="followup_type" required
+                            class="w-full p-3 rounded-xl border-2 border-gray-100 focus:border-primary focus:ring-0 outline-none transition-all text-gray-700 bg-gray-50/50">
+                            <option value="visit">College Visit</option>
+                            <option value="fee">Fee Payment</option>
+                        </select>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-sm font-semibold text-gray-700">Expected Date</label>
+                        <input type="date" name="expected_date" required
+                            class="w-full p-3 rounded-xl border-2 border-gray-100 focus:border-primary focus:ring-0 outline-none transition-all text-gray-700 bg-gray-50/50">
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block text-sm font-semibold text-gray-700">Remarks / Discussion Points</label>
+                    <textarea name="remarks" rows="4"
+                        class="w-full p-3 rounded-xl border-2 border-gray-100 focus:border-primary focus:ring-0 outline-none transition-all text-gray-700 bg-gray-50/50"
+                        placeholder="Describe what needs to be discussed or specific requirements..."></textarea>
+                </div>
+
+                <div class="pt-6 border-t border-gray-50 flex flex-wrap gap-4">
+                    <button type="submit"
+                        class="bg-primary text-white px-10 py-3 rounded-xl font-bold hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98]">
+                        Schedule Followup
+                    </button>
+                    <a href="{% url 'student_detail' student.id %}"
+                        class="bg-gray-100 text-gray-600 px-10 py-3 rounded-xl font-bold hover:bg-gray-200 transition-all">
+                        Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Quick Info Card -->
+        <div class="mt-6 bg-accent/30 rounded-2xl p-6 border border-dark/10 group">
+            <h4 class="text-sm font-bold text-dark mb-2 flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="id-13" />
+                </svg>
+                Context Helper
+            </h4>
+            <p class="text-sm text-gray-600 leading-relaxed">
+                Scheduling a followup helps in tracking student interest and ensuring the admission process remains
+                active.
+                Notifications will be generated based on the expected date.
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

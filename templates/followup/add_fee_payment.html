@@ -1,0 +1,106 @@
+{% extends 'followup/new_base.html' %}
+{% block title %}Add Fee Payment - {{ student.student_name }}{% endblock %}
+
+{% block content %}
+<div class="flex flex-col lg:flex-row gap-8">
+    <!-- Sidebar Stepper -->
+    <div class="lg:w-1/4">
+        <div class="sticky top-24">
+            <h3 class="text-lg font-bold mb-4 text-gray-800 px-2">Payment Steps</h3>
+            {% include 'followup/stepper.html' %}
+        </div>
+    </div>
+
+    <!-- Main Form Content -->
+    <div class="lg:w-3/4">
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="p-6 bg-dark text-white">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h2 class="text-xl font-bold">Add Fee Payment</h2>
+                        <p class="text-sm opacity-90">Record a new financial transaction for {{ student.student_name }}
+                        </p>
+                    </div>
+                    <div class="hidden md:block text-right">
+                        <p class="text-xs uppercase tracking-wider opacity-70">Application No</p>
+                        <p class="font-mono font-bold">{{ student.Application_number|default:"PENDING" }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <form method="POST" class="p-8 space-y-6">
+                {% csrf_token %}
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                        <label class="block text-sm font-semibold text-gray-700">Amount Paid (₹)</label>
+                        <div class="relative group">
+                            <span
+                                class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold group-focus-within:text-dark transition-colors">₹</span>
+                            <input type="number" step="0.01" name="amount" required
+                                class="w-full pl-10 pr-4 py-3 rounded-xl border-2 border-gray-100 focus:border-dark focus:ring-0 outline-none transition-all text-gray-700 bg-gray-50/50 font-semibold"
+                                placeholder="0.00">
+                        </div>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-sm font-semibold text-gray-700">Payment Date</label>
+                        <input type="date" name="payment_date" required
+                            class="w-full p-3 rounded-xl border-2 border-gray-100 focus:border-dark focus:ring-0 outline-none transition-all text-gray-700 bg-gray-50/50">
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-sm font-semibold text-gray-700">Payment Mode</label>
+                        <select name="payment_mode" required
+                            class="w-full p-3 rounded-xl border-2 border-gray-100 focus:border-dark focus:ring-0 outline-none transition-all text-gray-700 bg-gray-50/50">
+                            <option value="Cash">Cash</option>
+                            <option value="GPay/PhonePe">GPay / PhonePe</option>
+                            <option value="Bank Transfer">Bank Transfer</option>
+                            <option value="Cheque">Cheque</option>
+                            <option value="Scholarship">Scholarship</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="pt-6 border-t border-gray-50 flex flex-wrap gap-4">
+                    <button type="submit"
+                        class="bg-dark text-white px-10 py-3 rounded-xl font-bold hover:bg-dark/90 transition-all shadow-lg shadow-dark/20 hover:scale-[1.02] active:scale-[0.98]">
+                        Record Payment
+                    </button>
+                    <a href="{% url 'student_detail' student.id %}"
+                        class="bg-gray-100 text-gray-600 px-10 py-3 rounded-xl font-bold hover:bg-gray-200 transition-all">
+                        Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Summary of Previous Payments -->
+        {% if student.fee_payments.all %}
+        <div class="mt-8">
+            <h3 class="text-lg font-bold text-gray-800 mb-4 px-2">Payment History</h3>
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <table class="w-full text-left">
+                    <thead class="bg-gray-50 border-b border-gray-100">
+                        <tr>
+                            <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase">Date</th>
+                            <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase">Mode</th>
+                            <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase text-right">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-50">
+                        {% for payment in student.fee_payments.all %}
+                        <tr class="hover:bg-gray-50/50 transition-colors">
+                            <td class="px-6 py-4 text-sm text-gray-600">{{ payment.payment_date }}</td>
+                            <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ payment.payment_mode }}</td>
+                            <td class="px-6 py-4 text-sm font-bold text-dark text-right">₹{{ payment.amount }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
