@@ -1,0 +1,116 @@
+{% extends 'followup/new_base.html' %}
+{% load static %}
+
+{% block title %}Follow-up List{% endblock %}
+
+{% block content %}
+<div class="lg:col-span-12 space-y-6">
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex justify-between items-center">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900 tracking-tight">Follow-up List</h1>
+            <p class="text-sm text-gray-500 font-medium">Manage student visits and fee commitments</p>
+        </div>
+        <div class="flex gap-2">
+            <a href="{% url 'followup_list' %}?filter=overdue"
+                class="px-4 py-2 bg-red-50 text-red-600 rounded-xl text-xs font-bold hover:bg-red-100 transition-all border border-red-200/50">Overdue</a>
+            <a href="{% url 'followup_list' %}?filter=today"
+                class="px-4 py-2 bg-amber-50 text-amber-600 rounded-xl text-xs font-bold hover:bg-amber-100 transition-all border border-amber-200/50">Today</a>
+            <a href="{% url 'followup_list' %}?filter=tomorrow"
+                class="px-4 py-2 bg-blue-50 text-blue-600 rounded-xl text-xs font-bold hover:bg-blue-100 transition-all border border-blue-200/50">Tomorrow</a>
+            <a href="{% url 'followup_list' %}"
+                class="px-4 py-2 bg-gray-50 text-gray-600 rounded-xl text-xs font-bold hover:bg-gray-100 transition-all border border-gray-200/50">All
+                Pending</a>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left">
+                <thead class="bg-gray-50/50">
+                    <tr>
+                        <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Student
+                            Name</th>
+                        <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">                            Mobile</th>
+                        <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Type</th>
+                        <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Expected
+                            Date</th>
+                        <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Remarks
+                        </th>
+                        <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest text-right">
+                            Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    {% for fu in followups %}
+                    <tr class="hover:bg-gray-50/50 transition-all group">
+                        <td class="px-6 py-4">
+                            <span class="text-sm font-bold text-gray-900 tracking-tight">{{ fu.student.student_name }}</span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="text-sm font-bold text-gray-900 tracking-tight">{{ fu.student.student_mobile }}</span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span
+                                class="inline-flex px-2 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider
+                                {% if fu.followup_type == 'visit' %}bg-purple-50 text-purple-600{% else %}bg-emerald-50 text-emerald-600{% endif %}">
+                                {{ fu.get_followup_type_display }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span
+                                class="text-xs font-bold {% if fu.is_overdue %}text-red-500 font-black{% else %}text-gray-500{% endif %}">
+                                {{ fu.expected_date|date:"d M, Y" }}
+                                {% if fu.is_overdue %}(Overdue){% endif %}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <p class="text-[11px] text-gray-600 line-clamp-1 max-w-xs">{{ fu.remarks|default:"-" }}</p>
+                        </td>
+                        <td class="px-6 py-4 text-right">
+                            <div class="flex justify-end gap-2">
+                                <button onclick="completeFollowUp({{ fu.id }})"
+                                    class="h-8 w-8 rounded-lg bg-green-50 text-green-600 hover:bg-green-600 hover:text-white transition-all flex items-center justify-center shadow-sm">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                                <a href="{% url 'student_detail' pk=fu.student.id %}"
+                                    class="inline-flex h-8 px-4 items-center justify-center rounded-lg bg-gray-50 text-[10px] font-bold text-gray-400 hover:bg-primary hover:text-white transition-all tracking-wider uppercase">View</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="px-6 py-24 text-center">
+                            <div class="flex flex-col items-center gap-4 opacity-20">
+                                <i class="fas fa-calendar-alt text-6xl"></i>
+                                <p class="text-lg font-black uppercase tracking-widest">No follow-ups found</p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    function completeFollowUp(id) {
+        if (confirm('Mark this follow-up as completed?')) {
+            fetch(`/followups/complete/${id}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        location.reload();
+                    }
+                });
+        }
+    }
+</script>
+<!-- Add Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+{% endblock %}

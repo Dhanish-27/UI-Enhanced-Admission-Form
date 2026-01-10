@@ -1,353 +1,363 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Erode Sengunthar Engineering College - Home</title>
-    <style>
-        :root {
-            --primary: #003366;
-            --secondary: #007BFF;
-            --accent: #FFD700;
-            --light-bg: #f8f9fa;
-            --dark-text: #333;
-            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
+{% extends 'base.html' %}
+{% load static %}
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+{% block title %}ESEC - Staff Dashboard{% endblock %}
 
-        body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            color: var(--dark-text);
-        }
+{% block content %}
+{% if user.is_staff %}
+<div class="lg:col-span-12">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
 
-        .hero {
-            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
-                        url('https://erode-sengunthar.ac.in/wp-content/uploads/2022/05/FIRSTYEARBLOCK-scaled.jpg');
-            background-size: cover;
-            background-position: center;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            color: white;
-            padding: 20px;
-        }
+        <!-- SIDEBAR: QUICK LINKS (Left Side) -->
+        <aside class="lg:col-span-3 space-y-6">
+            <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="bg-primary/10 px-6 py-5 border-b border-gray-50">
+                    <h3 class="text-sm font-black uppercase tracking-widest text-primary flex items-center gap-2">
+                        <i class="fas fa-rocket"></i> Quick Explorer
+                    </h3>
+                </div>
 
-        .hero-content {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
+                <nav class="p-3 space-y-1">
+                    <!-- Dashboard Link -->
+                    <a href="{% url 'home' %}"
+                        class="flex items-center gap-3 px-4 py-3 rounded-2xl bg-primary text-white font-black text-sm shadow-lg shadow-primary/20 transition-all">
+                        <i class="fas fa-th-large"></i> Dashboard
+                    </a>
 
-        .logo-section {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 30px;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-        }
+                    <!-- Student Section -->
+                    <div class="pt-4 px-4 pb-2">
+                        <p class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Student Mgmt</p>
+                    </div>
+                    <a href="{% url 'personal_details' %}"
+                        class="flex items-center gap-3 px-4 py-3 rounded-2xl text-gray-600 hover:bg-gray-50 hover:text-primary font-bold text-sm transition-all group">
+                        <div
+                            class="w-8 h-8 rounded-lg bg-gray-50 group-hover:bg-primary/10 flex items-center justify-center transition-all">
+                            <i class="fas fa-user-plus text-xs"></i>
+                        </div>
+                        Add New Student
+                    </a>
+                    <a href="{% url 'student_applications_list' %}"
+                        class="flex items-center gap-3 px-4 py-3 rounded-2xl text-gray-600 hover:bg-gray-50 hover:text-primary font-bold text-sm transition-all group">
+                        <div
+                            class="w-8 h-8 rounded-lg bg-gray-50 group-hover:bg-primary/10 flex items-center justify-center transition-all">
+                            <i class="fas fa-users text-xs"></i>
+                        </div>
+                        Applications List
+                    </a>
 
-        .logo-section img {
-            width: 120px;
-            height: 120px;
-            object-fit: contain;
-        }
+                    <!-- Follow-up Section -->
+                    <div class="pt-4 px-4 pb-2">
+                        <p class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Engagements</p>
+                    </div>
+                    <a href="{% url 'followup_list' %}"
+                        class="flex items-center gap-3 px-4 py-3 rounded-2xl text-gray-600 hover:bg-gray-50 hover:text-primary font-bold text-sm transition-all group">
+                        <div
+                            class="w-8 h-8 rounded-lg bg-gray-50 group-hover:bg-primary/10 flex items-center justify-center transition-all">
+                            <i class="fas fa-phone-alt text-xs"></i>
+                        </div>
+                        Follow-ups List
+                    </a>
+                    <a href="{% url 'followup_list' %}?filter=today"
+                        class="flex items-center gap-3 px-4 py-3 rounded-2xl text-gray-600 hover:bg-gray-50 hover:text-primary font-bold text-sm transition-all group">
+                        <div
+                            class="w-8 h-8 rounded-lg bg-gray-50 group-hover:bg-primary/10 flex items-center justify-center transition-all text-[10px]">
+                            Today
+                        </div>
+                        Due Today
+                    </a>
 
-        .college-title h1 {
-            font-size: 3rem;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-        }
-
-        .college-title p {
-            font-size: 1.2rem;
-            margin-bottom: 20px;
-            opacity: 0.9;
-        }
-
-        .hero-buttons {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-top: 40px;
-        }
-
-        .btn {
-            padding: 15px 30px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            text-decoration: none;
-            border-radius: 50px;
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
-            display: inline-block;
-            min-width: 200px;
-            text-align: center;
-        }
-
-        .btn-primary {
-            background: var(--secondary);
-            color: white;
-            border-color: var(--secondary);
-        }
-
-        .btn-primary:hover {
-            background: transparent;
-            border-color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(0,123,255,0.3);
-        }
-
-        .btn-secondary {
-            background: var(--accent);
-            color: var(--primary);
-            border-color: var(--accent);
-        }
-
-        .btn-secondary:hover {
-            background: transparent;
-            border-color: white;
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(255,215,0,0.3);
-        }
-
-        .features {
-            padding: 60px 20px;
-            background: var(--light-bg);
-        }
-
-        .features h2 {
-            text-align: center;
-            font-size: 2.5rem;
-            margin-bottom: 40px;
-            color: var(--primary);
-        }
-
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .feature-card {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: var(--card-shadow);
-            text-align: center;
-            transition: transform 0.3s ease;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .feature-card h3 {
-            color: var(--primary);
-            margin-bottom: 15px;
-            font-size: 1.5rem;
-        }
-
-        .feature-card p {
-            color: #666;
-            line-height: 1.6;
-        }
-
-        .stats {
-            padding: 40px 20px;
-            background: var(--primary);
-            color: white;
-            text-align: center;
-        }
-
-        .stats h2 {
-            margin-bottom: 30px;
-            font-size: 2rem;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 30px;
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-
-        .stat-item h3 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            color: var(--accent);
-        }
-
-        .stat-item p {
-            font-size: 1.1rem;
-        }
-
-        .footer {
-            padding: 20px;
-            background: #222;
-            color: white;
-            text-align: center;
-        }
-
-        @media (max-width: 768px) {
-            .college-title h1 {
-                font-size: 2rem;
-            }
-
-            .hero-buttons {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .btn {
-                min-width: 250px;
-            }
-
-            .logo-section {
-                gap: 15px;
-            }
-
-            .logo-section img {
-                width: 80px;
-                height: 80px;
-            }
-        }
-    </style>
-</head>
-<body>
-    <section class="hero">
-        <div class="hero-content">
-            <div class="logo-section">
-                <img src="https://portal.esec.ac.in/uploads/banner/logo.png" alt="College Logo">
-                <img src="https://image2url.com/images/1762682522296-3da738b9-c28f-4b1f-9d22-55cdb054a4bb.png" alt="NAAC">
-                <img src="https://erode-sengunthar.ac.in/wp-content/uploads/2025/05/naaca.jpg" alt="NAAC A+">
-                <img src="https://erode-sengunthar.ac.in/wp-content/uploads/2025/05/NBA.png" alt="NBA">
+                    <!-- Account Section -->
+                    <div class="pt-4 px-4 pb-2">
+                        <p class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Account</p>
+                    </div>
+                    <a href="{% url 'logout_user' %}"
+                        class="flex items-center gap-3 px-4 py-3 rounded-2xl text-red-500 hover:bg-red-50 font-bold text-sm transition-all group">
+                        <div
+                            class="w-8 h-8 rounded-lg bg-red-50 group-hover:bg-red-500 group-hover:text-white flex items-center justify-center transition-all">
+                            <i class="fas fa-sign-out-alt text-xs"></i>
+                        </div>
+                        Logout ({{ user.username }})
+                    </a>
+                </nav>
             </div>
 
-            <div class="college-title">
-                <h1>Erode Sengunthar Engineering College</h1>
-                <p>(Autonomous Institution - Affiliated to Anna University, Chennai)</p>
-                <p>Perundurai, Erode - 638 057, Tamil Nadu</p>
+            <!-- Activity Sidebar (Moved here for better space utilization) -->
+            <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 overflow-hidden">
+                <div class="flex items-center justify-between mb-8">
+                    <h2 class="text-sm font-black uppercase tracking-widest text-gray-400">Log Feed</h2>
+                    <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+                </div>
+                <div class="space-y-6">
+                    {% for log in recent_activities %}
+                    <div class="relative pl-6 pb-6 last:pb-0">
+                        {% if not forloop.last %}
+                        <div class="absolute left-1 top-2 bottom-0 w-px bg-gray-100"></div>
+                        {% endif %}
+                        <div
+                            class="absolute left-0 top-1.5 w-2 h-2 rounded-full bg-primary border-2 border-white ring-4 ring-gray-50/50">
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <p class="text-xs font-black text-gray-900 leading-none truncate">{{ log.student.student_name }}</p>
+                            <p class="text-[10px] text-gray-500 font-medium leading-relaxed">{{ log.action }}</p>
+                            <span class="text-[8px] font-bold text-primary uppercase tracking-tighter">{{ log.created_at|timesince }} ago</span>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p class="text-center text-[10px] font-black text-gray-300 uppercase py-4">No recent activity</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN DASHBOARD CONTENT (Right Side) -->
+        <div class="lg:col-span-9 space-y-8">
+
+            <!-- ALERT STRIP (Top) -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <a href="{% url 'followup_list' %}?filter=overdue"
+                    class="group bg-red-50 border border-red-100 rounded-2xl p-5 flex items-center justify-between hover:bg-red-100 hover:shadow-md transition-all">
+                    <div class="flex items-center gap-4">
+                        <div
+                            class="w-12 h-12 rounded-xl bg-red-500 flex items-center justify-center text-white shadow-lg shadow-red-200 group-hover:scale-110 transition-transform">
+                            <i class="fas fa-exclamation-triangle text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-red-700 font-bold text-lg leading-none">Overdue</h3>
+                            <p class="text-red-500 text-xs mt-1 font-medium">Follow-ups missed</p>
+                        </div>
+                    </div>
+                    <div class="flex flex-col items-end">
+                        <span class="text-3xl font-black text-red-600 leading-none">{{ overdue_count }}</span>
+                    </div>
+                </a>
+
+                <a href="{% url 'followup_list' %}?filter=today"
+                    class="group bg-amber-50 border border-amber-100 rounded-2xl p-5 flex items-center justify-between hover:bg-amber-100 hover:shadow-md transition-all">
+                    <div class="flex items-center gap-4">
+                        <div
+                            class="w-12 h-12 rounded-xl bg-primary flex items-center justify-center text-white shadow-lg shadow-amber-200 group-hover:scale-110 transition-transform">
+                            <i class="fas fa-calendar-day text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-amber-700 font-bold text-lg leading-none">Due Today</h3>
+                            <p class="text-amber-500 text-xs mt-1 font-medium">For action now</p>
+                        </div>
+                    </div>
+                    <div class="flex flex-col items-end">
+                        <span class="text-3xl font-black text-amber-600 leading-none">{{ today_count }}</span>
+                    </div>
+                </a>
+
+                <a href="{% url 'followup_list' %}?filter=tomorrow"
+                    class="group bg-blue-50 border border-blue-100 rounded-2xl p-5 flex items-center justify-between hover:bg-blue-100 hover:shadow-md transition-all">
+                    <div class="flex items-center gap-4">
+                        <div
+                            class="w-12 h-12 rounded-xl bg-blue-500 flex items-center justify-center text-white shadow-lg shadow-blue-200 group-hover:scale-110 transition-transform">
+                            <i class="fas fa-calendar-plus text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-blue-700 font-bold text-lg leading-none">Tomorrow</h3>
+                            <p class="text-blue-500 text-xs mt-1 font-medium">Upcoming visits</p>
+                        </div>
+                    </div>
+                    <div class="flex flex-col items-end">
+                        <span class="text-3xl font-black text-blue-600 leading-none">{{ tomorrow_count }}</span>
+                    </div>
+                </a>
             </div>
 
-<div class="hero-buttons">
-    <a href="/personal_details/" class="btn btn-primary">
-        Start Admission Process
-    </a>
-    {% if user.is_authenticated %}
-    
-    <a href="/staff/applications/" class="btn btn-secondary">
-        Staff Dashboard
-    </a>
-    {% else %}
-    <a href="accounts/login_user" class="btn btn-secondary">Login</a>
-    
+            <!-- KPI SUMMARY -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div
+                    class="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm hover:shadow-md transition-all group">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-gray-400 text-[10px] font-black uppercase tracking-widest leading-none">Total
+                                Students</p>
+                            <h2 class="text-4xl font-black text-gray-900 mt-2 leading-none">{{ total_students }}</h2>
+                        </div>
+                        <div
+                            class="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-primary group-hover:text-white transition-all">
+                            <i class="fas fa-user-graduate font-black"></i>
+                        </div>
+                    </div>
+                </div>
 
+                <div
+                    class="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm hover:shadow-md transition-all group">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-gray-400 text-[10px] font-black uppercase tracking-widest leading-none">
+                                Today's Targets</p>
+                            <div class="flex gap-4 mt-2">
+                                <div>
+                                    <h2 class="text-2xl font-black text-primary leading-none">{{ visits_today }}</h2>
+                                    <p class="text-[8px] font-bold text-gray-400 uppercase mt-1">Visits</p>
+                                </div>
+                                <div class="w-px h-8 bg-gray-100"></div>
+                                <div>
+                                    <h2 class="text-2xl font-black text-green-600 leading-none">{{ fee_followups_today }}</h2>
+                                    <p class="text-[8px] font-bold text-gray-400 uppercase mt-1">Fees</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div
+                            class="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-dark group-hover:text-white transition-all">
+                            <i class="fas fa-bullseye font-black"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-    <form action="/admission_key/" method="GET" style="display: none; gap: 10px; align-items: center; margin-top: 10px;">
-        <!-- <label for="admission_key" style="color: white; font-weight: 600;">Admission Key:</label> -->
-        <input type="text" id="admission_key" name="admission_key" placeholder="Enter your admission key" required
-               style="padding: 10px 15px; border-radius: 30px; border: none; min-width: 200px; font-size: 1rem;">
-        <button type="submit" class="btn btn-primary" style="min-width: auto; padding: 10px 20px; font-size: 1rem;">
-            Submit
-        </button>
-    </form>
+            <!-- TABLES: TODAY & OVERDUE -->
+            <div class="space-y-6">
+                <!-- TODAY'S FOLLOW-UPS -->
+                <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="px-6 py-4 border-b border-gray-50 bg-gray-50/30 flex justify-between items-center">
+                        <h2 class="text-base font-black text-gray-900 tracking-tight leading-none uppercase">Today's
+                            Focus</h2>
+                        <span
+                            class="bg-primary/10 text-primary px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest">Active:
+                            {{ today_followups.count }}</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead class="bg-gray-50/50">
+                                <tr>
+                                    <th
+                                        class="px-6 py-3 text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none">
+                                        Student Name</th>
+                                    <th
+                                        class="px-6 py-3 text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none">
+                                        Mobile</th>
+                                    <th
+                                        class="px-6 py-3 text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none">
+                                        Type</th>
+                                    <th
+                                        class="px-6 py-3 text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none text-right">
+                                        Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100">
+                                {% for fu in today_followups %}
+                                <tr class="hover:bg-gray-50/50 transition-all group">
+                                    <td class="px-6 py-4">
+                                        <span
+                                            class="text-sm font-bold text-gray-900 tracking-tight transition-colors">{{ fu.student.student_name }}</span>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <span
+                                            class="text-sm font-bold text-gray-900 tracking-tight transition-colors">{{ fu.student.student_mobile }}</span>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <span
+                                            class="inline-flex px-2 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider {% if fu.followup_type == 'visit' %}bg-purple-50 text-purple-600{% else %}bg-emerald-50 text-emerald-600{% endif %}">
+                                            {{ fu.get_followup_type_display }}
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 text-right">
+                                        <a href="{% url 'student_detail' pk=fu.student.pk %}"
+                                            class="inline-flex h-8 px-4 items-center justify-center rounded-lg bg-gray-50 text-[10px] font-bold text-gray-400 hover:bg-primary hover:text-white transition-all tracking-wider uppercase">View</a>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="3" class="px-6 py-12 text-center opacity-30">
+                                        <p class="text-sm font-bold uppercase tracking-widest">All done for today!</p>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
 
-    <a class="btn btn-secondary" onclick="update()" name="switch">
-        Update Existing Details 
-    </a>
-    {% endif %}
+                <!-- OVERDUE FOLLOW-UPS -->
+                <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="px-6 py-4 border-b border-gray-50 bg-red-50/20 flex justify-between items-center">
+                        <h2 class="text-base font-black text-red-700 tracking-tight uppercase">Urgent Attention</h2>
+                        <span
+                            class="bg-red-100 text-red-600 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest">{{ overdue_followups.count }} Overdue</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead class="bg-gray-50/50">
+                                <tr>
+                                    <th
+                                        class="px-6 py-3 text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                                        Student</th>
+                                    <th
+                                        class="px-6 py-3 text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                                        Type</th>
+                                    <th
+                                        class="px-6 py-3 text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                                        Status</th>
+                                    <th
+                                        class="px-6 py-3 text-[10px] font-black text-gray-400 uppercase tracking-widest text-right">
+                                        Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100">
+                                {% for fu in overdue_followups %}
+                                <tr class="hover:bg-red-50/10 transition-all group">
+                                    <td class="px-6 py-4">
+                                        <span class="text-sm font-bold text-gray-900 tracking-tight">{{ fu.student.student_name }}</span>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <span
+                                            class="inline-flex px-2 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider bg-gray-50 text-gray-600">{{ fu.get_followup_type_display }}</span>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <span class="text-[10px] font-black uppercase text-red-600">{{ fu.expected_date|timesince }} overdue</span>
+                                    </td>
+                                    <td class="px-6 py-4 text-right">
+                                        <a href="{% url 'student_detail' pk=fu.student.pk %}"
+                                            class="inline-flex h-8 px-4 items-center justify-center rounded-lg bg-red-50 text-[10px] font-bold text-red-500 hover:bg-red-500 hover:text-white transition-all tracking-wider uppercase">Resolve</a>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="4" class="px-6 py-12 text-center opacity-20">
+                                        <p class="text-sm font-bold uppercase tracking-widest">Clean record!</p>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-        </div>
-    </section>
-    <script>
-        function update() {
-            var start = document.getElementsByClassName("btn btn-primary")[0];
-            var updateForm = document.getElementsByTagName("form")[0];
-            var switchElement = document.getElementsByName("switch")[0];
-            if (start && updateForm) {
-                if (start.style.display === "none") {
-                    start.style.display = "flex";
-                    updateForm.style.display = "none";
-                    switchElement.innerText = "Update Existing Details";
-                } else {
-                    start.style.display = "none";
-                    updateForm.style.display = "flex";
-                    switchElement.innerText = "Start New Admission process";
-                }
-            }
-        }
-    </script>
 
-    <section class="features">
-        <h2>Why Choose Erode Sengunthar Engineering College?</h2>
-        <div class="features-grid">
-            <div class="feature-card">
-                <h3>🏆 NAAC A+ Accredited</h3>
-                <p>Recognized for excellence in education with the highest accreditation grade.</p>
-            </div>
-            <div class="feature-card">
-                <h3>🎓 NBA Accredited Programs</h3>
-                <p>Multiple engineering programs accredited by National Board of Accreditation.</p>
-            </div>
-            <div class="feature-card">
-                <h3>🏢 Modern Infrastructure</h3>
-                <p>State-of-the-art facilities including advanced labs, library, and sports complex.</p>
-            </div>
-            <div class="feature-card">
-                <h3>👨‍🏫 Experienced Faculty</h3>
-                <p>Highly qualified and experienced faculty members dedicated to student success.</p>
-            </div>
-            <div class="feature-card">
-                <h3>🎯 Placement Support</h3>
-                <p>Comprehensive placement assistance with tie-ups to leading companies.</p>
-            </div>
-            <div class="feature-card">
-                <h3>🌟 Holistic Development</h3>
-                <p>Focus on technical skills, soft skills, and overall personality development.</p>
+{% else %}
+<!-- ORIGINAL HERO SECTION FOR NON-STAFF -->
+<div class="lg:col-span-12">
+    <div class="bg-white rounded-3xl shadow-xl overflow-hidden relative">
+        <div class="bg-gradient-to-br from-primary to-orange-600 p-12 text-white relative z-10">
+            <h1 class="text-5xl font-black tracking-tighter leading-none mb-6">Welcome to ESEC Admission Portal</h1>
+            <p class="text-xl text-orange-100 font-medium max-w-2xl leading-relaxed mb-8">
+                Empowering the next generation of engineers with state-of-the-art education and 100% placement support.
+            </p>
+            <div class="flex flex-wrap gap-4">
+                <a href="{% url 'personal_details' %}"
+                    class="bg-white text-primary px-8 py-4 rounded-2xl font-black text-lg hover:bg-orange-50 transition-all shadow-lg hover:shadow-primary/20">
+                    Start Admission 2024
+                </a>
+                <a href="{% url 'update_field' %}"
+                    class="bg-orange-700/30 backdrop-blur-md text-white border border-white/20 px-8 py-4 rounded-2xl font-black text-lg hover:bg-orange-700/50 transition-all">
+                    Update Details
+                </a>
             </div>
         </div>
-    </section>
-
-    <section class="stats">
-        <h2>Our Achievements</h2>
-        <div class="stats-grid">
-            <div class="stat-item">
-                <h3>25+</h3>
-                <p>Years of Excellence</p>
-            </div>
-            <div class="stat-item">
-                <h3>15+</h3>
-                <p>Engineering Programs</p>
-            </div>
-            <div class="stat-item">
-                <h3>100%</h3>
-                <p>Placement Record</p>
-            </div>
-            <div class="stat-item">
-                <h3>5000+</h3>
-                <p>Alumni Network</p>
-            </div>
+        <div class="absolute right-0 top-0 w-1/3 h-full bg-cover bg-center opacity-20 filter grayscale"
+            style="background-image: url('https://erode-sengunthar.ac.in/wp-content/uploads/2022/05/FIRSTYEARBLOCK-scaled.jpg');">
         </div>
-    </section>
+    </div>
+</div>
+{% endif %}
 
-    <footer class="footer">
-        <p>&copy; 2024 Erode Sengunthar Engineering College. All rights reserved.</p>
-        <p>Contact: admissions@esec.ac.in | Phone: +91-4294-226600</p>
-    </footer>
-</body>
-</html>
+<!-- Add Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+{% endblock %}

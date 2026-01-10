@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
 from django.contrib import messages
-from .models import Admission, PaymentScreenshot
+from django.utils import timezone
+from .models import Admission, PaymentScreenshot, FollowUp, ActivityLog
 from django.db import IntegrityError
 import json
 from django.core.paginator import Paginator
@@ -125,11 +126,50 @@ The main home page view
 
 def home(request):
     try:
-        return render(request, 'index.html')
+        today = timezone.now().date()
+        tomorrow = today + timezone.timedelta(days=1)
+
+        # Alert Strip Counters
+        overdue_count = FollowUp.objects.filter(expected_date__lt=today, completed=False).count()
+        today_count = FollowUp.objects.filter(expected_date=today, completed=False).count()
+        tomorrow_count = FollowUp.objects.filter(expected_date=tomorrow, completed=False).count()
+
+        # KPI Summary Cards
+        total_students = Admission.objects.count()
+        visits_today = FollowUp.objects.filter(followup_type='visit', expected_date=today, completed=False).count()
+        fee_followups_today = FollowUp.objects.filter(followup_type='fee', expected_date=today, completed=False).count()
+        
+        # Today's Follow-ups Table
+        today_followups = FollowUp.objects.filter(
+            expected_date=today, 
+            completed=False
+        ).select_related('student').order_by('expected_date')
+
+        # Overdue Follow-ups Table
+        overdue_followups = FollowUp.objects.filter(
+            expected_date__lt=today, 
+            completed=False
+        ).select_related('student').order_by('expected_date')
+
+        # Recent Activity Timeline
+        recent_activities = ActivityLog.objects.select_related('student').order_by('-created_at')[:10]
+
+        context = {
+            'overdue_count': overdue_count,
+            'today_count': today_count,
+            'tomorrow_count': tomorrow_count,
+            'total_students': total_students,
+            'visits_today': visits_today,
+            'fee_followups_today': fee_followups_today,
+            'today_followups': today_followups,
+            'overdue_followups': overdue_followups,
+            'recent_activities': recent_activities,
+        }
+        return render(request, 'index.html', context)
     except Exception as e:
-        logger.error(f"Error loading home page: {str(e)}")
-        messages.error(request, "An error occurred while loading the page. Please try again.")
-        return render(request, 'error.html', {'error': 'Page load failed'})
+        logger.error(f"Error loading dashboard: {str(e)}")
+        messages.error(request, "An error occurred while loading the dashboard. Please try again.")
+        return render(request, 'error.html', {'error': str(e)})
 
 
 """

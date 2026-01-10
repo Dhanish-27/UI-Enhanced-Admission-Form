@@ -45,12 +45,14 @@ def followup_list(request):
 
     if filter_type == 'today':
         qs = qs.filter(expected_date=today)
+    elif filter_type == 'tomorrow':
+        qs = qs.filter(expected_date=today + timedelta(days=1))
     elif filter_type == 'yesterday':
         qs = qs.filter(expected_date=today - timedelta(days=1))
     elif filter_type == 'overdue':
         qs = qs.filter(expected_date__lt=today)
 
-    return render(request, 'admissions/followups/followup_list.html', {
+    return render(request, 'followup/followup_list.html', {
         'followups': qs
     })
 

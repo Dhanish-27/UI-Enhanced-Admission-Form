@@ -4,6 +4,7 @@ from django.db import models
 import json
 import os
 from django.contrib.auth.models import User
+from datetime import datetime, timezone
 
 def certificate_upload_path(instance, filename):
     # Create folder name as "Name-email"
@@ -212,7 +213,7 @@ class FollowUp(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def is_overdue(self):
-        return not self.completed and self.expected_date < timezone.now().date()
+        return not self.completed and self.expected_date < datetime.now().date()
 
     def __str__(self):
         return f"{self.student} - {self.followup_type}"
