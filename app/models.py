@@ -111,6 +111,7 @@ class Admission(models.Model):
     transaction_id = models.CharField(max_length=50,null=True, blank=True)
     transaction_date = models.DateTimeField(null=True, blank=True)
     payment_screenshot = models.FileField(upload_to=payment_upload_path, blank=True)
+    had_paid=models.BooleanField(default=False)
 
     # Marks Obtained
     tenth_total = models.CharField(max_length=50, blank=True)
@@ -230,6 +231,14 @@ class ActivityLog(models.Model):
         on_delete=models.SET_NULL,
         null=True
     )
+    followup = models.ForeignKey(
+        'FollowUp',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='logs'
+    )
+    is_completed = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

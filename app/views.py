@@ -169,7 +169,7 @@ def home(request):
     except Exception as e:
         logger.error(f"Error loading dashboard: {str(e)}")
         messages.error(request, "An error occurred while loading the dashboard. Please try again.")
-        return render(request, 'error.html', {'error': str(e)})
+        return HttpResponse(e)
 
 
 """
@@ -1120,7 +1120,7 @@ def student_detail(request, pk):
         context = {
             'admission': admission,
         }
-        return render(request, 'staff/staff_student_detail.html', context)
+        return render(request, 'followup/student_detail.html', context)
     except Exception as e:
         logger.error(f"Error in student_detail view for pk {pk}: {str(e)}")
         messages.error(request, 'An error occurred while loading student details.')

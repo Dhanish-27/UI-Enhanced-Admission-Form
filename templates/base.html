@@ -13,41 +13,48 @@
         rel="stylesheet">
     <style>
         /* Active step */
-.step-active {
-    background-color: #f59e0b;   /* orange-500 */
-    color: #ffffff;
-    border-color: #f59e0b;
-}
+        .step-active {
+            background-color: #f59e0b;
+            /* orange-500 */
+            color: #ffffff;
+            border-color: #f59e0b;
+        }
 
-/* Inactive step */
-.step-inactive {
-    background-color: #ffffff;
-    color: #6b7280;              /* gray-500 */
-    border-color: #e5e7eb;       /* gray-200 */
-}
+        /* Inactive step */
+        .step-inactive {
+            background-color: #ffffff;
+            color: #6b7280;
+            /* gray-500 */
+            border-color: #e5e7eb;
+            /* gray-200 */
+        }
 
-/* Completed step */
-.step-completed {
-    background-color: #22c55e;   /* green-500 */
-    color: #ffffff;
-    border-color: #22c55e;
-}
+        /* Completed step */
+        .step-completed {
+            background-color: #22c55e;
+            /* green-500 */
+            color: #ffffff;
+            border-color: #22c55e;
+        }
 
-/* Button styling */
-button {
-    background-color: #f59e0b;   /* primary orange */
-    color: #ffffff;
-    padding: 0.5rem 1.5rem;      /* py-2 px-6 */
-    border-radius: 9999px;       /* rounded-full */
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.2s ease-in-out;
-}
+        /* Button styling */
+        button {
+            background-color: #f59e0b;
+            /* primary orange */
+            color: #ffffff;
+            padding: 0.5rem 1.5rem;
+            /* py-2 px-6 */
+            border-radius: 9999px;
+            /* rounded-full */
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out;
+        }
 
-button:hover {
-    background-color: #d97706;   /* darker orange (primary/90 equivalent) */
-}
-
+        button:hover {
+            background-color: #d97706;
+            /* darker orange (primary/90 equivalent) */
+        }
     </style>
 
     <script>
@@ -98,11 +105,22 @@ button:hover {
             </div>
 
             <!-- Navigation -->
-            <nav class="hidden md:flex gap-8 text-sm font-medium text-gray-600">
-                <a href="#" class="hover:text-primary transition-colors">Services</a>
-                <a href="#" class="hover:text-primary transition-colors">About</a>
-                <a href="#" class="hover:text-primary transition-colors">Careers</a>
+            <nav class="hidden md:flex gap-8 text-sm font-medium text-gray-600 items-center">
+                <a href="{% url 'home' %}" class="hover:text-primary transition-colors">Home</a>
                 <a href="#" class="hover:text-primary transition-colors">Contact</a>
+                <a href="{% url 'followup_list' %}" class="text-gray-500 hover:text-primary transition-colors p-1"
+                    title="Notifications">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                    </svg>
+                </a>
+                <div
+                    class="flex items-center gap-2 text-gray-900 bg-gray-50 px-3 py-1.5 rounded-full border border-gray-100">
+                    <div class="w-2 h-2 rounded-full bg-green-500"></div>
+                    <span class="font-semibold">{{ user.username|default:"Guest" }}</span>
+                </div>
             </nav>
         </div>
     </header>

@@ -9,8 +9,8 @@ from .models import FollowUp, ActivityLog, Admission, FeePayment
 
 
 
-def create_followup(request, student_id):
-    student = get_object_or_404(Admission, id=student_id)
+def create_followup(request, pk):
+    student = get_object_or_404(Admission, pk=pk)
     if request.method == 'POST':
         followup = FollowUp.objects.create(
             student=student,
@@ -22,11 +22,12 @@ def create_followup(request, student_id):
 
         ActivityLog.objects.create(
             student=student,
+            followup=followup,
             action=f"{followup.get_followup_type_display()} scheduled for {followup.expected_date}",
             created_by=request.user
         )
 
-        return redirect('student_detail', student_id=student.id)
+        return redirect('student_detail', pk=student.id)
     
     return render(request, 'followup/add_Followup.html', {
         'student': student,
@@ -65,15 +66,16 @@ def complete_followup(request, followup_id):
     ActivityLog.objects.create(
         student=followup.student,
         action=f"{followup.get_followup_type_display()} completed",
-        created_by=request.user
+        created_by=request.user,
+        is_completed=True
     )
 
     return JsonResponse({'status': 'success'})
 
 
 
-def student_detail(request, student_id):
-    student = get_object_or_404(Admission, id=student_id)
+def student_detail(request, pk):
+    student = get_object_or_404(Admission, pk=pk)
 
     followups = student.followups.all().order_by('-expected_date')
     activities = student.activities.all().order_by('-created_at')
@@ -93,8 +95,11 @@ def student_detail(request, student_id):
 
 
 
-def add_fee_payment(request, student_id):
-    student = get_object_or_404(Admission, id=student_id)
+def add_fee_payment(request, pk):
+    student = get_object_or_404(Admission, pk=pk)
+    if not student.had_paid:
+        student.had_paid = True
+        student.save()
     if request.method == 'POST':
         FeePayment.objects.create(
             student=student,
@@ -106,10 +111,11 @@ def add_fee_payment(request, student_id):
         ActivityLog.objects.create(
             student=student,
             action=f"Fee payment of {request.POST['amount']} received",
-            created_by=request.user
+            created_by=request.user,
+            is_completed=True
         )
 
-        return redirect('student_detail', student_id=student.id)
+        return redirect('student_detail', pk=student.id)
 
     return render(request, 'followup/add_fee_payment.html', {
         'student': student,
@@ -117,8 +123,8 @@ def add_fee_payment(request, student_id):
         'active_step': 'add_fee'
     })
 
-def student_activity_log(request, student_id):
-    student = get_object_or_404(Admission, id=student_id)
+def student_activity_log(request, pk):
+    student = get_object_or_404(Admission, pk=pk)
     activities = student.activities.all().order_by('-created_at')
     
     return render(request, 'followup/activity_log.html', {

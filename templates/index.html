@@ -99,7 +99,18 @@
                         <div class="flex flex-col gap-1">
                             <p class="text-xs font-black text-gray-900 leading-none truncate">{{ log.student.student_name }}</p>
                             <p class="text-[10px] text-gray-500 font-medium leading-relaxed">{{ log.action }}</p>
-                            <span class="text-[8px] font-bold text-primary uppercase tracking-tighter">{{ log.created_at|timesince }} ago</span>
+                            <div class="flex items-center justify-between">
+                                <span class="text-[8px] font-bold text-primary uppercase tracking-tighter">{{ log.created_at|timesince }} ago</span>
+                                {% if log.followup and not log.followup.completed %}
+                                <select onchange="if(this.value==='Completed') completeFollowUp({{ log.followup.id }})"
+                                    class="text-[8px] bg-amber-50 border-none rounded-md px-1 py-0.5 font-bold text-amber-600 focus:ring-0 cursor-pointer">
+                                    <option value="Pending" selected>Pending</option>
+                                    <option value="Completed">Completed</option>
+                                </select>
+                                {% elif log.followup and log.followup.completed %}
+                                <span class="text-[8px] font-bold text-green-600 uppercase">Completed</span>
+                                {% endif %}
+                            </div>
                         </div>
                     </div>
                     {% empty %}
@@ -196,7 +207,7 @@
                                 </div>
                                 <div class="w-px h-8 bg-gray-100"></div>
                                 <div>
-                                    <h2 class="text-2xl font-black text-green-600 leading-none">{{ fee_followups_today }}</h2>
+                                    <h2 class="text-2xl font-black text-green-600 leading-none">{{ fee_followups_today  }}</h2>
                                     <p class="text-[8px] font-bold text-gray-400 uppercase mt-1">Fees</p>
                                 </div>
                             </div>
@@ -288,6 +299,9 @@
                                         Student</th>
                                     <th
                                         class="px-6 py-3 text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                                        Mobile</th>
+                                    <th
+                                        class="px-6 py-3 text-[10px] font-black text-gray-400 uppercase tracking-widest">
                                         Type</th>
                                     <th
                                         class="px-6 py-3 text-[10px] font-black text-gray-400 uppercase tracking-widest">
@@ -304,8 +318,12 @@
                                         <span class="text-sm font-bold text-gray-900 tracking-tight">{{ fu.student.student_name }}</span>
                                     </td>
                                     <td class="px-6 py-4">
+                                        <span class="text-sm font-bold text-gray-900 tracking-tight">{{ fu.student.student_mobile }}</span>
+                                    </td>
+                                    <td class="px-6 py-4">
                                         <span
-                                            class="inline-flex px-2 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider bg-gray-50 text-gray-600">{{ fu.get_followup_type_display }}</span>
+                                            class="inline-flex px-2 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider bg-gray-50 text-gray-600">{{
+                                            fu.get_followup_type_display }}</span>
                                     </td>
                                     <td class="px-6 py-4">
                                         <span class="text-[10px] font-black uppercase text-red-600">{{ fu.expected_date|timesince }} overdue</span>
@@ -360,4 +378,23 @@
 
 <!-- Add Font Awesome for icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<script>
+    function completeFollowUp(id) {
+        if (confirm('Mark this follow-up as completed?')) {
+            fetch(`/followups/complete/${id}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        location.reload();
+                    }
+                });
+        }
+    }
+</script>
 {% endblock %}
