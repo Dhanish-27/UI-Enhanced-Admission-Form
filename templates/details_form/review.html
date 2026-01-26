@@ -130,39 +130,64 @@
         <!-- 3. Marks Obtained -->
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
             <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
-                <h2 class="text-lg font-semibold text-gray-800">3. Marks Obtained</h2>
-                <a href="{% url 'marks_obtained' admission.pk %}"
-                    class="text-sm font-medium text-orange-600 hover:text-orange-700 hover:underline">Edit</a>
+            <h2 class="text-lg font-semibold text-gray-800">3. Marks Obtained</h2>
+            <a href="{% url 'marks_obtained' admission.pk %}"
+                class="text-sm font-medium text-orange-600 hover:text-orange-700 hover:underline">Edit</a>
             </div>
             <div class="p-6">
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="border-b border-gray-100 text-xs text-gray-400 uppercase tracking-wider">
-                                <th class="py-2 px-4 font-semibold">Subject</th>
-                                <th class="py-2 px-4 font-semibold">Marks</th>
-                            </tr>
-                        </thead>
-                        <tbody class="text-sm text-gray-700">
-                            <tr class="border-b border-gray-50">
-                                <td class="py-3 px-4 font-medium">Maths</td>
-                                <td class="py-3 px-4">{{ admission.maths_marks }}</td>
-                            </tr>
-                            <tr class="border-b border-gray-50">
-                                <td class="py-3 px-4 font-medium">Physics</td>
-                                <td class="py-3 px-4">{{ admission.physics_marks }}</td>
-                            </tr>
-                            <tr class="border-b border-gray-50">
-                                <td class="py-3 px-4 font-medium">Chemistry</td>
-                                <td class="py-3 px-4">{{ admission.chemistry_marks }}</td>
-                            </tr>
-                            <tr class="bg-orange-50/50">
-                                <td class="py-3 px-4 font-bold text-gray-900">Total</td>
-                                <td class="py-3 px-4 font-bold text-gray-900">{{ admission.total_marks }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+            <div class="overflow-x-auto">
+                {% if admission.qualification == '12th' %}
+                <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="border-b border-gray-100 text-xs text-gray-400 uppercase tracking-wider">
+                    <th class="py-2 px-4 font-semibold">Subject</th>
+                    <th class="py-2 px-4 font-semibold">Marks</th>
+                    </tr>
+                </thead>
+                <tbody class="text-sm text-gray-700">
+                    <tr class="border-b border-gray-50">
+                    <td class="py-3 px-4 font-medium">Maths</td>
+                    <td class="py-3 px-4">{{ admission.maths_marks }}</td>
+                    </tr>
+                    <tr class="border-b border-gray-50">
+                    <td class="py-3 px-4 font-medium">Physics</td>
+                    <td class="py-3 px-4">{{ admission.physics_marks }}</td>
+                    </tr>
+                    <tr class="border-b border-gray-50">
+                    <td class="py-3 px-4 font-medium">Chemistry</td>
+                    <td class="py-3 px-4">{{ admission.chemistry_marks }}</td>
+                    </tr>
+                    <tr class="bg-orange-50/50">
+                    <td class="py-3 px-4 font-bold text-gray-900">Total</td>
+                    <td class="py-3 px-4 font-bold text-gray-900">{{ admission.twelfth_total }}</td>
+                    </tr>
+                </tbody>
+                </table>
+                {% elif admission.qualification == 'Diploma' %}
+                <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="border-b border-gray-100 text-xs text-gray-400 uppercase tracking-wider">
+                    <th class="py-2 px-4 font-semibold">Subject</th>
+                    <th class="py-2 px-4 font-semibold">Marks</th>
+                    </tr>
+                </thead>
+                <tbody class="text-sm text-gray-700">
+                    <tr class="border-b border-gray-50">
+                    <td class="py-3 px-4 font-medium">Diploma Percentage</td>
+                    <td class="py-3 px-4">{{ admission.diploma_percentage }}</td>
+                    </tr>
+                    <tr class="border-b border-gray-50">
+                    <td class="py-3 px-4 font-medium">Diploma Major</td>
+                    <td class="py-3 px-4">{{ admission.diploma_major }}</td>
+                    </tr>
+                    <tr class="bg-orange-50/50">
+                    <td class="py-3 px-4 font-bold text-gray-900">Total</td>
+                    <td class="py-3 px-4 font-bold text-gray-900">{{ admission.diploma_total }}</td>
+                    </tr>
+                </tbody>
+                </table>
+                {% endif %}
+            </div>
             </div>
         </div>
 

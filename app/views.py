@@ -16,6 +16,7 @@ from django.template.loader import render_to_string
 from weasyprint import HTML
 from django.core.serializers.json import DjangoJSONEncoder
 
+
 # Set up logging
 logger = logging.getLogger(__name__)
 
@@ -172,174 +173,102 @@ def home(request):
         return HttpResponse(e)
 
 
-"""
-The personal details view for admission form
-"""
+
+
 def personal_details(request, pk=None):
-    admission = None
+    admission = Admission.objects.filter(pk=pk).first() if pk else None
 
-    try:
-        # If pk exists, try to fetch the existing admission record
-        if pk:
-            admission = Admission.objects.filter(pk=pk).first()
-            if not admission:
-                messages.error(request, 'Admission record not found.')
-                return redirect('personal_details')
+    if request.method == 'POST':
+        data = {k: v.strip() for k, v in request.POST.items()}
 
-        if request.method == 'POST':
-            # Get and validate form data
-            student_name = request.POST.get('student_name', '').strip()
-            email_input = request.POST.get('email', '').strip()
-            student_mobile = request.POST.get('student_mobile', '').strip()
-            father_mobile = request.POST.get('father_mobile', '').strip()
-            mother_mobile = request.POST.get('mother_mobile', '').strip()
-            guardian_mobile = request.POST.get('guardian_mobile', '').strip()
-            father_name = request.POST.get('father_name', '').strip()
-            mother_name = request.POST.get('mother_name', '').strip()
-            guardian_name = request.POST.get('guardian_name', '').strip()
-            register_number = request.POST.get('register_number', '').strip()
-            umis_number = request.POST.get('umis_number', '').strip()
-            dob = request.POST.get('dob', '').strip()
-            gender = request.POST.get('gender', '').strip()
-            community = request.POST.get('community', '').strip()
+        required_fields = [
+            'student_name', 'student_mobile', 'father_name',
+            'mother_name', 'dob', 'gender', 'address',
+            'country', 'state', 'district'
+        ]
 
-            
+        if not all(data.get(field) for field in required_fields):
+            messages.error(request, 'Please fill in all required fields.')
+            return render(request, 'details_form/personal_details.html', {
+                'admission': admission, 'pk': pk,
+                'steps': get_steps(), 'current_step': 1
+            })
 
-            address = request.POST.get('address', '').strip() 
-            country = request.POST.get('country', '').strip()
-            state = request.POST.get('state', '').strip() or request.POST.get('state_others', '').strip()
-            district = request.POST.get('district', '').strip() or request.POST.get('district_others', '').strip()
-
-            # Validate required fields
-            if not all([student_name, student_mobile, father_name, mother_name, dob, gender, address, country, state, district]):
-                messages.error(request, 'Please fill in all required fields.')
-                return render(request, 'details_form/personal_details.html', {'admission': admission, 'pk': pk , "steps": get_steps(),"current_step": 1})
-
-            # Validate email
-            if email_input:
-                try:
-                    email_input = validate_email(email_input)
-                except ValidationError as e:
-                    messages.error(request, f'Email validation error: {str(e)}')
-                    return render(request, 'details_form/personal_details.html', {'admission': admission, 'pk': pk , "steps": get_steps(),"current_step": 1})
-            else:
-                email_input=f"{student_name}+{student_mobile}@samplemail.com"
-
-            # Validate mobile numbers
+        # Email handling
+        email = data.get('email')
+        if email:
             try:
-                if student_mobile:
-                    student_mobile = validate_mobile_number(student_mobile)
-                if father_mobile:
-                    father_mobile = validate_mobile_number(father_mobile)
-                if mother_mobile:
-                    mother_mobile = validate_mobile_number(mother_mobile)
-                if guardian_mobile:
-                    guardian_mobile = validate_mobile_number(guardian_mobile)
+                email = validate_email(email)
             except ValidationError as e:
-                messages.error(request, f'Mobile number validation error: {str(e)}')
-                return render(request, 'details_form/personal_details.html', {'admission': admission, 'pk': pk , "steps": get_steps(),"current_step": 1})
+                messages.error(request, str(e))
+                return render(request, 'details_form/personal_details.html', {
+                    'admission': admission, 'pk': pk,
+                    'steps': get_steps(), 'current_step': 1
+                })
+        else:
+            email = f"{data['student_name']}+{data['student_mobile']}@samplemail.com"
 
-            # If no record found, try to fetch using register_number (in case email changed)
-            if not admission and register_number:
-                admission = Admission.objects.filter(register_number=register_number).first()
+        # Mobile validation
+        try:
+            for field in ['student_mobile', 'father_mobile', 'mother_mobile', 'guardian_mobile']:
+                if data.get(field):
+                    data[field] = validate_mobile_number(data[field])
+        except ValidationError as e:
+            messages.error(request, str(e))
+            return render(request, 'details_form/personal_details.html', {
+                'admission': admission, 'pk': pk,
+                'steps': get_steps(), 'current_step': 1
+            })
 
-            # Generate unique number
-            unique_id=generate_student_id(student_name,student_mobile)
+        # Generate unique ID
+        unique_id = generate_student_id(data['student_name'], data['student_mobile'])
 
-            # If still not found → create new record
-            if not admission:
-                admission = Admission(
-                    unique_id=unique_id,
-                    student_name=student_name,
-                    email=email_input,
-                    student_mobile=student_mobile,
-                    father_mobile=father_mobile,
-                    mother_mobile=mother_mobile,
-                    guardian_mobile=guardian_mobile,
-                    father_name=father_name,
-                    mother_name=mother_name,
-                    guardian_name=guardian_name,
-                    register_number=register_number,
-                    umis_number=umis_number,
-                    dob=dob,
-                    gender=gender,
-                    address=address,
-                    country=country,
-                    state=state,
-                    district=district,
-                    community=community,
-                    level='ug',
-                    tenth_total='',
-                    tenth_percentage='',
-                    group_major='',
-                    last_school='',
-                    board='State Board',
-                    year_passing=2024,
-                    medium='English',
-                    reference_name='',
-                    contact_number='',
-                    relationship='',
-                    admission_fee='',
-                    tuition_fee='',
-                    college_fee='',
-                    hostel_fee='',
-                    bus_fee='',
-                )
-            else:
-                # Update existing record
-                admission.student_name = student_name
-                admission.unique_id=unique_id
-                admission.email = email_input
-                admission.student_mobile = student_mobile
-                admission.father_mobile = father_mobile
-                admission.mother_mobile = mother_mobile
-                admission.guardian_mobile = guardian_mobile
-                admission.father_name = father_name
-                admission.mother_name = mother_name
-                admission.guardian_name = guardian_name
-                admission.register_number = register_number
-                admission.umis_number = umis_number
-                admission.dob = dob
-                admission.gender = gender
-                admission.address = address
-                admission.state = state
-                admission.country = country
-                admission.district = district
-                admission.community = community
-
-            try:
-                admission.full_clean()  # Django model validation
-                admission.save()
-                logger.info(f"Personal details saved for student: {student_name} (Register: {register_number})")
-                messages.success(request, 'Personal details saved successfully!')
-                return redirect('department_details', pk=admission.pk)
-            except IntegrityError as e:
-                logger.warning(f"Integrity error saving personal details: {str(e)}")
-                messages.error(request, 'Email or Register Number already exists.')
-                return render(request, 'details_form/personal_details.html', {'admission': admission, 'pk': pk , "steps": get_steps(),"current_step": 1})
-            except ValidationError as e:
-                logger.warning(f"Validation error in personal details: {str(e)}")
-                messages.error(request, f'Validation error: {str(e)}')
-                return render(request, 'details_form/personal_details.html', {'admission': admission, 'pk': pk , "steps": get_steps(),"current_step": 1})
-            except Exception as e:
-                logger.error(f"Unexpected error saving personal details: {str(e)}")
-                messages.error(request, 'An unexpected error occurred. Please try again.')
-                return render(request, 'details_form/personal_details.html', {'admission': admission, 'pk': pk , "steps": get_steps(),"current_step": 1})
-
-        context = {
-            'admission': admission,
-            'title': 'Personal Details',
-            'pk': pk , "steps": get_steps(),"current_step": 1
+        admission_data = {
+            'unique_id': unique_id,
+            'student_name': data['student_name'],
+            'email': email,
+            'student_mobile': data.get('student_mobile'),
+            'father_mobile': data.get('father_mobile'),
+            'mother_mobile': data.get('mother_mobile'),
+            'guardian_mobile': data.get('guardian_mobile'),
+            'father_name': data['father_name'],
+            'mother_name': data['mother_name'],
+            'guardian_name': data.get('guardian_name'),
+            'register_number': data.get('register_number'),
+            'umis_number': data.get('umis_number'),
+            'dob': data['dob'],
+            'gender': data['gender'],
+            'community': data.get('community'),
+            'address': data['address'],
+            'country': data['country'],
+            'state': data.get('state') or data.get('state_others'),
+            'district': data.get('district') or data.get('district_others'),
+            'level': 'ug',
         }
-        return render(request, 'details_form/personal_details.html', context)
 
-    except Exception as e:
-        logger.error(f"Error in personal_details view: {str(e)}")
-        messages.error(request, 'An error occurred while processing your request.')
-        if pk:
-            return redirect('personal_details', pk=pk)
-        return redirect('personal_details')
-        
+        try:
+            if admission:
+                for key, value in admission_data.items():
+                    setattr(admission, key, value)
+            else:
+                admission = Admission.objects.create(**admission_data)
+
+            messages.success(request, 'Personal details saved successfully.')
+            return redirect('department_details', pk=admission.pk)
+
+        except IntegrityError:
+            messages.error(request, 'Email or Register Number already exists.')
+        except Exception:
+            messages.error(request, 'An unexpected error occurred.')
+
+    return render(request, 'details_form/personal_details.html', {
+        'admission': admission,
+        'pk': pk,
+        'title': 'Personal Details',
+        'steps': get_steps(),
+        'current_step': 1
+    })
+    
 
 def department_details(request, pk):
     try:
@@ -401,94 +330,135 @@ def department_details(request, pk):
         return redirect('personal_details')
 
 def marks_obtained(request, pk):
-    try:
-        admission = Admission.objects.filter(pk=pk).first()
-        if not admission:
-            messages.error(request, 'Admission record not found.')
-            return redirect('personal_details')
+    admission = Admission.objects.filter(pk=pk).first()
+    if not admission:
+        messages.error(request, "Admission record not found.")
+        return redirect("personal_details")
 
-        if request.method == 'POST':
-            tenth_total = request.POST.get('tenth_total', '').strip()
-            tenth_percentage = request.POST.get('tenth_percentage', '').strip()
-            qualification = request.POST.get('qualification', '').strip()
-            twelfth_total = request.POST.get('twelfth_total', '').strip()
-            twelfth_percentage = request.POST.get('twelfth_percentage', '').strip()
-            maths_marks = request.POST.get('maths_marks', '').strip()
-            physics_marks = request.POST.get('physics_marks', '').strip()
-            chemistry_marks = request.POST.get('chemistry_marks', '').strip()
-            group_major = request.POST.get('group_major', '').strip()
-            cutoff_marks = request.POST.get('cutoff_marks', '').strip()
+    if request.method == "POST":
+        # Common fields
+        tenth_total = request.POST.get("tenth_total", "").strip()
+        tenth_percentage = request.POST.get("tenth_percentage", "").strip()
+        qualification = request.POST.get("qualification", "").strip()
 
-            # Validate required fields
-            if not all([tenth_total, tenth_percentage, qualification]):
-                messages.error(request, 'Please fill in all required fields.')
-                return render(request, 'details_form/marks_obtained.html', {'admission': admission})
+        # 12th fields
+        twelfth_total = request.POST.get("twelfth_total", "").strip()
+        twelfth_percentage = request.POST.get("twelfth_percentage", "").strip()
+        maths_marks = request.POST.get("maths_marks", "").strip()
+        physics_marks = request.POST.get("physics_marks", "").strip()
+        chemistry_marks = request.POST.get("chemistry_marks", "").strip()
+        twelfth_major = request.POST.get("twelfth_major", "").strip()
 
-            # Validate qualification-specific fields
-            if qualification == '12th':
-                if not all([twelfth_total, maths_marks, physics_marks, chemistry_marks, group_major]):
-                    messages.error(request, 'Please fill in all 12th qualification fields.')
-                    return render(request, 'details_form/marks_obtained.html', {'admission': admission})
-                # Calculate cutoff for 12th
-                try:
-                    cutoff_marks = (float(maths_marks) + float(physics_marks)/2 + float(chemistry_marks)/2)
-                except ValueError:
-                    messages.error(request, 'Invalid marks entered for 12th.')
-                    return render(request, 'details_form/marks_obtained.html', {'admission': admission})
-            elif qualification == 'Diploma':
-                if not group_major:
-                    messages.error(request, 'Please fill in the Group / Major field for Diploma.')
-                    return render(request, 'details_form/marks_obtained.html', {'admission': admission})
-                cutoff_marks = 0  # No cutoff calculation for diploma
-            else:
-                messages.error(request, 'Invalid qualification selected.')
-                return render(request, 'details_form/marks_obtained.html', {'admission': admission})
+        # Diploma fields
+        diploma_total = request.POST.get("diploma_total", "").strip()
+        diploma_percentage = request.POST.get("diploma_percentage", "").strip()
+        diploma_major = request.POST.get("diploma_major", "").strip()
 
-            # Validate percentages
-            try:
-                tenth_pct = float(tenth_percentage)
-                if not (0 <= tenth_pct <= 100):
-                    raise ValueError("Percentage must be between 0 and 100")
-                if twelfth_percentage:
-                    twelfth_pct = float(twelfth_percentage)
-                    if not (0 <= twelfth_pct <= 100):
-                        raise ValueError("Percentage must be between 0 and 100")
-            except ValueError as e:
-                messages.error(request, f'Invalid percentage value: {str(e)}')
-                return render(request, 'details_form/marks_obtained.html', {'admission': admission})
+        # ---------- BASIC VALIDATION ----------
+        if not all([tenth_total, tenth_percentage, qualification]):
+            messages.error(request, "Please fill all required fields.")
+            return render(request, "details_form/marks_obtained.html", {"admission": admission})
+
+        try:
+            tenth_pct = float(tenth_percentage)
+            if not (0 <= tenth_pct <= 100):
+                raise ValueError("10th percentage must be between 0 and 100")
+        except ValueError as e:
+            messages.error(request, str(e))
+            return render(request, "details_form/marks_obtained.html", {"admission": admission})
+
+        cutoff_marks = None
+
+        # ---------- QUALIFICATION SPECIFIC ----------
+        if qualification == "12th":
+            if not all([twelfth_total, maths_marks, physics_marks, chemistry_marks, twelfth_major]):
+                messages.error(request, "Please fill all 12th qualification fields.")
+                return render(request, "details_form/marks_obtained.html", {"admission": admission})
 
             try:
-                admission.tenth_total = tenth_total
-                admission.tenth_percentage = tenth_percentage
-                admission.qualification = qualification
-                admission.twelfth_total = twelfth_total
-                admission.twelfth_percentage = float(twelfth_total)/5
-                admission.maths_marks = maths_marks
-                admission.physics_marks = physics_marks
-                admission.chemistry_marks = chemistry_marks
-                admission.group_major = group_major
-                admission.cutoff_marks = cutoff_marks
-                admission.full_clean()
-                admission.save()
-                logger.info(f"Marks obtained saved for student: {admission.student_name}")
-                messages.success(request, 'Marks details saved successfully!')
-                return redirect('academic_info', pk=pk)
-            except ValidationError as e:
-                logger.warning(f"Validation error in marks obtained: {str(e)}")
-                messages.error(request, f'Validation error: {str(e)}')
-                return render(request, 'details_form/marks_obtained.html', {'admission': admission})
-            except Exception as e:
-                logger.error(f"Error saving marks obtained: {str(e)}")
-                messages.error(request, 'An error occurred while saving marks details.')
-                return render(request, 'details_form/marks_obtained.html', {'admission': admission})
+                maths = float(maths_marks)
+                physics = float(physics_marks)
+                chemistry = float(chemistry_marks)
 
-        return render(request, 'details_form/marks_obtained.html', {'admission': admission, "steps": get_steps(), "current_step": 3})
+                cutoff_marks = maths + (physics / 2) + (chemistry / 2)
+            except ValueError:
+                messages.error(request, "Invalid numeric marks for 12th.")
+                return render(request, "details_form/marks_obtained.html", {"admission": admission})
 
-    except Exception as e:
-        logger.error(f"Error in marks_obtained view: {str(e)}")
-        messages.error(request, 'An error occurred while processing your request.')
-        return redirect('personal_details')
+            # Clear Diploma fields
+            admission.diploma_total = None
+            admission.diploma_percentage = None
+            admission.diploma_major = None
 
+        elif qualification == "Diploma":
+            if not all([diploma_total, diploma_percentage, diploma_major]):
+                messages.error(request, "Please fill all Diploma qualification fields.")
+                return render(request, "details_form/marks_obtained.html", {"admission": admission})
+
+            try:
+                diploma_pct = float(diploma_percentage)
+                if not (0 <= diploma_pct <= 100):
+                    raise ValueError
+            except ValueError:
+                messages.error(request, "Diploma percentage must be between 0 and 100.")
+                return render(request, "details_form/marks_obtained.html", {"admission": admission})
+
+            cutoff_marks = 0
+
+            # Clear 12th fields
+            admission.twelfth_total = None
+            admission.twelfth_percentage = None
+            admission.maths_marks = None
+            admission.physics_marks = None
+            admission.chemistry_marks = None
+            admission.twelfth_major = None
+
+        else:
+            messages.error(request, "Invalid qualification selected.")
+            return render(request, "details_form/marks_obtained.html", {"admission": admission})
+
+        # ---------- SAVE ----------
+        try:
+            admission.tenth_total = tenth_total or None
+            admission.tenth_percentage = tenth_pct or None
+            admission.qualification = qualification or None
+
+            admission.twelfth_total = twelfth_total or None
+            admission.twelfth_percentage = twelfth_percentage or None
+            admission.maths_marks = maths_marks or None
+            admission.physics_marks = physics_marks or None
+            admission.chemistry_marks = chemistry_marks or None
+            admission.twelfth_major = twelfth_major or None
+
+            admission.diploma_total = diploma_total or None
+            admission.diploma_percentage = diploma_percentage or None
+            admission.diploma_major = diploma_major or None
+
+            admission.cutoff_marks = cutoff_marks or None
+
+            admission.full_clean()
+            admission.save()
+
+            logger.info("Marks saved for admission %s", admission.pk)
+            messages.success(request, "Marks details saved successfully.")
+            return redirect("academic_info", pk=pk)
+
+        except ValidationError as e:
+            logger.warning("Validation error: %s", e)
+            messages.error(request, e.message_dict)
+        except Exception as e:
+            logger.error("Unexpected error: %s", e)
+            messages.error(request, "Error while saving marks.")
+
+    return render(
+        request,
+        "details_form/marks_obtained.html",
+        {
+            "admission": admission,
+            "steps": get_steps(),
+            "current_step": 3,
+        },
+    )
 def academic_info(request, pk):
     try:
         admission = Admission.objects.filter(pk=pk).first()

@@ -122,8 +122,13 @@ class Admission(models.Model):
     maths_marks = models.CharField(max_length=50, blank=True, null=True)
     physics_marks = models.CharField(max_length=50, blank=True, null=True)
     chemistry_marks = models.CharField(max_length=50, blank=True, null=True)
-    group_major = models.CharField(max_length=255, blank=True)
     cutoff_marks = models.CharField(max_length=50, blank=True, null=True)
+    twelfth_major = models.CharField(max_length=255, blank=True,null= True)
+
+    #Diploma Details
+    diploma_total = models.CharField(max_length=50, blank=True, null=True)
+    diploma_percentage = models.CharField(max_length=50, blank=True, null=True)
+    diploma_major = models.CharField(max_length=255, blank=True)
 
     # Academic Information
     last_school = models.CharField(max_length=255, blank=True)
