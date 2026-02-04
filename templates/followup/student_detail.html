@@ -184,51 +184,104 @@
 
             <!-- Marks -->
             <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-                <div class="px-4 py-3 bg-gray-50 border-b border-gray-100 flex items-center gap-2">
-                    <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
-                        </path>
-                    </svg>
-                    <h3 class="font-bold text-gray-800">Performance ({{ admission.qualification }})</h3>
-                </div>
-                <div class="p-5 text-sm space-y-4">
-                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
-                        <div>
-                            <p class="text-gray-500 text-xs uppercase font-semibold">Cutoff Marks</p>
-                            <p class="text-2xl font-bold text-primary">{{ admission.cutoff_marks|default:"N/A" }}</p>
-                        </div>
-                        <div class="text-right">
-                            <p class="text-gray-500 text-xs uppercase font-semibold">Percentage</p>
-                            {% if admission.qualification == '12th' %}
-                            <p class="text-2xl font-bold text-green-600">{{ admission.twelfth_percentage }}%</p>
-                            {% else %}
-                            <p class="text-2xl font-bold text-green-600">{{ admission.tenth_percentage }}%</p>
-                            {% endif %}
-                        </div>
-                    </div>
+    <div class="px-4 py-3 bg-gray-50 border-b border-gray-100 flex items-center gap-2">
+        <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+            </path>
+        </svg>
+        <h3 class="font-bold text-gray-800">
+            Performance ({{ admission.qualification|default:"N/A" }})
+        </h3>
+    </div>
 
-                    <div class="grid grid-cols-3 gap-2">
-                        <div class="bg-white p-2 border rounded-lg text-center">
-                            <p class="text-xs text-gray-500">Physics</p>
-                            <p class="font-bold text-gray-900">{{ admission.physics_marks|default:"—" }}</p>
-                        </div>
-                        <div class="bg-white p-2 border rounded-lg text-center">
-                            <p class="text-xs text-gray-500">Chemistry</p>
-                            <p class="font-bold text-gray-900">{{ admission.chemistry_marks|default:"—" }}</p>
-                        </div>
-                        <div class="bg-white p-2 border rounded-lg text-center">
-                            <p class="text-xs text-gray-500">Maths</p>
-                            <p class="font-bold text-gray-900">{{ admission.maths_marks|default:"—" }}</p>
-                        </div>
-                    </div>
+    <div class="p-5 text-sm space-y-4">
 
-                    <div class="p-2 bg-gray-50 rounded-lg">
-                        <p class="text-xs text-gray-500 uppercase font-bold">Group Major</p>
-                        <p class="text-gray-900">{{ admission.group_major }}</p>
-                    </div>
-                </div>
+        <!-- ===== COMMON METRICS ===== -->
+        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
+            <div>
+                <p class="text-gray-500 text-xs uppercase font-semibold">Cutoff Marks</p>
+                <p class="text-2xl font-bold text-primary">
+                    {{ admission.cutoff_marks|default:"N/A" }}
+                </p>
             </div>
+
+            <div class="text-right">
+                <p class="text-gray-500 text-xs uppercase font-semibold">Percentage</p>
+
+                {% if admission.qualification == "12th" %}
+                    <p class="text-2xl font-bold text-green-600">
+                        {{ admission.twelfth_percentage|default:"N/A" }}%
+                    </p>
+                {% elif admission.qualification == "Diploma" %}
+                    <p class="text-2xl font-bold text-green-600">
+                        {{ admission.diploma_percentage|default:"N/A" }}%
+                    </p>
+                {% else %}
+                    <p class="text-2xl font-bold text-gray-400">—</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- ===== 12TH DETAILS ===== -->
+        {% if admission.qualification == "12th" %}
+        <div class="grid grid-cols-3 gap-2">
+            <div class="bg-white p-2 border rounded-lg text-center">
+                <p class="text-xs text-gray-500">Physics</p>
+                <p class="font-bold text-gray-900">
+                    {{ admission.physics_marks|default:"—" }}
+                </p>
+            </div>
+            <div class="bg-white p-2 border rounded-lg text-center">
+                <p class="text-xs text-gray-500">Chemistry</p>
+                <p class="font-bold text-gray-900">
+                    {{ admission.chemistry_marks|default:"—" }}
+                </p>
+            </div>
+            <div class="bg-white p-2 border rounded-lg text-center">
+                <p class="text-xs text-gray-500">Maths</p>
+                <p class="font-bold text-gray-900">
+                    {{ admission.maths_marks|default:"—" }}
+                </p>
+            </div>
+        </div>
+
+        <div class="p-2 bg-gray-50 rounded-lg">
+            <p class="text-xs text-gray-500 uppercase font-bold">12th Major</p>
+            <p class="text-gray-900">
+                {{ admission.twelfth_major|default:"N/A" }}
+            </p>
+        </div>
+        {% endif %}
+
+        <!-- ===== DIPLOMA DETAILS ===== -->
+        {% if admission.qualification == "Diploma" %}
+        <div class="grid grid-cols-2 gap-2">
+            <div class="bg-white p-2 border rounded-lg text-center">
+                <p class="text-xs text-gray-500">Diploma Total</p>
+                <p class="font-bold text-gray-900">
+                    {{ admission.diploma_total|default:"—" }}
+                </p>
+            </div>
+            <div class="bg-white p-2 border rounded-lg text-center">
+                <p class="text-xs text-gray-500">Diploma Major</p>
+                <p class="font-bold text-gray-900">
+                    {{ admission.diploma_major|default:"—" }}
+                </p>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- ===== FALLBACK ===== -->
+        {% if not admission.qualification %}
+        <p class="text-center text-gray-400 text-sm">
+            Qualification details not available
+        </p>
+        {% endif %}
+
+    </div>
+</div>
+
         </div>
 
         <!-- Preferences & Address Section -->
@@ -264,8 +317,7 @@
                         <div
                             class="flex items-center justify-between p-3 border rounded-xl hover:bg-gray-50 transition-colors">
                             <span class="font-medium text-gray-700">{{ dept }}</span>
-                            <span class="bg-gray-200 text-gray-800 text-xs font-bold px-2 py-1 rounded-full">Choice {{
-                                rank }}</span>
+                            <span class="bg-gray-200 text-gray-800 text-xs font-bold px-2 py-1 rounded-full">Choice {{ rank }}</span>
                         </div>
                         {% endfor %}
                         {% else %}

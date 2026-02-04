@@ -83,7 +83,6 @@
                                         <td>{{ admission.community|default:"N/A" }}</td>
                                         <td class="bg-light"><strong>Address</strong></td>
                                         <td>{{ admission.address }},{{ admission.district}}, {{admission.state}}</td>
-
                                     </tr>
                                 </tbody>
                             </table>
@@ -93,29 +92,58 @@
                     <!-- Marks Obtained -->
                     <h4 class="card-title bg-primary text-white p-2 mt-4">2. Marks Obtained</h4>
                     <table class="table table-bordered">
-                        <tbody>
-                            <tr>
-                                <td class="bg-light"><strong>10th Total</strong></td>
-                                <td>{{ admission.tenth_total }}</td>
-                                <td class="bg-light"><strong>10th Percentage</strong></td>
-                                <td>{{ admission.tenth_percentage }}%</td>
-                            </tr>
-                            {% if admission.twelfth_total %}
-                            <tr>
-                                <td class="bg-light"><strong>12th Total</strong></td>
-                                <td>{{ admission.twelfth_total }}</td>
-                                <td class="bg-light"><strong>12th Percentage</strong></td>
-                                <td>{{ admission.twelfth_percentage }}%</td>
-                            </tr>
-                            {% endif %}
-                            <tr>
-                                <td class="bg-light"><strong>Group Major</strong></td>
-                                <td>{{ admission.group_major }}</td>
-                                <td class="bg-light"><strong>Cutoff Marks</strong></td>
-                                <td>{{ admission.cutoff_marks|default:"N/A" }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
+    <tbody>
+        <!-- 10th Details -->
+        <tr>
+            <td class="bg-light"><strong>10th Total</strong></td>
+            <td>{{ admission.tenth_total|default:"N/A" }}</td>
+            <td class="bg-light"><strong>10th Percentage</strong></td>
+            <td>{{ admission.tenth_percentage|default:"N/A" }}%</td>
+        </tr>
+
+        <!-- 12th Details -->
+        {% if admission.qualification == "12th" %}
+        <tr>
+            <td class="bg-light"><strong>12th Total</strong></td>
+            <td>{{ admission.twelfth_total|default:"N/A" }}</td>
+            <td class="bg-light"><strong>12th Percentage</strong></td>
+            <td>{{ admission.twelfth_percentage|default:"N/A" }}%</td>
+        </tr>
+        <tr>
+            <td class="bg-light"><strong>12th Major</strong></td>
+            <td>{{ admission.twelfth_major|default:"N/A" }}</td>
+            <td class="bg-light"><strong>Cutoff Marks</strong></td>
+            <td>{{ admission.cutoff_marks|default:"N/A" }}</td>
+        </tr>
+        {% endif %}
+
+        <!-- Diploma Details -->
+        {% if admission.qualification == "Diploma" %}
+        <tr>
+            <td class="bg-light"><strong>Diploma Total</strong></td>
+            <td>{{ admission.diploma_total|default:"N/A" }}</td>
+            <td class="bg-light"><strong>Diploma Percentage</strong></td>
+            <td>{{ admission.diploma_percentage|default:"N/A" }}%</td>
+        </tr>
+        <tr>
+            <td class="bg-light"><strong>Diploma Major</strong></td>
+            <td>{{ admission.diploma_major|default:"N/A" }}</td>
+            <td class="bg-light"><strong>Cutoff Marks</strong></td>
+            <td>{{ admission.cutoff_marks|default:"N/A" }}</td>
+        </tr>
+        {% endif %}
+
+        <!-- No Qualification Selected -->
+        {% if not admission.qualification %}
+        <tr>
+            <td colspan="4" class="text-center text-muted">
+                Qualification details not available
+            </td>
+        </tr>
+        {% endif %}
+    </tbody>
+</table>
+
 
                     <!-- Department Details -->
                     <h4 class="card-title bg-primary text-white p-2 mt-4">3. Department Details</h4>

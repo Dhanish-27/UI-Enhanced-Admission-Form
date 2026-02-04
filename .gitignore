@@ -1,0 +1,13 @@
+
+*.pyc
+*.pyo
+*.pyd
+*.log
+*.pycache/
+*.egg-info/
+dist/
+build/
+Migrations/
+.env
+.idea/
+.vscode/

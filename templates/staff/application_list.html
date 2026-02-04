@@ -248,7 +248,7 @@
                         {% for admission in page_obj %}
                         <tr class="hover:bg-gray-50/50 transition-all group">
                             <td class="px-6 py-4">
-                                <span class="text-sm font-bold text-gray-900">{{ admission.Application_number|default:"N/A" }}</span>
+                                <span class="text-sm font-bold text-gray-900">{{ admission.pk|default:"N/A" }}</span>
                             </td>
                             <td class="px-6 py-4">
                                 <div class="flex flex-col">
@@ -259,14 +259,14 @@
                             <td class="px-6 py-4">
                                 <span class="inline-flex px-2 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider
                                     {% if admission.level == 'ug' %}bg-sky-50 text-sky-600{% elif admission.level == 'pg' %}bg-emerald-50 text-emerald-600{% else %}bg-amber-50 text-amber-600{% endif %} font-mono">
-                                    {{ admission.get_level_display }}
+                                    {{ admission.level }}
                                 </span>
                             </td>
                             <td class="px-6 py-4 text-center">
                                 <span class="text-sm font-black text-dark">{{ admission.cutoff_marks|default:"N/A" }}</span>
                             </td>
                             <td class="px-6 py-4">
-                                <span class="text-[11px] font-bold text-gray-600 line-clamp-1 max-w-[140px] uppercase" title="{{ admission.first_preference_dept }}">
+                                <span class="text-[11px] font-bold text-gray-600 line-clamp-1  uppercase" title="{{ admission.first_preference_dept }}">
                                     {{ admission.first_preference_dept|default:"N/A" }}
                                 </span>
                             </td>
