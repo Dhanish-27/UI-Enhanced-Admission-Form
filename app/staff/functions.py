@@ -7,7 +7,7 @@ from weasyprint import HTML
 from django.core.serializers.json import DjangoJSONEncoder
 import logging
 from django.contrib import messages
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect,get_object_or_404
 logger = logging.getLogger(__name__)
 import sys
 
