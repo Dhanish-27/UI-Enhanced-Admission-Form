@@ -219,15 +219,10 @@
         <!-- Export Tools & Count -->
         <div class="flex flex-col sm:flex-row justify-between items-center bg-white rounded-2xl shadow-sm border border-gray-100 p-4 gap-4">
             <div class="flex items-center gap-2">
-                <button onclick="exportToExcel()" class="flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-700 rounded-xl text-xs font-bold hover:bg-emerald-100 transition-all border border-emerald-200/50">
-                    <i class="fas fa-file-excel"></i> Export Excel
-                </button>
-                <button onclick="exportToPDF()" class="flex items-center gap-2 px-4 py-2 bg-rose-50 text-rose-700 rounded-xl text-xs font-bold hover:bg-rose-100 transition-all border border-rose-200/50">
-                    <i class="fas fa-file-pdf"></i> Export PDF
-                </button>
-                <button onclick="printTable()" class="flex items-center gap-2 px-4 py-2 bg-sky-50 text-sky-700 rounded-xl text-xs font-bold hover:bg-sky-100 transition-all border border-sky-200/50">
-                    <i class="fas fa-print"></i> Print
-                </button>
+                <a href="{% url 'export_applications' %}"  class="flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-700 rounded-xl text-xs font-bold hover:bg-emerald-100 transition-all border border-emerald-200/50">
+                    <i class="fas fa-file-excel"></i> Export All Applications
+                </a>
+
             </div>
             <p class="text-xs font-bold text-gray-400 uppercase tracking-widest">
                 Showing <span class="text-gray-900">{{ page_obj.start_index }}</span> - <span class="text-gray-900">{{ page_obj.end_index }}</span> of <span class="text-gray-900">{{ page_obj.paginator.count }}</span>
@@ -316,102 +311,11 @@
 </div>
 
 <!-- Hidden table for export (Keep original structure for scripts) -->
-<table id="exportTable" style="display: none;">
-    <thead>
-        <tr>
-            <th>Application Number</th>
-            <th>Student Name</th>
-            <th>Email</th>
-            <th>Level</th>
-            <th>Board</th>
-            <th>10th Percentage</th>
-            <th>12th Percentage</th>
-            <th>Cutoff Marks</th>
-            <th>Department Preference</th>
-            <th>Hostel Needed</th>
-            <th>Community</th>
-            <th>Guardian Name</th>
-            <th>Guardian Mobile</th>
-            <th>Register Number</th>
-            <th>Date of Birth</th>
-            <th>Application Date</th>
-            <th>Last School</th>
-            <th>Year of Passing</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for admission in page_obj %}
-        <tr>
-            <td>{{ admission.Application_number|default:"N/A" }}</td>
-            <td>{{ admission.student_name }}</td>
-            <td>{{ admission.email }}</td>
-            <td>{{ admission.get_level_display }}</td>
-            <td>{{ admission.board|default:"N/A" }}</td>
-            <td>{{ admission.tenth_percentage|default:"N/A" }}</td>
-            <td>{{ admission.twelfth_percentage|default:"N/A" }}</td>
-            <td>{{ admission.cutoff_marks|default:"N/A" }}</td>
-            <td>
-                {% if admission.department_preferences %}
-                [ {% for dept, rank in admission.department_preferences.items %}
-                {{ dept }}:{{ rank }} -
-                {% endfor %} ]
-                {% else %}N/A{% endif %}
-            </td>
-            <td>{{ admission.hostel_needed|title|default:"N/A" }}</td>
-            <td>{{ admission.community|default:"N/A" }}</td>
-            <td>{{ admission.guardian_name|default:"N/A" }}</td>
-            <td>{{ admission.guardian_mobile|default:"N/A" }}</td>
-            <td>{{ admission.register_number|default:"N/A" }}</td>
-            <td>{{ admission.dob|date:"Y-m-d" }}</td>
-            <td>{{ admission.created_at|date:"Y-m-d" }}</td>
-            <td>{{admission.last_school}}</td>
-            <td>{{ admission.last_school }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+
 
 <script>
-    // Export to Excel function
-    function exportToExcel() {
-        const table = document.getElementById('exportTable');
-        const worksheet = XLSX.utils.table_to_sheet(table);
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, "Student Applications");
-        const timestamp = new Date().toISOString().slice(0, 10).replace(/-/g, '');
-        const filename = `Student_Applications_${timestamp}.xlsx`;
-        XLSX.writeFile(workbook, filename);
-    }
 
-    // Export to PDF function
-    function exportToPDF() {
-        alert('PDF export functionality would be implemented here. This typically requires a server-side solution or additional libraries like jsPDF.');
-    }
 
-    // Print function
-    function printTable() {
-        const printWindow = window.open('', '_blank');
-        const tableContent = document.getElementById('exportTable').outerHTML;
-        printWindow.document.write(`
-            <html>
-                <head>
-                    <title>Student Applications</title>
-                    <style>
-                        body { font-family: sans-serif; padding: 20px; }
-                        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-                        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; font-size: 10px; }
-                        th { background-color: #f8f9fa; }
-                    </style>
-                </head>
-                <body>
-                    <h2>Student Applications - ${new Date().toLocaleDateString()}</h2>
-                    ${tableContent}
-                </body>
-            </html>
-        `);
-        printWindow.document.close();
-        printWindow.print();
-    }
 
     // Clear filters function
     function clearFilters() {

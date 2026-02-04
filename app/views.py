@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.utils import timezone
 from .models import Admission, PaymentScreenshot, FollowUp, ActivityLog
@@ -15,6 +15,10 @@ from django.conf import settings
 from django.template.loader import render_to_string
 from weasyprint import HTML
 from django.core.serializers.json import DjangoJSONEncoder
+from django.core.mail import EmailMessage
+from django.contrib.auth.decorators import login_required
+from openpyxl import Workbook
+
 
 
 # Set up logging
@@ -74,6 +78,11 @@ def get_steps():
         {"number": 10, "label": "Certificate Details"},
         {"number": 11, "label": "Complete"},
     ]
+def sendmail(mail):
+    try:
+        email = EmailMessage()
+    except Exception as e:
+        logger.error(f"Error sending email: {str(e)}")
 
 
 
@@ -124,7 +133,7 @@ def update_field(request):
 """
 The main home page view
 """
-
+@login_required
 def home(request):
     try:
         today = timezone.now().date()
@@ -884,6 +893,9 @@ def success(request, identifier):
         if not admission:
             messages.error(request, 'Admission record not found.')
             return redirect('personal_details')
+            res = sendmail(admission.email)
+            if res:
+                messages.success(request, 'Admission record saved successfully.')
 
         return render(request, 'details_form/success.html',{'id': admission.unique_id})
     except Exception as e:
@@ -1075,7 +1087,7 @@ def student_applications_list(request):
             'sort_by': sort_by,
         }
 
-        return render(request, 'followup/application_list.html', context)
+        return render(request, 'staff/application_list.html', context)
 
     except Exception as e:
         logger.error(f"Error in student_applications_list view: {str(e)}")
@@ -1114,3 +1126,53 @@ def admission_report(request, pk):
         logger.error(f"Error generating PDF report for pk {pk}: {str(e)}")
         messages.error(request, 'An error occurred while generating the PDF report.')
         return redirect('student_detail', pk=pk)
+
+from django.http import HttpResponse
+import datetime
+
+def format_excel_value(value):
+    """Helper to format values for Excel export"""
+    if value is None:
+        return ""
+    if isinstance(value, bool):
+        return "Yes" if value else "No"
+    if isinstance(value, (datetime.date, datetime.datetime)):
+        return value.strftime('%Y-%m-%d')
+    if isinstance(value, dict):
+        return ", ".join([f"{k}: {v}" for k, v in value.items()])
+    return str(value)
+
+
+def export_applications(request):
+    queryset = Admission.objects.all()
+
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Admissions"
+
+    # 🔹 Fetch all concrete DB fields
+    fields = Admission._meta.concrete_fields
+
+    # 🔹 Header row (human-readable)
+    ws.append([field.verbose_name.title() for field in fields])
+
+    # 🔹 Data rows
+    for obj in queryset:
+        row = []
+        for field in fields:
+            value = getattr(obj, field.name)
+            row.append(format_excel_value(value))
+        ws.append(row)
+
+    # 🔹 Auto column width
+    for column in ws.columns:
+        max_length = max(len(str(cell.value)) for cell in column if cell.value)
+        ws.column_dimensions[column[0].column_letter].width = max_length + 2
+
+    response = HttpResponse(
+        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
+    response["Content-Disposition"] = 'attachment; filename="admissions_full_export.xlsx"'
+
+    wb.save(response)
+    return response

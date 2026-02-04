@@ -76,8 +76,7 @@ class Admission(models.Model):
     ('SCA', 'Scheduled Caste (Arunthathiyar) (SCA)'),
     ('ST', 'Scheduled Tribe (ST)') ],
     blank=True,
-    null=True
-)
+    null=True)
 
 
 

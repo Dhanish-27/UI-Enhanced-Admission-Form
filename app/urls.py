@@ -5,7 +5,6 @@ urlpatterns = [
     # To find the existing records
     path('admission_key/',views.update_field,name="update_field"),
 
-
     #For application
     path('', views.home, name='home'),
     path('personal_details/', views.personal_details, name='personal_details'),
@@ -31,4 +30,6 @@ urlpatterns = [
     path('followups/complete/<int:followup_id>/', followup.complete_followup, name='complete_followup'),
     path('fees/add/<int:pk>/', followup.add_fee_payment, name='add_fee_payment'),
     path('activities/<int:pk>/', followup.student_activity_log, name='student_activity_log'),
+    #Excel Export
+    path('export_applications/', views.export_applications, name='export_applications'),
 ]
