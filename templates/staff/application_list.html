@@ -115,24 +115,15 @@
                     </div>
                 </div>
 
-                <!-- Hostel & Bus (Horizontal) -->
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">Hostel</label>
-                        <select name="hostel_needed" class="w-full rounded-xl border-gray-200 text-sm focus:border-primary focus:ring-primary transition-all">
-                            <option value="">All</option>
-                            <option value="yes" {% if request.GET.hostel_needed == "yes" %}selected{% endif %}>Yes</option>
-                            <option value="no" {% if request.GET.hostel_needed == "no" %}selected{% endif %}>No</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">Bus</label>
-                        <select name="bus_needed" class="w-full rounded-xl border-gray-200 text-sm focus:border-primary focus:ring-primary transition-all">
-                            <option value="">All</option>
-                            <option value="yes" {% if request.GET.bus_needed == "yes" %}selected{% endif %}>Yes</option>
-                            <option value="no" {% if request.GET.bus_needed == "no" %}selected{% endif %}>No</option>
-                        </select>
-                    </div>
+                <!-- Hostel & Transport Filter -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1.5">Hostel & Transport</label>
+                    <select name="accommodation_type" class="w-full rounded-xl border-gray-200 text-sm focus:border-primary focus:ring-primary transition-all">
+                        <option value="">All</option>
+                        <option value="hostel" {% if request.GET.accommodation_type == "hostel" %}selected{% endif %}>Hostel</option>
+                        <option value="transport" {% if request.GET.accommodation_type == "transport" %}selected{% endif %}>Transport</option>
+                        <option value="not_needed" {% if request.GET.accommodation_type == "not_needed" %}selected{% endif %}>Not needed</option>
+                    </select>
                 </div>
 
                 <!-- Cutoff Range (Horizontal) -->
@@ -388,7 +379,7 @@
 
     // Auto-submit form when certain filters change
     document.addEventListener('DOMContentLoaded', function () {
-        const autoSubmitFilters = ['level', 'board', 'community', 'sort', 'preference', 'hostel_needed', 'bus_needed'];
+        const autoSubmitFilters = ['level', 'board', 'community', 'sort', 'preference', 'accommodation_type'];
         autoSubmitFilters.forEach(filter => {
             const element = document.getElementById(filter);
             if (element) {

@@ -55,21 +55,14 @@ def student_applications_list(request):
             elif country_filter == 'Others':
                 queryset = queryset.exclude(country__iexact='India')
 
-        # Hostel
-        hostels_only = request.GET.get('hostels_only', '')
-        hostel_needed = request.GET.get('hostel_needed', '')
-        if hostels_only or hostel_needed == 'yes':
+        # Combined Hostel & Transport Filter
+        accommodation_type = request.GET.get('accommodation_type', '')
+        if accommodation_type == 'hostel':
             queryset = queryset.filter(hostel_needed='yes')
-        elif hostel_needed == 'no':
-            queryset = queryset.filter(hostel_needed='no')
-
-        # Bus
-        buses_only = request.GET.get('buses_only', '')
-        bus_needed = request.GET.get('bus_needed', '')
-        if buses_only or bus_needed == 'yes':
+        elif accommodation_type == 'transport':
             queryset = queryset.filter(bus_needed='yes')
-        elif bus_needed == 'no':
-            queryset = queryset.filter(bus_needed='no')
+        elif accommodation_type == 'not_needed':
+            queryset = queryset.filter(hostel_needed='no', bus_needed='no')
 
         # Cutoff range
         cutoff_from = request.GET.get('cutoff_from', '')
@@ -181,8 +174,7 @@ def student_applications_list(request):
             'district_filter': district_filter,
             'states': states,
             'districts': districts,
-            'hostels_only': hostels_only,
-            'buses_only': buses_only,
+            'accommodation_type': accommodation_type,
             'cutoff_from': cutoff_from,
             'cutoff_to': cutoff_to,
             'date_from': date_from,
