@@ -20,8 +20,7 @@ def student_applications_list(request):
             queryset = queryset.filter(
                 Q(student_name__icontains=search_query) |
                 Q(email__icontains=search_query) |
-                Q(register_number__icontains=search_query) |
-                Q(Application_number__icontains=search_query)
+                Q(application_number__icontains=search_query)
             )
 
 
