@@ -10,7 +10,7 @@
     <div class="mb-6 space-y-2">
         {% for message in messages %}
         <div
-            class="p-4 rounded-lg text-sm font-medium {% if message.tags   ==   'error' %}bg-red-50 text-red-600{% elif message.tags   ==   'success' %}bg-green-50 text-green-600{% else %}bg-blue-50 text-blue-600{% endif %}">
+            class="p-4 rounded-lg text-sm font-medium {% if message.tags == 'error' %}bg-red-50 text-red-600{% elif message.tags == 'success' %}bg-green-50 text-green-600{% else %}bg-blue-50 text-blue-600{% endif %}">
             {{ message }}
         </div>
         {% endfor %}
@@ -22,6 +22,8 @@
         <form method="post" enctype="multipart/form-data" action="{% url 'facility_details' admission.pk %}"
             id="facilityForm">
             {% csrf_token %}
+            <input type="hidden" name="pk" value="{% if admission %}{{ admission.pk }}{% endif %}">
+            
             <div class="max-w-5xl mx-auto bg-white shadow-lg rounded-xl p-8">
                 <h2 class="text-xl font-semibold mb-6 border-b pb-3">
                     6. Facility Details
@@ -34,12 +36,12 @@
                         </label>
                         <select id="facilityType" name="facility_type" required onchange="toggleSections()"
                             class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500">
-                            <option value="none" {% if not admission.bus_needed   ==   'yes' and not admission.hostel_needed  ==  'yes' %}selected{% endif %}>None</option>
-                            <option value="transport" {% if admission.bus_needed   ==   'yes' %}selected{% endif %}>Transport
-                            </option>
-                            <option value="hostel" {% if admission.hostel_needed   ==   'yes' %}selected{% endif %}>Hostel
-                            </option>
+                            <option value="">Select Option</option>
+                            <option value="none" {% if admission.facility_type == 'none' or not admission.bus_needed and not admission.hostel_needed %}selected{% endif %}>Not Needed</option>
+                            <option value="transport" {% if admission.bus_needed == 'yes' or admission.facility_type == 'transport' %}selected{% endif %}>Transport</option>
+                            <option value="hostel" {% if admission.hostel_needed == 'yes' or admission.facility_type == 'hostel' %}selected{% endif %}>Hostel</option>
                         </select>
+                        <div id="facility_type_error" class="error-message text-red-500 text-sm mt-1"></div>
                     </div>
                 </div>
 
@@ -54,26 +56,18 @@
                             <select name="boarding_point" id="boarding_point"
                                 class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500">
                                 <option value="">Select your Boarding Point</option>
-                                <option {% if admission.boarding_point == 'Erode Bus Stand' %}selected{% endif %}>Erode
-                                    Bus Stand</option>
-                                <option {% if admission.boarding_point == 'Perundurai' %}selected{% endif %}>Perundurai
-                                </option>
-                                <option {% if admission.boarding_point == 'Gobichettipalayam' %}selected{% endif %}>
-                                    Gobichettipalayam</option>
-                                <option {% if admission.boarding_point == 'Bhavani' %}selected{% endif %}>Bhavani</option>
-                                <option {% if admission.boarding_point == 'Chennimalai' %}selected{% endif %}>Chennimalai
-                                </option>
-                                <option {% if admission.boarding_point == 'Sathyamangalam' %}selected{% endif %}>
-                                    Sathyamangalam</option>
-                                <option {% if admission.boarding_point == 'Kodumudi' %}selected{% endif %}>Kodumudi
-                                </option>
-                                <option {% if admission.boarding_point == 'Tiruchengode' %}selected{% endif %}>
-                                    Tiruchengode</option>
-                                <option {% if admission.boarding_point == 'Pallipalayam' %}selected{% endif %}>
-                                    Pallipalayam</option>
-                                <option {% if admission.boarding_point == 'Anthiyur' %}selected{% endif %}>Anthiyur
-                                </option>
+                                <option {% if admission and admission.boarding_point == 'Erode Bus Stand' %}selected{% endif %}>Erode Bus Stand</option>
+                                <option {% if admission and admission.boarding_point == 'Perundurai' %}selected{% endif %}>Perundurai</option>
+                                <option {% if admission and admission.boarding_point == 'Gobichettipalayam' %}selected{% endif %}>Gobichettipalayam</option>
+                                <option {% if admission and admission.boarding_point == 'Bhavani' %}selected{% endif %}>Bhavani</option>
+                                <option {% if admission and admission.boarding_point == 'Chennimalai' %}selected{% endif %}>Chennimalai</option>
+                                <option {% if admission and admission.boarding_point == 'Sathyamangalam' %}selected{% endif %}>Sathyamangalam</option>
+                                <option {% if admission and admission.boarding_point == 'Kodumudi' %}selected{% endif %}>Kodumudi</option>
+                                <option {% if admission and admission.boarding_point == 'Tiruchengode' %}selected{% endif %}>Tiruchengode</option>
+                                <option {% if admission and admission.boarding_point == 'Pallipalayam' %}selected{% endif %}>Pallipalayam</option>
+                                <option {% if admission and admission.boarding_point == 'Anthiyur' %}selected{% endif %}>Anthiyur</option>
                             </select>
+                            <div id="boarding_point_error" class="error-message text-red-500 text-sm mt-1"></div>
                         </div>
                         <div>
                             <label class="block font-medium mb-1">
@@ -82,27 +76,18 @@
                             <select name="bus_route" id="bus_route"
                                 class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500">
                                 <option value="">Select Bus Route</option>
-                                <option value="1" {% if admission.bus_route == '1' %}selected{% endif %}>Route 1 - Erode
-                                </option>
-                                <option value="2" {% if admission.bus_route == '2' %}selected{% endif %}>Route 2 -
-                                    Perundurai</option>
-                                <option value="3" {% if admission.bus_route == '3' %}selected{% endif %}>Route 3 -
-                                    Gobichettipalayam</option>
-                                <option value="4" {% if admission.bus_route == '4' %}selected{% endif %}>Route 4 - Bhavani
-                                </option>
-                                <option value="5" {% if admission.bus_route == '5' %}selected{% endif %}>Route 5 -
-                                    Chennimalai</option>
-                                <option value="6" {% if admission.bus_route == '6' %}selected{% endif %}>Route 6 -
-                                    Sathyamangalam</option>
-                                <option value="7" {% if admission.bus_route == '7' %}selected{% endif %}>Route 7 -
-                                    Kodumudi</option>
-                                <option value="8" {% if admission.bus_route == '8' %}selected{% endif %}>Route 8 -
-                                    Tiruchengode</option>
-                                <option value="9" {% if admission.bus_route == '9' %}selected{% endif %}>Route 9 -
-                                    Pallipalayam</option>
-                                <option value="10" {% if admission.bus_route == '10' %}selected{% endif %}>Route 10 -
-                                    Anthiyur</option>
+                                <option value="1" {% if admission and admission.bus_route == '1' %}selected{% endif %}>Route 1 - Erode</option>
+                                <option value="2" {% if admission and admission.bus_route == '2' %}selected{% endif %}>Route 2 - Perundurai</option>
+                                <option value="3" {% if admission and admission.bus_route == '3' %}selected{% endif %}>Route 3 - Gobichettipalayam</option>
+                                <option value="4" {% if admission and admission.bus_route == '4' %}selected{% endif %}>Route 4 - Bhavani</option>
+                                <option value="5" {% if admission and admission.bus_route == '5' %}selected{% endif %}>Route 5 - Chennimalai</option>
+                                <option value="6" {% if admission and admission.bus_route == '6' %}selected{% endif %}>Route 6 - Sathyamangalam</option>
+                                <option value="7" {% if admission and admission.bus_route == '7' %}selected{% endif %}>Route 7 - Kodumudi</option>
+                                <option value="8" {% if admission and admission.bus_route == '8' %}selected{% endif %}>Route 8 - Tiruchengode</option>
+                                <option value="9" {% if admission and admission.bus_route == '9' %}selected{% endif %}>Route 9 - Pallipalayam</option>
+                                <option value="10" {% if admission and admission.bus_route == '10' %}selected{% endif %}>Route 10 - Anthiyur</option>
                             </select>
+                            <div id="bus_route_error" class="error-message text-red-500 text-sm mt-1"></div>
                         </div>
                     </div>
                 </div>
@@ -115,10 +100,11 @@
                             <label class="block font-medium mb-1">
                                 Hostel Name <span class="text-red-600">*</span>
                             </label>
-                            <input type="text" name="hostel_name"
+                            <input type="text" name="hostel_name" id="hostel_name"
                                 value="{% if admission %}{{ admission.hostel_name }}{% endif %}"
                                 placeholder="Enter Hostel Name"
                                 class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500">
+                            <div id="hostel_name_error" class="error-message text-red-500 text-sm mt-1"></div>
                         </div>
                         <div>
                             <label class="block font-medium mb-1">
@@ -127,11 +113,10 @@
                             <select name="hostel_type" id="hostel_type"
                                 class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500">
                                 <option value="">Select Hostel Type</option>
-                                <option {% if admission.hostel_type == 'Boys Hostel' %}selected{% endif %}>Boys Hostel
-                                </option>
-                                <option {% if admission.hostel_type == 'Girls Hostel' %}selected{% endif %}>Girls Hostel
-                                </option>
+                                <option {% if admission and admission.hostel_type == 'Boys Hostel' %}selected{% endif %}>Boys Hostel</option>
+                                <option {% if admission and admission.hostel_type == 'Girls Hostel' %}selected{% endif %}>Girls Hostel</option>
                             </select>
+                            <div id="hostel_type_error" class="error-message text-red-500 text-sm mt-1"></div>
                         </div>
                         <div>
                             <label class="block font-medium mb-1">
@@ -140,10 +125,11 @@
                             <select name="room_type" id="room_type"
                                 class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500">
                                 <option value="">Select Room Type</option>
-                                <option {% if admission.room_type == '2-Sharing' %}selected{% endif %}>2-Sharing</option>
-                                <option {% if admission.room_type == '3-Sharing' %}selected{% endif %}>3-Sharing</option>
-                                <option {% if admission.room_type == '4-Sharing' %}selected{% endif %}>4-Sharing</option>
+                                <option {% if admission and admission.room_type == '2-Sharing' %}selected{% endif %}>2-Sharing</option>
+                                <option {% if admission and admission.room_type == '3-Sharing' %}selected{% endif %}>3-Sharing</option>
+                                <option {% if admission and admission.room_type == '4-Sharing' %}selected{% endif %}>4-Sharing</option>
                             </select>
+                            <div id="room_type_error" class="error-message text-red-500 text-sm mt-1"></div>
                         </div>
                         <div>
                             <label class="block font-medium mb-1">
@@ -152,18 +138,28 @@
                             <select name="mess_type" id="mess_type"
                                 class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500">
                                 <option value="">Select Mess Type</option>
-                                <option {% if admission.mess_type == 'Vegetarian' %}selected{% endif %}>Vegetarian
-                                </option>
-                                <option {% if admission.mess_type == 'Non-Vegetarian' %}selected{% endif %}>Non-Vegetarian
-                                </option>
+                                <option {% if admission and admission.mess_type == 'Vegetarian' %}selected{% endif %}>Vegetarian</option>
+                                <option {% if admission and admission.mess_type == 'Non-Vegetarian' %}selected{% endif %}>Non-Vegetarian</option>
                             </select>
+                            <div id="mess_type_error" class="error-message text-red-500 text-sm mt-1"></div>
+                        </div>
+                        <div>
+                            <label class="block font-medium mb-1">
+                                Hostel Fee Amount (Optional)
+                            </label>
+                            <input type="number" name="hostel_fee_amount" id="hostel_fee_amount"
+                                value="{% if admission %}{{ admission.hostel_fee_amount }}{% endif %}"
+                                placeholder="Enter Hostel Fee Amount"
+                                step="0.01" min="0"
+                                class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500">
+                            <div id="hostel_fee_amount_error" class="error-message text-red-500 text-sm mt-1"></div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Actions -->
                 <div class="flex justify-between mt-8">
-                    <button type="button" onclick="window.location.href='{% url 'vocational_details' admission.pk %}';"
+                    <button type="button" onclick="window.location.href='{% url 'vocational_details' admission.pk %}'"
                         class="px-6 py-2 border rounded hover:bg-gray-100">
                         Previous
                     </button>
@@ -186,20 +182,92 @@
         transportSection.classList.add('hidden');
         hostelSection.classList.add('hidden');
 
-        // Remove required attributes from all
-        const transportInputs = transportSection.querySelectorAll('select');
-        const hostelInputs = hostelSection.querySelectorAll('select');
+        // Clear all errors
+        clearAllErrors();
 
-        transportInputs.forEach(input => input.removeAttribute('required'));
-        hostelInputs.forEach(input => input.removeAttribute('required'));
-
-        if (facilityType  == = 'transport') {
+        if (facilityType === 'transport') {
             transportSection.classList.remove('hidden');
-            transportInputs.forEach(input => input.setAttribute('required', 'required'));
-        } else if (facilityType  == = 'hostel') {
+        } else if (facilityType === 'hostel') {
             hostelSection.classList.remove('hidden');
-            hostelInputs.forEach(input => input.setAttribute('required', 'required'));
         }
+    }
+
+    // Form validation
+    document.getElementById('facilityForm').addEventListener('submit', function (e) {
+        let isValid = true;
+        clearAllErrors();
+
+        // Required fields
+        const facilityType = document.getElementById('facilityType').value;
+        if (!facilityType) {
+            showError('facility_type', 'Please select a facility option');
+            isValid = false;
+        }
+
+        // If transport selected, validate transport fields
+        if (facilityType === 'transport') {
+            const boardingPoint = document.querySelector('[name="boarding_point"]').value;
+            const busRoute = document.querySelector('[name="bus_route"]').value;
+
+            if (!boardingPoint) {
+                showError('boarding_point', 'Please select boarding point');
+                isValid = false;
+            }
+            if (!busRoute) {
+                showError('bus_route', 'Please select bus route');
+                isValid = false;
+            }
+        }
+
+        // If hostel selected, validate hostel fields
+        if (facilityType === 'hostel') {
+            const requiredHostelFields = ['hostel_name', 'hostel_type', 'room_type', 'mess_type'];
+            requiredHostelFields.forEach(field => {
+                const element = document.querySelector(`[name="${field}"]`);
+                if (!element.value.trim()) {
+                    showError(field, 'This field is required');
+                    isValid = false;
+                }
+            });
+
+            // Hostel fee validation (optional but if provided, must be numeric)
+            const hostelFee = document.querySelector('[name="hostel_fee_amount"]').value;
+            if (hostelFee && (isNaN(hostelFee) || parseFloat(hostelFee) < 0)) {
+                showError('hostel_fee_amount', 'Hostel fee must be a valid positive number');
+                isValid = false;
+            }
+        }
+
+        if (!isValid) {
+            e.preventDefault();
+        }
+    });
+
+    // Clear error on input
+    document.querySelectorAll('input, select').forEach(element => {
+        element.addEventListener('input', function () {
+            clearError(this.name);
+        });
+    });
+
+    function showError(field, message) {
+        const errorElement = document.getElementById(field + '_error');
+        if (errorElement) {
+            errorElement.textContent = message;
+        }
+    }
+
+    function clearError(field) {
+        const errorElement = document.getElementById(field + '_error');
+        if (errorElement) {
+            errorElement.textContent = '';
+        }
+    }
+
+    function clearAllErrors() {
+        document.querySelectorAll('.error-message').forEach(element => {
+            element.textContent = '';
+        });
     }
 
     // Initialize on load

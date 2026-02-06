@@ -248,7 +248,7 @@
                         {% for admission in page_obj %}
                         <tr class="hover:bg-gray-50/50 transition-all group">
                             <td class="px-6 py-4">
-                                <span class="text-sm font-bold text-gray-900">{{ admission.pk|default:"N/A" }}</span>
+                                <span class="text-sm font-bold text-gray-900">{{ admission.application_number|default:"N/A" }}</span>
                             </td>
                             <td class="px-6 py-4">
                                 <div class="flex flex-col">
@@ -267,7 +267,7 @@
                             </td>
                             <td class="px-6 py-4">
                                 <span class="text-[11px] font-bold text-gray-600 line-clamp-1  uppercase" title="{{ admission.first_preference_dept }}">
-                                    {{ admission.first_preference_dept|default:"N/A" }}
+                                    {{ admission.branch|default:"N/A" }}
                                 </span>
                             </td>
                             <td class="px-6 py-4 text-center">
@@ -307,6 +307,63 @@
                 </table>
             </div>
         </div>
+
+        <!-- Pagination -->
+        {% if page_obj.has_other_pages %}
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+            <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+                <div class="text-sm text-gray-600">
+                    Page <span class="font-bold text-gray-900">{{ page_obj.number }}</span> of <span class="font-bold text-gray-900">{{ page_obj.paginator.num_pages }}</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <!-- Previous Button -->
+                    {% if page_obj.has_previous %}
+                        <a href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page_obj.previous_page_number }}" 
+                           class="px-4 py-2 bg-gray-50 text-gray-700 rounded-xl text-sm font-bold hover:bg-gray-100 transition-all border border-gray-200 flex items-center gap-2">
+                            <i class="fas fa-chevron-left text-xs"></i>
+                            Previous
+                        </a>
+                    {% else %}
+                        <button disabled class="px-4 py-2 bg-gray-50 text-gray-400 rounded-xl text-sm font-bold border border-gray-200 flex items-center gap-2 cursor-not-allowed">
+                            <i class="fas fa-chevron-left text-xs"></i>
+                            Previous
+                        </button>
+                    {% endif %}
+
+                    <!-- Page Numbers -->
+                    <div class="flex items-center gap-1">
+                        {% for num in page_obj.paginator.page_range %}
+                            {% if page_obj.number == num %}
+                                <span class="w-10 h-10 bg-primary text-white rounded-xl text-sm font-bold flex items-center justify-center">{{ num }}</span>
+                            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                <a href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ num }}" 
+                                   class="w-10 h-10 bg-gray-50 text-gray-700 rounded-xl text-sm font-bold hover:bg-gray-100 transition-all flex items-center justify-center">{{ num }}</a>
+                            {% elif num == page_obj.paginator.page_range.0 or num == page_obj.paginator.page_range.last %}
+                                <a href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ num }}" 
+                                   class="w-10 h-10 bg-gray-50 text-gray-700 rounded-xl text-sm font-bold hover:bg-gray-100 transition-all flex items-center justify-center">{{ num }}</a>
+                            {% elif num == page_obj.number|add:'-4' or num == page_obj.number|add:'4' %}
+                                <span class="w-10 h-10 bg-gray-50 text-gray-400 rounded-xl text-sm font-bold flex items-center justify-center">...</span>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+
+                    <!-- Next Button -->
+                    {% if page_obj.has_next %}
+                        <a href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page_obj.next_page_number }}" 
+                           class="px-4 py-2 bg-gray-50 text-gray-700 rounded-xl text-sm font-bold hover:bg-gray-100 transition-all border border-gray-200 flex items-center gap-2">
+                            Next
+                            <i class="fas fa-chevron-right text-xs"></i>
+                        </a>
+                    {% else %}
+                        <button disabled class="px-4 py-2 bg-gray-50 text-gray-400 rounded-xl text-sm font-bold border border-gray-200 flex items-center gap-2 cursor-not-allowed">
+                            Next
+                            <i class="fas fa-chevron-right text-xs"></i>
+                        </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
     </div>
 </div>
 

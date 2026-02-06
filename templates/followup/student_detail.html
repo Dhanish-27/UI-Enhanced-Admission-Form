@@ -361,7 +361,7 @@
 
         <!-- Facilities & Reference Section -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- Hostel & Bus -->
+            <!-- Facility Details -->
             <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
                 <div class="px-4 py-3 bg-gray-50 border-b border-gray-100 flex items-center gap-2">
                     <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -369,54 +369,106 @@
                             d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
                         </path>
                     </svg>
-                    <h3 class="font-bold text-gray-800">Campus Facilities</h3>
+                    <h3 class="font-bold text-gray-800">Facility Details</h3>
                 </div>
-                <div class="p-5 text-sm space-y-6">
-                    <!-- Hostel -->
-                    <div class="relative">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="font-bold text-gray-800 flex items-center gap-2">
-                                <span
-                                    class="w-6 h-6 rounded bg-gray-100 flex items-center justify-center text-xs">H</span>
-                                Hostel Accommodation
-                            </span>
-                            <span
-                                class="px-2 py-0.5 rounded text-[10px] font-bold uppercase border {% if admission.hostel_needed == 'yes' %}bg-green-50 text-green-600 border-green-200{% else %}bg-gray-50 text-gray-400 border-gray-200{% endif %}">
-                                {{ admission.hostel_needed|default:"NO" }}
-                            </span>
+                <div class="p-5 text-sm space-y-4">
+                    <!-- Facility Type Overview -->
+                    <div class="p-4 bg-gradient-to-r from-gray-50 to-blue-50 rounded-xl border border-gray-200">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="font-bold text-gray-800">Facility Required</span>
+                            {% if admission.facility_type == 'none' or not admission.bus_needed and not admission.hostel_needed %}
+                                <span class="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-xs font-bold uppercase border border-gray-300">
+                                    Not Needed
+                                </span>
+                            {% elif admission.facility_type == 'transport' or admission.bus_needed == 'yes' %}
+                                <span class="px-3 py-1 bg-blue-100 text-blue-600 rounded-full text-xs font-bold uppercase border border-blue-300">
+                                    Transport
+                                </span>
+                            {% elif admission.facility_type == 'hostel' or admission.hostel_needed == 'yes' %}
+                                <span class="px-3 py-1 bg-orange-100 text-orange-600 rounded-full text-xs font-bold uppercase border border-orange-300">
+                                    Hostel
+                                </span>
+                            {% else %}
+                                <span class="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-xs font-bold uppercase border border-gray-300">
+                                    Not Specified
+                                </span>
+                            {% endif %}
                         </div>
-                        {% if admission.hostel_needed == 'yes' %}
-                        <div
-                            class="grid grid-cols-2 gap-3 p-3 bg-gray-50 rounded-xl border border-gray-100 italic text-gray-600">
-                            <p><strong>Type:</strong> {{ admission.hostel_type }}</p>
-                            <p><strong>Room:</strong> {{ admission.room_type }}</p>
-                            <p><strong>Mess:</strong> {{ admission.mess_type }}</p>
-                            <p class="text-primary font-bold"><strong>Fee:</strong> ₹{{ admission.hostel_fee_amount }}
-                            </p>
-                        </div>
-                        {% endif %}
                     </div>
 
-                    <!-- Bus -->
-                    <div class="relative pt-2 border-t border-gray-50">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="font-bold text-gray-800 flex items-center gap-2">
-                                <span
-                                    class="w-6 h-6 rounded bg-gray-100 flex items-center justify-center text-xs">T</span>
-                                Bus/Transport Facility
-                            </span>
-                            <span
-                                class="px-2 py-0.5 rounded text-[10px] font-bold uppercase border {% if admission.bus_needed == 'yes' %}bg-blue-50 text-blue-600 border-blue-200{% else %}bg-gray-50 text-gray-400 border-gray-200{% endif %}">
-                                {{ admission.bus_needed|default:"NO" }}
-                            </span>
+                    <!-- Transport Details -->
+                    {% if admission.facility_type == 'transport' or admission.bus_needed == 'yes' %}
+                    <div class="p-4 bg-blue-50 rounded-xl border border-blue-200">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="w-8 h-8 rounded-lg bg-blue-500 text-white flex items-center justify-center text-sm font-bold">T</span>
+                            <h4 class="font-bold text-blue-900">Transport Facility</h4>
                         </div>
-                        {% if admission.bus_needed == 'yes' %}
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 space-y-1 italic text-gray-600">
-                            <p><strong>Point:</strong> {{ admission.boarding_point }}</p>
-                            <p><strong>Route:</strong> {{ admission.bus_route }}</p>
+                        <div class="grid grid-cols-1 gap-2 text-gray-700">
+                            <div class="flex justify-between items-center p-2 bg-white rounded-lg">
+                                <span class="text-sm font-medium">Boarding Point:</span>
+                                <span class="font-bold text-blue-600">{{ admission.boarding_point|default:"—" }}</span>
+                            </div>
+                            <div class="flex justify-between items-center p-2 bg-white rounded-lg">
+                                <span class="text-sm font-medium">Bus Route:</span>
+                                <span class="font-bold text-blue-600">Route {{ admission.bus_route|default:"—" }}</span>
+                            </div>
                         </div>
-                        {% endif %}
                     </div>
+                    {% endif %}
+
+                    <!-- Hostel Details -->
+                    {% if admission.facility_type == 'hostel' or admission.hostel_needed == 'yes' %}
+                    <div class="p-4 bg-orange-50 rounded-xl border border-orange-200">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="w-8 h-8 rounded-lg bg-orange-500 text-white flex items-center justify-center text-sm font-bold">H</span>
+                            <h4 class="font-bold text-orange-900">Hostel Facility</h4>
+                        </div>
+                        <div class="grid grid-cols-1 gap-2 text-gray-700">
+                            {% if admission.hostel_name %}
+                            <div class="flex justify-between items-center p-2 bg-white rounded-lg">
+                                <span class="text-sm font-medium">Hostel Name:</span>
+                                <span class="font-bold text-orange-600">{{ admission.hostel_name }}</span>
+                            </div>
+                            {% endif %}
+                            {% if admission.hostel_type %}
+                            <div class="flex justify-between items-center p-2 bg-white rounded-lg">
+                                <span class="text-sm font-medium">Hostel Type:</span>
+                                <span class="font-bold text-orange-600">{{ admission.hostel_type }}</span>
+                            </div>
+                            {% endif %}
+                            {% if admission.room_type %}
+                            <div class="flex justify-between items-center p-2 bg-white rounded-lg">
+                                <span class="text-sm font-medium">Room Type:</span>
+                                <span class="font-bold text-orange-600">{{ admission.room_type }}</span>
+                            </div>
+                            {% endif %}
+                            {% if admission.mess_type %}
+                            <div class="flex justify-between items-center p-2 bg-white rounded-lg">
+                                <span class="text-sm font-medium">Mess Type:</span>
+                                <span class="font-bold text-orange-600">{{ admission.mess_type }}</span>
+                            </div>
+                            {% endif %}
+                            {% if admission.hostel_fee_amount %}
+                            <div class="flex justify-between items-center p-2 bg-white rounded-lg">
+                                <span class="text-sm font-medium">Hostel Fee:</span>
+                                <span class="font-bold text-orange-600">₹{{ admission.hostel_fee_amount }}</span>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- No Facility Selected -->
+                    {% if admission.facility_type == 'none' or not admission.bus_needed and not admission.hostel_needed %}
+                    <div class="p-4 bg-gray-50 rounded-xl border border-gray-200 text-center">
+                        <div class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center mx-auto mb-3">
+                            <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <p class="text-gray-600 font-medium">No campus facilities required</p>
+                    </div>
+                    {% endif %}
                 </div>
             </div>
 

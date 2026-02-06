@@ -158,13 +158,25 @@
             <td class="label">Gender</td>
             <td class="value">{{ admission.gender }}</td>
             <td class="label">Community</td>
-            <td class="value">{{ admission.get_community_display }}</td>
+            <td class="value">{{ admission.community|default:"N/A" }}</td>
         </tr>
         <tr>
+            <td class="label">Caste</td>
+            <td class="value">{{ admission.caste|default:"N/A" }}</td>
+            <td class="label">Region</td>
+            <td class="value">{{ admission.region|default:"N/A" }}</td>
+        </tr>
+        <tr>
+            <td class="label">Aadhaar Number</td>
+            <td class="value">{{ admission.aadhaar_number|default:"N/A" }}</td>
             <td class="label">Email</td>
             <td class="value">{{ admission.email }}</td>
+        </tr>
+        <tr>
             <td class="label">Student Mobile</td>
             <td class="value">{{ admission.student_mobile|default:"N/A" }}</td>
+            <td class="label">Pincode</td>
+            <td class="value">{{ admission.pincode|default:"N/A" }}</td>
         </tr>
         <tr>
             <td class="label">Father's Name</td>
@@ -198,19 +210,23 @@
             <table>
                 <tr>
                     <td class="label" style="width: 40%;">Last Institution</td>
-                    <td>{{ admission.last_school }}</td>
+                    <td>{{ admission.last_school|default:"N/A" }}</td>
+                </tr>
+                <tr>
+                    <td class="label">Qualification</td>
+                    <td>{{ admission.qualification|default:"N/A" }}</td>
                 </tr>
                 <tr>
                     <td class="label">Board</td>
-                    <td>{{ admission.board }}</td>
+                    <td>{{ admission.board|default:"N/A" }}</td>
                 </tr>
                 <tr>
                     <td class="label">Year of Passing</td>
-                    <td>{{ admission.year_passing }}</td>
+                    <td>{{ admission.year_passing|default:"N/A" }}</td>
                 </tr>
                 <tr>
                     <td class="label">Medium</td>
-                    <td>{{ admission.medium }}</td>
+                    <td>{{ admission.medium|default:"N/A" }}</td>
                 </tr>
                 {% if admission.vocational_stream %}
                 <tr>
@@ -229,8 +245,16 @@
                 </tr>
                 {% if admission.qualification == "12th" %}
                 <tr>
+                    <td class="label">12th Reg No.</td>
+                    <td>{{ admission.twelth_reg_no|default:"N/A" }}</td>
+                </tr>
+                <tr>
                     <td class="label">12th Percentage</td>
                     <td>{{ admission.twelfth_percentage|default:"N/A" }}%</td>
+                </tr>
+                <tr>
+                    <td class="label">12th Major</td>
+                    <td>{{ admission.twelfth_major|default:"N/A" }}</td>
                 </tr>
                 <tr>
                     <td colspan="2" style="padding: 0;">
@@ -288,34 +312,51 @@
         </tr>
     </table>
 
-    <div class="grid-2">
-        {% if admission.hostel_needed == 'yes' or admission.bus_needed == 'yes' %}
-        <div class="grid-col">
-            <div class="section-title">5. Campus Facilities</div>
-            <table>
-                {% if admission.hostel_needed == 'yes' %}
-                <tr>
-                    <td class="label" style="width: 40%;">Hostel</td>
-                    <td>Needed ({{ admission.hostel_type }} - {{ admission.room_type }})</td>
-                </tr>
-                <tr>
-                    <td class="label">Mess Type</td>
-                    <td>{{ admission.mess_type }}</td>
-                </tr>
+    <div class="section-title">5. Campus Facilities</div>
+    <table>
+        <tr>
+            <td class="label" style="width: 40%;">Facility Type</td>
+            <td class="value">
+                {% if admission.facility_type == 'none' or not admission.bus_needed and not admission.hostel_needed %}
+                    Not Needed
+                {% elif admission.facility_type == 'transport' or admission.bus_needed == 'yes' %}
+                    Transport
+                {% elif admission.facility_type == 'hostel' or admission.hostel_needed == 'yes' %}
+                    Hostel
+                {% else %}
+                    Not Specified
                 {% endif %}
-                {% if admission.bus_needed == 'yes' %}
-                <tr>
-                    <td class="label">Transport</td>
-                    <td>Needed (Route: {{ admission.bus_route }})</td>
-                </tr>
-                <tr>
-                    <td class="label">Boarding Point</td>
-                    <td>{{ admission.boarding_point }}</td>
-                </tr>
-                {% endif %}
-            </table>
-        </div>
+            </td>
+            <td class="label">Application Date</td>
+            <td class="value">{{ admission.application_date|date:"d M Y"|default:"N/A" }}</td>
+        </tr>
+        
+        <!-- Transport Details -->
+        {% if admission.facility_type == 'transport' or admission.bus_needed == 'yes' %}
+        <tr>
+            <td class="label">Bus Boarding Point</td>
+            <td class="value">{{ admission.boarding_point|default:"N/A" }}</td>
+            <td class="label">Bus Route</td>
+            <td class="value">Route {{ admission.bus_route|default:"N/A" }}</td>
+        </tr>
         {% endif %}
+        
+        <!-- Hostel Details -->
+        {% if admission.facility_type == 'hostel' or admission.hostel_needed == 'yes' %}
+        <tr>
+            <td class="label">Hostel Name</td>
+            <td class="value">{{ admission.hostel_name|default:"N/A" }}</td>
+            <td class="label">Hostel Type</td>
+            <td class="value">{{ admission.hostel_type|default:"N/A" }}</td>
+        </tr>
+        <tr>
+            <td class="label">Room Type</td>
+            <td class="value">{{ admission.room_type|default:"N/A" }}</td>
+            <td class="label">Mess Type</td>
+            <td class="value">{{ admission.mess_type|default:"N/A" }}</td>
+        </tr>
+        {% endif %}
+    </table>
         
         {% if admission.reference_name %}
         <div class="grid-col" {% if not admission.hostel_needed == 'yes' and not admission.bus_needed == 'yes' %}style="width: 100%;"{% endif %}>
@@ -344,15 +385,84 @@
             <th>Admission Fee</th>
             <th>Tuition Fee</th>
             <th>College Fee</th>
-            {% if admission.hostel_needed == 'yes' %}<th>Hostel Fee</th>{% endif %}
-            {% if admission.bus_needed == 'yes' %}<th>Bus Fee</th>{% endif %}
+            <th>University Fee</th>
+            <th>Other Fee</th>
         </tr>
         <tr>
             <td>₹{{ admission.admission_fee|default:"0" }}</td>
             <td>₹{{ admission.tuition_fee|default:"0" }}</td>
             <td>₹{{ admission.college_fee|default:"0" }}</td>
-            {% if admission.hostel_needed == 'yes' %}<td>₹{{ admission.hostel_fee_amount|default:admission.hostel_fee|default:"0" }}</td>{% endif %}
-            {% if admission.bus_needed == 'yes' %}<td>₹{{ admission.bus_fee|default:"0" }}</td>{% endif %}
+            <td>₹{{ admission.university_fee|default:"0" }}</td>
+            <td>₹{{ admission.other_fee|default:"0" }}</td>
+        </tr>
+    </table>
+    
+    {% if admission.hostel_needed == 'yes' or admission.facility_type == 'hostel' %}
+    <table class="fee-table" style="margin-top: 8px;">
+        <tr>
+            <th>Hostel Fee</th>
+            <th>Hostel Fee Amount</th>
+            <th>Paid Amount</th>
+            <th>Concession</th>
+            <th>Balance</th>
+        </tr>
+        <tr>
+            <td>₹{{ admission.hostel_fee|default:"0" }}</td>
+            <td>₹{{ admission.hostel_fee_amount|default:"0" }}</td>
+            <td>₹{{ admission.paid_fee|default:"0" }}</td>
+            <td>₹{{ admission.concession_amount|default:"0" }}</td>
+            <td>₹{{ admission.balance_fee|default:"0" }}</td>
+        </tr>
+    </table>
+    {% endif %}
+    
+    {% if admission.bus_needed == 'yes' or admission.facility_type == 'transport' %}
+    <table class="fee-table" style="margin-top: 8px;">
+        <tr>
+            <th>Bus Fee</th>
+            <th>Pending Amount</th>
+        </tr>
+        <tr>
+            <td>₹{{ admission.bus_fee|default:"0" }}</td>
+            <td>₹{{ admission.pending_amount|default:"0" }}</td>
+        </tr>
+    </table>
+    {% endif %}
+    
+    <div style="background-color: #f8f9fa; padding: 8px; border: 1px solid #eee; margin-top: 5px;">
+        <table style="margin: 0; border: none;">
+            <tr>
+                <td style="border: none; padding: 0; width: 60%;">
+                    <span class="label" style="background: none;">Transaction ID:</span> 
+                    <strong>{{ admission.transaction_id|default:"MANUAL RECORD" }}</strong>
+                </td>
+                <td style="border: none; padding: 0; text-align: right;">
+                    <span class="label" style="background: none;">Date:</span> 
+                    <strong>{{ admission.transaction_date|default:admission.created_at|date:"d M Y" }}</strong>
+                </td>
+            </tr>
+        </table>
+    </div>
+    
+    <div class="section-title" style="margin-top: 15px;">8. Bank Details</div>
+    <table>
+        <tr>
+            <td class="label" style="width: 40%;">Account Holder Name</td>
+            <td class="value">{{ admission.account_holder_name|default:"N/A" }}</td>
+            <td class="label">Account Number</td>
+            <td class="value">{{ admission.account_number|default:"N/A" }}</td>
+        </tr>
+        <tr>
+            <td class="label">Bank Name</td>
+            <td class="value">{{ admission.bank_name|default:"N/A" }}</td>
+            <td class="label">Branch</td>
+            <td class="value">{{ admission.bank_branch|default:"N/A" }}</td>
+        </tr>
+        <tr>
+            <td class="label">IFSC Code</td>
+            <td class="value">{{ admission.ifsc_code|default:"N/A" }}</td>
+            <td class="label">Seeding Status</td>
+            <td class="value">{{ admission.seeding_status|default:"N/A" }}</td>
         </tr>
     </table>
     
@@ -370,6 +480,40 @@
             </tr>
         </table>
     </div>
+
+    <div class="section-title" style="margin-top: 15px;">9. Additional Information</div>
+    <table>
+        <tr>
+            <td class="label" style="width: 40%;">Portal Status</td>
+            <td class="value">{{ admission.portal_status|default:"N/A" }}</td>
+            <td class="label">Quota</td>
+            <td class="value">{{ admission.quota|default:"N/A" }}</td>
+        </tr>
+        <tr>
+            <td class="label">Roll Number</td>
+            <td class="value">{{ admission.roll_number|default:"N/A" }}</td>
+            <td class="label">UMIS Number</td>
+            <td class="value">{{ admission.umis_number|default:"N/A" }}</td>
+        </tr>
+        <tr>
+            <td class="label">Allotment Number</td>
+            <td class="value">{{ admission.allotment_number|default:"N/A" }}</td>
+            <td class="label">Admission Date</td>
+            <td class="value">{{ admission.admission_date|date:"d M Y"|default:"N/A" }}</td>
+        </tr>
+        <tr>
+            <td class="label">Scholarship - FG</td>
+            <td class="value">{% if admission.is_fg %}Yes ({{ admission.fg_number|default:"N/A" }}){% else %}No{% endif %}</td>
+            <td class="label">Scholarship - PMSS</td>
+            <td class="value">{% if admission.pmss %}Yes{% else %}No{% endif %}</td>
+        </tr>
+        <tr>
+            <td class="label">Scholarship - 7.5%</td>
+            <td class="value">{% if admission.seven_five %}Yes{% else %}No{% endif %}</td>
+            <td class="label">Payment Status</td>
+            <td class="value">{% if admission.had_paid %}Paid{% else %}Pending{% endif %}</td>
+        </tr>
+    </table>
 
     <div class="footer">
         This is a computer-generated admission report. | Printed on {{ "now"|date:"d M Y H:i" }}
