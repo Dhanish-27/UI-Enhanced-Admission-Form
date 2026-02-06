@@ -36,9 +36,9 @@
                 <!-- Step Text -->
                 <div class="pt-1">
                     <h3 class="font-semibold leading-tight px-2 py-0.5 rounded-md transition-colors duration-300 w-fit
-                        {% if step.step_number == current_step %}
+                        {% if step.number == current_step %}
                             text-orange-700 bg-orange-50
-                        {% elif step.step_number < current_step %}
+                        {% elif step.number < current_step %}
                             text-green-700 bg-green-50
                         {% else %}
                             text-gray-500

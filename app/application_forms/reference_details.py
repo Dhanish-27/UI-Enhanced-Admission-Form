@@ -44,7 +44,7 @@ def reference_details(request, pk):
                 admission.save()
                 logger.info(f"Reference details saved for student: {admission.student_name}")
                 messages.success(request, 'Reference details saved successfully!')
-                return redirect('certificate_checklist', pk=pk)
+                return redirect('bank_details', pk=pk)
             except ValidationError as e:
                 logger.warning(f"Validation error in reference details: {str(e)}")
                 messages.error(request, f'Validation error: {str(e)}')
@@ -54,7 +54,7 @@ def reference_details(request, pk):
                 messages.error(request, 'An error occurred while saving reference details.')
                 return render(request, 'details_form/reference_details.html', {'admission': admission})
 
-        return render(request, 'details_form/reference_details.html', {'admission': admission, "steps": get_steps(), "current_step": 9})
+        return render(request, 'details_form/reference_details.html', {'admission': admission, "steps": get_steps(), "current_step": 8})
 
     except Exception as e:
         logger.error(f"Error in reference_details view: {str(e)}")

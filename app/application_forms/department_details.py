@@ -1,6 +1,6 @@
 from app.models import * 
 from django.contrib import messages
-from django.shortcuts import redirect
+from django.shortcuts import redirect,render
 from django.template.loader import render_to_string
 from weasyprint import HTML
 from django.core.serializers.json import DjangoJSONEncoder

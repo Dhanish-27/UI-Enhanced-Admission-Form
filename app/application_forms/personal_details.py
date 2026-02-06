@@ -70,7 +70,7 @@ def personal_details(request, pk=None):
             'father_name': data['father_name'],
             'mother_name': data['mother_name'],
             'guardian_name': data.get('guardian_name'),
-            'register_number': data.get('register_number'),
+            'allotment_number': data.get('register_number'),
             'umis_number': data.get('umis_number'),
             'dob': data['dob'],
             'gender': data['gender'],
@@ -94,8 +94,9 @@ def personal_details(request, pk=None):
 
         except IntegrityError:
             messages.error(request, 'Email or Register Number already exists.')
-        except Exception:
-            messages.error(request, 'An unexpected error occurred.')
+        except Exception as e:
+            logger.error(f"An unexpected error occurred: {str(e)}")
+            messages.error(request, 'An unexpected error occurred.'+str(e))
 
     return render(request, 'details_form/personal_details.html', {
         'admission': admission,

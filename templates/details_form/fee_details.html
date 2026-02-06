@@ -10,7 +10,7 @@
   <div class="mb-6 space-y-2">
     {% for message in messages %}
     <div
-      class="p-4 rounded-lg text-sm font-medium {% if message.tags == 'error' %}bg-red-50 text-red-600{% elif message.tags == 'success' %}bg-green-50 text-green-600{% else %}bg-blue-50 text-blue-600{% endif %}">
+      class="p-4 rounded-lg text-sm font-medium {% if message.tags  ==  'error' %}bg-red-50 text-red-600{% elif message.tags  ==  'success' %}bg-green-50 text-green-600{% else %}bg-blue-50 text-blue-600{% endif %}">
       {{ message }}
     </div>
     {% endfor %}
@@ -19,124 +19,141 @@
 
   <!-- Content Block -->
   <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
-<form method="post"
-      enctype="multipart/form-data"
-      action="{% url 'fee_details' admission.pk %}"
-      id="feeForm">
+    <form method="post" enctype="multipart/form-data" action="{% url 'fee_details' admission.pk %}" id="feeForm">
 
-  {% csrf_token %}
-  <input type="hidden" name="pk" value="{% if admission %}{{ admission.pk }}{% endif %}">
+      {% csrf_token %}
+      <input type="hidden" name="pk" value="{% if admission %}{{ admission.pk }}{% endif %}">
 
-  <div class="max-w-5xl mx-auto bg-white shadow-lg rounded-xl p-8">
+      <div class="max-w-5xl mx-auto bg-white shadow-lg rounded-xl p-8">
 
-    <h2 class="text-xl font-semibold mb-6 border-b pb-3">
-      8. Fee Details
-    </h2>
+        <h2 class="text-xl font-semibold mb-6 border-b pb-3">
+          8. Fee Details
+        </h2>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-      <!-- Admission Fee -->
-      <div>
-        <label class="block font-medium mb-1">Admission Fee</label>
-        <input type="text"
-               name="admission_fee"
-               value="{% if admission %}{{ admission.admission_fee }}{% endif %}"
-               placeholder="Enter amount"
-               class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500">
+          <!-- Admission Fee -->
+          <div>
+            <label class="block font-medium mb-1">Admission Fee</label>
+            <input type="text" name="admission_fee" value="{% if admission %}{{ admission.admission_fee }}{% endif %}"
+              placeholder="Enter amount"
+              class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500">
+            <span class="error-message" id="admission_fee_error"></span>
+          </div>
+
+          <!-- Tuition Fee -->
+          <div>
+            <label class="block font-medium mb-1">Tuition Fee</label>
+            <input type="text" name="tuition_fee" value="{% if admission %}{{ admission.tuition_fee }}{% endif %}"
+              placeholder="Enter amount"
+              class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500">
+            <span class="error-message" id="tuition_fee_error"></span>
+          </div>
+
+          <!-- College Fee -->
+          <div>
+            <label class="block font-medium mb-1">College Fee</label>
+            <input type="text" name="college_fee" value="{% if admission %}{{ admission.college_fee }}{% endif %}"
+              placeholder="Enter amount"
+              class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500">
+            <span class="error-message" id="college_fee_error"></span>
+          </div>
+
+          <!-- Hostel Fee -->
+          <div>
+            <label class="block font-medium mb-1">Hostel Fee</label>
+            <input type="text" name="hostel_fee" value="{% if admission %}{{ admission.hostel_fee }}{% endif %}"
+              placeholder="Enter amount"
+              class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500">
+            <span class="error-message" id="hostel_fee_error"></span>
+          </div>
+
+          <!-- Bus Fee -->
+          <div>
+            <label class="block font-medium mb-1">Bus Fee</label>
+            <input type="text" name="bus_fee" value="{% if admission %}{{ admission.bus_fee }}{% endif %}"
+              placeholder="Enter amount"
+              class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500">
+            <span class="error-message" id="bus_fee_error"></span>
+          </div>
+
+          <!-- Transaction ID -->
+          <div>
+            <label class="block font-medium mb-1">Transaction ID</label>
+            <input type="text" name="transaction_id" value="{% if admission %}{{ admission.transaction_id }}{% endif %}"
+              placeholder="Enter transaction ID"
+              class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500">
+          </div>
+
+          <!-- Transaction Date -->
+          <div>
+            <label class="block font-medium mb-1">Transaction Date</label>
+            <input type="datetime-local" name="transaction_date"
+              value="{% if admission and admission.transaction_date %}{{ admission.transaction_date|date:'Y-m-d\\TH:i' }}{% endif %}"
+              class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500">
+          </div>
+
+          <!-- Payment Screenshots -->
+          <div>
+            <label class="block font-medium mb-1">Payment Screenshots</label>
+            <input type="file" name="payment_screenshots" accept=".pdf,.jpg,.jpeg,.png" multiple
+              class="w-full border border-gray-300 rounded px-3 py-2 file:mr-3 file:border-0 file:bg-blue-600 file:text-white file:px-4 file:py-2 file:rounded">
+            <span class="error-message" id="payment_screenshots_error"></span>
+          </div>
+
+          <!-- PMSS & FG Options -->
+          <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+            <div class="flex items-center gap-3">
+              <input type="checkbox" name="pmss" id="pmss" {% if admission and admission.pmss %}checked{% endif %}
+                class="w-5 h-5 text-orange-600 border-gray-300 rounded focus:ring-orange-500">
+              <label for="pmss" class="font-medium">PMSS Scholarship</label>
+            </div>
+
+            <div class="flex flex-col gap-3">
+              <div class="flex items-center gap-3">
+                <input type="checkbox" name="is_fg" id="is_fg" onchange="toggleFGNumber()" {% if admission and admission.is_fg %}checked{% endif %}
+                  class="w-5 h-5 text-orange-600 border-gray-300 rounded focus:ring-orange-500">
+                <label for="is_fg" class="font-medium">First Graduate (FG)</label>
+              </div>
+
+              <div id="fg_number_container"
+                style="{% if admission and admission.is_fg %}display: block;{% else %}display: none;{% endif %}">
+                <label class="block text-sm font-medium mb-1">FG Number</label>
+                <input type="text" name="fg_number" value="{% if admission %}{{ admission.fg_number }}{% endif %}"
+                  placeholder="Enter FG number"
+                  class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500">
+                <span class="error-message" id="fg_number_error"></span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Actions -->
+        <div class="flex justify-between mt-8">
+          <button type="button" onclick="window.location.href='{% url 'facility_details' admission.pk %}';"
+            class="px-6 py-2 border rounded hover:bg-gray-100">
+            Previous
+          </button>
+
+          <button type="submit" class="bg-orange-600 text-white px-6 py-2 rounded hover:bg-orange-700">
+            Next
+          </button>
+        </div>
+
       </div>
-
-      <!-- Tuition Fee -->
-      <div>
-        <label class="block font-medium mb-1">Tuition Fee</label>
-        <input type="text"
-               name="tuition_fee"
-               value="{% if admission %}{{ admission.tuition_fee }}{% endif %}"
-               placeholder="Enter amount"
-               class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500">
-      </div>
-
-      <!-- College Fee -->
-      <div>
-        <label class="block font-medium mb-1">College Fee</label>
-        <input type="text"
-               name="college_fee"
-               value="{% if admission %}{{ admission.college_fee }}{% endif %}"
-               placeholder="Enter amount"
-               class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500">
-      </div>
-
-      <!-- Hostel Fee -->
-      <div>
-        <label class="block font-medium mb-1">Hostel Fee</label>
-        <input type="text"
-               name="hostel_fee"
-               value="{% if admission %}{{ admission.hostel_fee }}{% endif %}"
-               placeholder="Enter amount"
-               class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500">
-      </div>
-
-      <!-- Bus Fee -->
-      <div>
-        <label class="block font-medium mb-1">Bus Fee</label>
-        <input type="text"
-               name="bus_fee"
-               value="{% if admission %}{{ admission.bus_fee }}{% endif %}"
-               placeholder="Enter amount"
-               class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500">
-      </div>
-
-      <!-- Transaction ID -->
-      <div>
-        <label class="block font-medium mb-1">Transaction ID</label>
-        <input type="text"
-               name="transaction_id"
-               value="{% if admission %}{{ admission.transaction_id }}{% endif %}"
-               placeholder="Enter transaction ID"
-               class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500">
-      </div>
-
-      <!-- Transaction Date -->
-      <div>
-        <label class="block font-medium mb-1">Transaction Date</label>
-        <input type="datetime-local"
-               name="transaction_date"
-               value="{% if admission and admission.transaction_date %}{{ admission.transaction_date|date:'Y-m-d\\TH:i' }}{% endif %}"
-               class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500">
-      </div>
-
-      <!-- Payment Screenshots -->
-      <div>
-        <label class="block font-medium mb-1">Payment Screenshots</label>
-        <input type="file"
-               name="payment_screenshots"
-               accept=".pdf,.jpg,.jpeg,.png"
-               multiple
-               class="w-full border border-gray-300 rounded px-3 py-2 file:mr-3 file:border-0 file:bg-blue-600 file:text-white file:px-4 file:py-2 file:rounded">
-      </div>
-
-    </div>
-
-    <!-- Actions -->
-    <div class="flex justify-between mt-8">
-      <button type="button"
-              onclick="window.location.href='{% url 'hostel_facilities' admission.pk %}'"
-              class="px-6 py-2 border rounded hover:bg-gray-100">
-        Previous
-      </button>
-
-      <button type="submit"
-              class="bg-orange-600 text-white px-6 py-2 rounded hover:bg-orange-700">
-        Next
-      </button>
-    </div>
-
-  </div>
-</form>
+    </form>
 
   </div>
 </div>
 
 <script>
+  function toggleFGNumber() {
+    const isFG = document.getElementById('is_fg').checked;
+    const container = document.getElementById('fg_number_container');
+    container.style.display = isFG ? 'block' : 'none';
+  }
+
   document.getElementById('feeForm').addEventListener('submit', function (e) {
     let isValid = true;
     clearAllErrors();
@@ -146,10 +163,14 @@
     const feeFields = ['admission_fee', 'tuition_fee', 'college_fee', 'hostel_fee', 'bus_fee'];
     feeFields.forEach(field => {
       const element = document.querySelector(`[name="${field}"]`);
-      const value = element.value.trim();
-      if (value && (isNaN(value) || parseFloat(value) < 0)) {
-        showError(field, 'Fee amount must be a valid positive number');
-        isValid = false;
+      if (element) {
+        const value = element.value.trim();
+        if (value && (isNaN(value) || parseFloat(value) < 0)) {
+          showError(field, 'Fee amount must be a valid positive number');
+          isValid = false;
+        }
+      } else {
+        console.warn('Field not found:', field);
       }
     });
 
@@ -173,8 +194,12 @@
       }
     }
 
+    console.log('Form validation result:', isValid);
     if (!isValid) {
       e.preventDefault();
+      console.log('Form submission prevented due to validation errors.');
+    } else {
+      console.log('Form submitting...');
     }
   });
 

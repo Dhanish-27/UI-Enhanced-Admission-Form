@@ -19,97 +19,80 @@
 
   <!-- Content Block -->
   <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
-<form method="post"
-      enctype="multipart/form-data"
-      action="{% url 'certificate_checklist' admission.pk %}"
+    <form method="post" enctype="multipart/form-data" action="{% url 'certificate_checklist' admission.pk %}"
       id="certificateForm">
 
-  {% csrf_token %}
-  <input type="hidden" name="pk" value="{% if admission %}{{ admission.pk }}{% endif %}">
+      {% csrf_token %}
+      <input type="hidden" name="pk" value="{% if admission %}{{ admission.pk }}{% endif %}">
 
-  <div class="max-w-5xl mx-auto bg-white shadow-lg rounded-xl p-8">
+      <div class="max-w-5xl mx-auto bg-white shadow-lg rounded-xl p-8">
 
-    <h2 class="text-xl font-semibold mb-6 border-b pb-3">
-      10. Certificate Checklist
-    </h2>
+        <h2 class="text-xl font-semibold mb-6 border-b pb-3">
+          11. Certificate Checklist
+        </h2>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-      <!-- Transfer Certificate -->
-      <div>
-        <label class="block font-medium mb-1">Transfer Certificate (TC)</label>
-        <input type="file"
-               name="tc"
-               accept=".pdf,.jpg,.jpeg,.png"
-               class="w-full border border-gray-300 rounded px-3 py-2">
+          <!-- Transfer Certificate -->
+          <div>
+            <label class="block font-medium mb-1">Transfer Certificate (TC)</label>
+            <input type="file" name="tc" accept=".pdf,.jpg,.jpeg,.png"
+              class="w-full border border-gray-300 rounded px-3 py-2">
+          </div>
+
+          <!-- Community Certificate -->
+          <div>
+            <label class="block font-medium mb-1">Community Certificate</label>
+            <input type="file" name="community_cert" accept=".pdf,.jpg,.jpeg,.png"
+              class="w-full border border-gray-300 rounded px-3 py-2">
+          </div>
+
+          <!-- Aadhaar -->
+          <div>
+            <label class="block font-medium mb-1">Aadhaar Card</label>
+            <input type="file" name="aadhaar" accept=".pdf,.jpg,.jpeg,.png"
+              class="w-full border border-gray-300 rounded px-3 py-2">
+          </div>
+
+          <!-- 10th Marksheet -->
+          <div>
+            <label class="block font-medium mb-1">10th Marksheet</label>
+            <input type="file" name="tenth_marksheet" accept=".pdf,.jpg,.jpeg,.png"
+              class="w-full border border-gray-300 rounded px-3 py-2">
+          </div>
+
+          <!-- 12th Marksheet -->
+          <div>
+            <label class="block font-medium mb-1">12th Marksheet (Optional)</label>
+            <input type="file" name="twelfth_marksheet" accept=".pdf,.jpg,.jpeg,.png"
+              class="w-full border border-gray-300 rounded px-3 py-2">
+          </div>
+
+          <!-- Photo -->
+          <div>
+            <label class="block font-medium mb-1">
+              Passport Size Photo <span class="text-red-600">*</span>
+            </label>
+            <input type="file" name="photo" accept=".jpg,.jpeg,.png"
+              class="w-full border border-gray-300 rounded px-3 py-2">
+          </div>
+
+        </div>
+
+        <!-- Actions -->
+        <div class="flex justify-between mt-8">
+          <button type="button" onclick="window.location.href='{% url 'bank_details' admission.pk %}'"
+            class="px-6 py-2 border rounded hover:bg-gray-100">
+            Previous
+          </button>
+
+          <button type="submit" class="bg-orange-600 text-white px-6 py-2 rounded hover:bg-orange-700">
+            Next
+          </button>
+        </div>
+
       </div>
-
-      <!-- Community Certificate -->
-      <div>
-        <label class="block font-medium mb-1">Community Certificate</label>
-        <input type="file"
-               name="community_cert"
-               accept=".pdf,.jpg,.jpeg,.png"
-               class="w-full border border-gray-300 rounded px-3 py-2">
-      </div>
-
-      <!-- Aadhaar -->
-      <div>
-        <label class="block font-medium mb-1">Aadhaar Card</label>
-        <input type="file"
-               name="aadhaar"
-               accept=".pdf,.jpg,.jpeg,.png"
-               class="w-full border border-gray-300 rounded px-3 py-2">
-      </div>
-
-      <!-- 10th Marksheet -->
-      <div>
-        <label class="block font-medium mb-1">10th Marksheet</label>
-        <input type="file"
-               name="tenth_marksheet"
-               accept=".pdf,.jpg,.jpeg,.png"
-               class="w-full border border-gray-300 rounded px-3 py-2">
-      </div>
-
-      <!-- 12th Marksheet -->
-      <div>
-        <label class="block font-medium mb-1">12th Marksheet (Optional)</label>
-        <input type="file"
-               name="twelfth_marksheet"
-               accept=".pdf,.jpg,.jpeg,.png"
-               class="w-full border border-gray-300 rounded px-3 py-2">
-      </div>
-
-      <!-- Photo -->
-      <div>
-        <label class="block font-medium mb-1">
-          Passport Size Photo <span class="text-red-600">*</span>
-        </label>
-        <input type="file"
-               name="photo"
-               accept=".jpg,.jpeg,.png"
-               
-               class="w-full border border-gray-300 rounded px-3 py-2">
-      </div>
-
-    </div>
-
-    <!-- Actions -->
-    <div class="flex justify-between mt-8">
-      <button type="button"
-              onclick="window.location.href='{% url 'reference_details' admission.pk %}'"
-              class="px-6 py-2 border rounded hover:bg-gray-100">
-        Previous
-      </button>
-
-      <button type="submit"
-              class="bg-orange-600 text-white px-6 py-2 rounded hover:bg-orange-700">
-        Next
-      </button>
-    </div>
-
-  </div>
-</form>
+    </form>
 
   </div>
 </div>

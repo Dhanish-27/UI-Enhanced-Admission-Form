@@ -109,17 +109,17 @@
                         <p class="text-xs text-gray-400 uppercase tracking-wider font-semibold">Preferences</p>
                         <div class="mt-1">
                             {% if admission.department_preferences %}
-                                    {% for dept, pref in admission.department_preferences.items %}
-                                    {{ pref }}: {{ dept|upper }} <br> {% if not forloop.last %} {% endif %}
-                                    {% endfor %}
-                                    {% else %}
-                                    N/A
+                            {% for dept, pref in admission.department_preferences.items %}
+                            {{ pref }}: {{ dept|upper }} <br> {% if not forloop.last %} {% endif %}
+                            {% endfor %}
+                            {% else %}
+                            N/A
                             {% endif %}
                             {% if admission.pg_dept %}
-                           
-                                
-                                {{ admission.pg_dept }}
-                          
+
+
+                            {{ admission.pg_dept }}
+
                             {% endif %}
                         </div>
                     </div>
@@ -130,64 +130,64 @@
         <!-- 3. Marks Obtained -->
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
             <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
-            <h2 class="text-lg font-semibold text-gray-800">3. Marks Obtained</h2>
-            <a href="{% url 'marks_obtained' admission.pk %}"
-                class="text-sm font-medium text-orange-600 hover:text-orange-700 hover:underline">Edit</a>
+                <h2 class="text-lg font-semibold text-gray-800">3. Marks Obtained</h2>
+                <a href="{% url 'marks_obtained' admission.pk %}"
+                    class="text-sm font-medium text-orange-600 hover:text-orange-700 hover:underline">Edit</a>
             </div>
             <div class="p-6">
-            <div class="overflow-x-auto">
-                {% if admission.qualification == '12th' %}
-                <table class="w-full text-left border-collapse">
-                <thead>
-                    <tr class="border-b border-gray-100 text-xs text-gray-400 uppercase tracking-wider">
-                    <th class="py-2 px-4 font-semibold">Subject</th>
-                    <th class="py-2 px-4 font-semibold">Marks</th>
-                    </tr>
-                </thead>
-                <tbody class="text-sm text-gray-700">
-                    <tr class="border-b border-gray-50">
-                    <td class="py-3 px-4 font-medium">Maths</td>
-                    <td class="py-3 px-4">{{ admission.maths_marks }}</td>
-                    </tr>
-                    <tr class="border-b border-gray-50">
-                    <td class="py-3 px-4 font-medium">Physics</td>
-                    <td class="py-3 px-4">{{ admission.physics_marks }}</td>
-                    </tr>
-                    <tr class="border-b border-gray-50">
-                    <td class="py-3 px-4 font-medium">Chemistry</td>
-                    <td class="py-3 px-4">{{ admission.chemistry_marks }}</td>
-                    </tr>
-                    <tr class="bg-orange-50/50">
-                    <td class="py-3 px-4 font-bold text-gray-900">Total</td>
-                    <td class="py-3 px-4 font-bold text-gray-900">{{ admission.twelfth_total }}</td>
-                    </tr>
-                </tbody>
-                </table>
-                {% elif admission.qualification == 'Diploma' %}
-                <table class="w-full text-left border-collapse">
-                <thead>
-                    <tr class="border-b border-gray-100 text-xs text-gray-400 uppercase tracking-wider">
-                    <th class="py-2 px-4 font-semibold">Subject</th>
-                    <th class="py-2 px-4 font-semibold">Marks</th>
-                    </tr>
-                </thead>
-                <tbody class="text-sm text-gray-700">
-                    <tr class="border-b border-gray-50">
-                    <td class="py-3 px-4 font-medium">Diploma Percentage</td>
-                    <td class="py-3 px-4">{{ admission.diploma_percentage }}</td>
-                    </tr>
-                    <tr class="border-b border-gray-50">
-                    <td class="py-3 px-4 font-medium">Diploma Major</td>
-                    <td class="py-3 px-4">{{ admission.diploma_major }}</td>
-                    </tr>
-                    <tr class="bg-orange-50/50">
-                    <td class="py-3 px-4 font-bold text-gray-900">Total</td>
-                    <td class="py-3 px-4 font-bold text-gray-900">{{ admission.diploma_total }}</td>
-                    </tr>
-                </tbody>
-                </table>
-                {% endif %}
-            </div>
+                <div class="overflow-x-auto">
+                    {% if admission.qualification == '12th' %}
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-gray-100 text-xs text-gray-400 uppercase tracking-wider">
+                                <th class="py-2 px-4 font-semibold">Subject</th>
+                                <th class="py-2 px-4 font-semibold">Marks</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-sm text-gray-700">
+                            <tr class="border-b border-gray-50">
+                                <td class="py-3 px-4 font-medium">Maths</td>
+                                <td class="py-3 px-4">{{ admission.maths_marks }}</td>
+                            </tr>
+                            <tr class="border-b border-gray-50">
+                                <td class="py-3 px-4 font-medium">Physics</td>
+                                <td class="py-3 px-4">{{ admission.physics_marks }}</td>
+                            </tr>
+                            <tr class="border-b border-gray-50">
+                                <td class="py-3 px-4 font-medium">Chemistry</td>
+                                <td class="py-3 px-4">{{ admission.chemistry_marks }}</td>
+                            </tr>
+                            <tr class="bg-orange-50/50">
+                                <td class="py-3 px-4 font-bold text-gray-900">Total</td>
+                                <td class="py-3 px-4 font-bold text-gray-900">{{ admission.twelfth_total }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    {% elif admission.qualification == 'Diploma' %}
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-gray-100 text-xs text-gray-400 uppercase tracking-wider">
+                                <th class="py-2 px-4 font-semibold">Subject</th>
+                                <th class="py-2 px-4 font-semibold">Marks</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-sm text-gray-700">
+                            <tr class="border-b border-gray-50">
+                                <td class="py-3 px-4 font-medium">Diploma Percentage</td>
+                                <td class="py-3 px-4">{{ admission.diploma_percentage }}</td>
+                            </tr>
+                            <tr class="border-b border-gray-50">
+                                <td class="py-3 px-4 font-medium">Diploma Major</td>
+                                <td class="py-3 px-4">{{ admission.diploma_major }}</td>
+                            </tr>
+                            <tr class="bg-orange-50/50">
+                                <td class="py-3 px-4 font-bold text-gray-900">Total</td>
+                                <td class="py-3 px-4 font-bold text-gray-900">{{ admission.diploma_total }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    {% endif %}
+                </div>
             </div>
         </div>
 
@@ -236,71 +236,71 @@
                 </div>
             </div>
 
-            <!-- Transport -->
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+            <!-- 6. Facility Details -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden md:col-span-2">
                 <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
-                    <h2 class="text-lg font-semibold text-gray-800">6. Transport</h2>
-                    <a href="{% url 'transport_details' admission.pk %}"
+                    <h2 class="text-lg font-semibold text-gray-800">6. Facility Details</h2>
+                    <a href="{% url 'facility_details' admission.pk %}"
                         class="text-sm font-medium text-orange-600 hover:text-orange-700 hover:underline">Edit</a>
                 </div>
-                <div class="p-6 space-y-4">
-                    <div>
-                        <p class="text-xs text-gray-400 uppercase tracking-wider font-semibold">Bus Facility</p>
-                        <p class="text-gray-900 font-medium mt-1">{{ admission.bus_needed|title }}</p>
+                <div class="p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <!-- Transport -->
+                        <div class="space-y-4">
+                            <h3 class="text-sm font-bold text-gray-700 uppercase tracking-wider">Transport</h3>
+                            <div>
+                                <p class="text-xs text-gray-400 uppercase tracking-wider font-semibold">Bus Facility</p>
+                                <p class="text-gray-900 font-medium mt-1">{{ admission.bus_needed|title }}</p>
+                            </div>
+                            {% if admission.bus_needed == "yes" %}
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <p class="text-xs text-gray-400 uppercase tracking-wider font-semibold">Boarding
+                                        Point</p>
+                                    <p class="text-gray-900 font-medium mt-1">{{ admission.boarding_point }}</p>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-gray-400 uppercase tracking-wider font-semibold">Route</p>
+                                    <p class="text-gray-900 font-medium mt-1">{{ admission.bus_route }}</p>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <!-- Hostel -->
+                        <div class="space-y-4">
+                            <h3 class="text-sm font-bold text-gray-700 uppercase tracking-wider">Hostel</h3>
+                            <div>
+                                <p class="text-xs text-gray-400 uppercase tracking-wider font-semibold">Hostel Needed
+                                </p>
+                                <p class="text-gray-900 font-medium mt-1">{{ admission.hostel_needed|title }}</p>
+                            </div>
+                            {% if admission.hostel_needed == "yes" %}
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <p class="text-xs text-gray-400 uppercase tracking-wider font-semibold">Hostel Type
+                                    </p>
+                                    <p class="text-gray-900 font-medium mt-1">{{ admission.hostel_type }}</p>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-gray-400 uppercase tracking-wider font-semibold">Room Type
+                                    </p>
+                                    <p class="text-gray-900 font-medium mt-1">{{ admission.room_type }}</p>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-gray-400 uppercase tracking-wider font-semibold">Mess</p>
+                                    <p class="text-gray-900 font-medium mt-1">{{ admission.mess_type }}</p>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
                     </div>
-                    {% if admission.bus_needed == "yes" %}
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <p class="text-xs text-gray-400 uppercase tracking-wider font-semibold">Boarding Point</p>
-                            <p class="text-gray-900 font-medium mt-1">{{ admission.boarding_point }}</p>
-                        </div>
-                        <div>
-                            <p class="text-xs text-gray-400 uppercase tracking-wider font-semibold">Route</p>
-                            <p class="text-gray-900 font-medium mt-1">{{ admission.bus_route }}</p>
-                        </div>
-                    </div>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-
-        <!-- Hostel & Fee -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <!-- Hostel -->
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
-                    <h2 class="text-lg font-semibold text-gray-800">7. Hostel</h2>
-                    <a href="{% url 'hostel_facilities' admission.pk %}"
-                        class="text-sm font-medium text-orange-600 hover:text-orange-700 hover:underline">Edit</a>
-                </div>
-                <div class="p-6 space-y-4">
-                    <div>
-                        <p class="text-xs text-gray-400 uppercase tracking-wider font-semibold">Hostel Needed</p>
-                        <p class="text-gray-900 font-medium mt-1">{{ admission.hostel_needed|title }}</p>
-                    </div>
-                    {% if admission.hostel_needed == "yes" %}
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                            <p class="text-xs text-gray-400 uppercase tracking-wider font-semibold">Hostel Type</p>
-                            <p class="text-gray-900 font-medium mt-1">{{ admission.hostel_type }}</p>
-                        </div>
-                        <div>
-                            <p class="text-xs text-gray-400 uppercase tracking-wider font-semibold">Room Type</p>
-                            <p class="text-gray-900 font-medium mt-1">{{ admission.room_type }}</p>
-                        </div>
-                        <div>
-                            <p class="text-xs text-gray-400 uppercase tracking-wider font-semibold">Mess</p>
-                            <p class="text-gray-900 font-medium mt-1">{{ admission.mess_type }}</p>
-                        </div>
-                    </div>
-                    {% endif %}
                 </div>
             </div>
 
             <!-- Fee Details -->
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                 <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
-                    <h2 class="text-lg font-semibold text-gray-800">8. Fee Details</h2>
+                    <h2 class="text-lg font-semibold text-gray-800">7. Fee Details</h2>
                     <a href="{% url 'fee_details' admission.pk %}"
                         class="text-sm font-medium text-orange-600 hover:text-orange-700 hover:underline">Edit</a>
                 </div>
@@ -320,6 +320,22 @@
                                 <td class="py-2 text-gray-500">College Fee</td>
                                 <td class="py-2 text-right font-medium text-gray-900">₹{{ admission.college_fee }}</td>
                             </tr>
+                            <tr>
+                                <td class="py-2 text-gray-500">PMSS Scholarship</td>
+                                <td class="py-2 text-right font-medium text-gray-900">
+                                    {% if admission.pmss %}<span class="text-green-600">Yes</span>{% else %}No{% endif%}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="py-2 text-gray-500">First Graduate</td>
+                                <td class="py-2 text-right font-medium text-gray-900">
+                                    {% if admission.is_fg %}
+                                    <span class="text-green-600">Yes</span> ({{ admission.fg_number }})
+                                    {% else %}
+                                    No
+                                    {% endif %}
+                                </td>
+                            </tr>
                             <tr class="bg-gray-50/50">
                                 <td class="py-3 font-semibold text-gray-700">Transaction ID</td>
                                 <td class="py-3 text-right font-mono text-gray-600">{{ admission.transaction_id }}</td>
@@ -334,7 +350,7 @@
         <!-- 9. Reference Details -->
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
             <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
-                <h2 class="text-lg font-semibold text-gray-800">9. Reference Details</h2>
+                <h2 class="text-lg font-semibold text-gray-800">8. Reference Details</h2>
                 <a href="{% url 'reference_details' admission.pk %}"
                     class="text-sm font-medium text-orange-600 hover:text-orange-700 hover:underline">Edit</a>
             </div>
@@ -356,7 +372,42 @@
             </div>
         </div>
 
-        <!-- 10. Certificates Stats -->
+        <!-- 10. Bank Details -->
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+                <h2 class="text-lg font-semibold text-gray-800">9. Bank Details</h2>
+                <a href="{% url 'bank_details' admission.pk %}"
+                    class="text-sm font-medium text-orange-600 hover:text-orange-700 hover:underline">Edit</a>
+            </div>
+            <div class="p-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-y-6 gap-x-4">
+                    <div>
+                        <p class="text-xs text-gray-400 uppercase tracking-wider font-semibold">Account Holder</p>
+                        <p class="text-gray-900 font-medium mt-1">{{ admission.account_holder_name|default:"N/A" }}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-400 uppercase tracking-wider font-semibold">Account Number</p>
+                        <p class="text-gray-900 font-medium mt-1">{{ admission.account_number|default:"N/A" }}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-400 uppercase tracking-wider font-semibold">Bank & Branch</p>
+                        <p class="text-gray-900 font-medium mt-1">
+                            {{ admission.bank_name|default:"N/A" }} - {{ admission.bank_branch|default:"N/A" }}
+                        </p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-400 uppercase tracking-wider font-semibold">IFSC Code</p>
+                        <p class="text-gray-900 font-medium mt-1 font-mono">{{ admission.ifsc_code|default:"N/A" }}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-400 uppercase tracking-wider font-semibold">Aadhaar Seeding</p>
+                        <p class="text-gray-900 font-medium mt-1">{{ admission.seeding_status|default:"N/A" }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 11. Certificates Stats -->
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
             <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
                 <h2 class="text-lg font-semibold text-gray-800">10. Uploaded Documents</h2>

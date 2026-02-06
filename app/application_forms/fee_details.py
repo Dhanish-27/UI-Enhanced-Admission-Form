@@ -23,6 +23,10 @@ def fee_details(request, pk):
             transaction_id = request.POST.get('transaction_id', '').strip()
             transaction_date_str = request.POST.get('transaction_date', '').strip()
             payment_screenshots = request.FILES.getlist('payment_screenshots')
+            
+            pmss = request.POST.get('pmss') == 'on'
+            is_fg = request.POST.get('is_fg') == 'on'
+            fg_number = request.POST.get('fg_number', '').strip()
 
             # Validate payment screenshot
             if payment_screenshots:
@@ -63,6 +67,9 @@ def fee_details(request, pk):
                 admission.bus_fee = bus_fee
                 admission.transaction_id = transaction_id
                 admission.transaction_date = transaction_date
+                admission.pmss = pmss
+                admission.is_fg = is_fg
+                admission.fg_number = fg_number if is_fg else ""
                 admission.full_clean()
                 admission.save()
 
@@ -83,7 +90,7 @@ def fee_details(request, pk):
                 messages.error(request, 'An error occurred while saving fee details.')
                 return render(request, 'details_form/fee_details.html', {'admission': admission})
 
-        return render(request, 'details_form/fee_details.html', {'admission': admission, "steps": get_steps(), "current_step": 8})
+        return render(request, 'details_form/fee_details.html', {'admission': admission, "steps": get_steps(), "current_step": 7})
 
     except Exception as e:
         logger.error(f"Error in fee_details view: {str(e)}")

@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views, followup
-from .application_forms import personal_details, department_details, marks_obtained, academic_info, vocational_details, transport_facilities, hostal_facilities, fee_details, reference_details, certifications, extras
+from .application_forms import personal_details, department_details, marks_obtained, academic_info, vocational_details, facility_details, fee_details, reference_details, certifications, extras, bank_details
 from .staff.functions import student_applications_list, admission_report, export_applications
 from .utils import update_field
 
@@ -16,10 +16,10 @@ urlpatterns = [
     path('marks_obtained/<int:pk>/', marks_obtained.marks_obtained, name='marks_obtained'),
     path('academic_info/<int:pk>/', academic_info.academic_info, name='academic_info'),
     path('vocational_details/<int:pk>/', vocational_details.vocational_details, name='vocational_details'),
-    path('transport_details/<int:pk>/', transport_facilities.transport_details, name='transport_details'),
-    path('hostel_facilities/<int:pk>/', hostal_facilities.hostel_facilities, name='hostel_facilities'),
+    path('facility_details/<int:pk>/', facility_details.facility_details, name='facility_details'),
     path('fee_details/<int:pk>/', fee_details.fee_details, name='fee_details'),
     path('reference_details/<int:pk>/', reference_details.reference_details, name='reference_details'),
+    path('bank_details/<int:pk>/', bank_details.bank_details, name='bank_details'),
     path('certificate_checklist/<int:pk>/', certifications.certificate_checklist, name='certificate_checklist'),
     path('review/<int:pk>/', extras.review, name='review'),
     path('success/<str:identifier>/', extras.success, name='success'),

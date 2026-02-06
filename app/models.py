@@ -47,142 +47,173 @@ def vocational_upload_path(instance, filename):
     return os.path.join(folder_name,'vocational',  filename)
 
 
+from django.db import models
+
+
 class Admission(models.Model):
-    # Student Details
-    Application_number=models.CharField(max_length=100, unique=True, blank =True, null =True)
-    unique_id=models.CharField(unique=True,blank=True,null=True)
-    student_name = models.CharField(max_length=255)
-    email = models.EmailField(unique=True)
-    student_mobile = models.CharField(max_length=15, blank=True, null=True)
+
+    # =========================
+    # APPLICATION / ADMISSION META
+    # =========================
+    application_number = models.CharField(max_length=100, blank=True, null=True)
+    application_date = models.DateField(blank=True, null=True)
+    admission_date = models.DateField(blank=True, null=True)
+    allotment_number = models.CharField(max_length=100, blank=True, null=True)
+    portal_status = models.CharField(max_length=50, blank=True, null=True)
+    quota = models.CharField(max_length=50, blank=True, null=True)
+    roll_number = models.CharField(max_length=100, blank=True, null=True)
+    unique_id = models.CharField(max_length=100, blank=True, null=True)
+    umis_number = models.CharField(max_length=100, blank=True, null=True)
+
+    # =========================
+    # COURSE / DEPARTMENT
+    # =========================
+    level = models.CharField(max_length=10, blank=True, null=True)
+    course = models.CharField(max_length=100, blank=True, null=True)
+    branch = models.CharField(max_length=100, blank=True, null=True)
+    department_preferences = models.JSONField(default=dict, blank=True, null=True)
+    pg_dept = models.CharField(max_length=255, blank=True, null=True)
+
+    # =========================
+    # SCHOLARSHIP DETAILS
+    # =========================
+    is_fg = models.BooleanField(default=False, blank=True, null=True)
+    fg_number = models.CharField(max_length=100, blank=True, null=True)
+    pmss = models.BooleanField(default=False, blank=True, null=True)
+    seven_five = models.BooleanField(default=False, blank=True, null=True)
+
+    # =========================
+    # PERSONAL DETAILS
+    # =========================
+    student_name = models.CharField(max_length=255, blank=True, null=True)
+    dob = models.DateField(blank=True, null=True)
+    gender = models.CharField(max_length=10, blank=True, null=True)
+    community = models.CharField(max_length=50, blank=True, null=True)
+    caste = models.CharField(max_length=100, blank=True, null=True)
+    region = models.CharField(max_length=100, blank=True, null=True)
+    aadhaar_number = models.CharField(max_length=12, blank=True, null=True)
+
+    # =========================
+    # PARENT / GUARDIAN
+    # =========================
+    father_name = models.CharField(max_length=255, blank=True, null=True)
+    mother_name = models.CharField(max_length=255, blank=True, null=True)
+    guardian_name = models.CharField(max_length=255, blank=True, null=True)
+
     father_mobile = models.CharField(max_length=15, blank=True, null=True)
     mother_mobile = models.CharField(max_length=15, blank=True, null=True)
-    guardian_mobile = models.CharField(max_length=15,blank=True,null=True)
+    guardian_mobile = models.CharField(max_length=15, blank=True, null=True)
 
-    father_name = models.CharField(max_length=255)
-    mother_name = models.CharField(max_length=255)
-    guardian_name = models.CharField(max_length=255, blank=True, null=True)
-    register_number = models.CharField(max_length=100, unique=True,blank=True)
-    umis_number = models.CharField(max_length=100, blank=True, null=True)
-    dob = models.DateField()
-    gender = models.CharField(max_length=10, choices=[('Male', 'Male'), ('Female', 'Female'), ('Others', 'Others')])
-    community = models.CharField(
-    max_length=255,
-    choices=[ ('OC', 'Open Competition (OC)'),
-    ('BC', 'Backward Class (BC)'),
-    ('MBC', 'Most Backward Class (MBC)'),
-    ('DNC', 'Denotified Communities (DNC)'),
-    ('BCM', 'Backward Class (Muslim) (BCM)'),
-    ('SC', 'Scheduled Caste (SC)'),
-    ('SCA', 'Scheduled Caste (Arunthathiyar) (SCA)'),
-    ('ST', 'Scheduled Tribe (ST)') ],
-    blank=True,
-    null=True)
+    # =========================
+    # CONTACT & ADDRESS
+    # =========================
+    email = models.EmailField(blank=True, null=True)
+    student_mobile = models.CharField(max_length=15, blank=True, null=True)
+    address = models.TextField(blank=True, null=True)
+    pincode = models.CharField(max_length=10, blank=True, null=True)
+    district = models.CharField(max_length=100, blank=True, null=True)
+    state = models.CharField(max_length=100, blank=True, null=True)
+    country = models.CharField(max_length=100, blank=True, null=True)
 
+    # =========================
+    # ACADEMIC HISTORY
+    # =========================
+    qualification = models.CharField(max_length=10, blank=True, null=True)
 
+    tenth_total = models.CharField(max_length=50, blank=True, null=True)
+    tenth_percentage = models.CharField(max_length=50, blank=True, null=True)
 
-    #Address Details
-    address = models.TextField()
-    state=models.CharField(blank=True,null=True)
-    district=models.CharField(blank=True,null=True)
-    country=models.CharField(blank=True,null=True)
-
-
-
-    # Department Details
-    level = models.CharField(max_length=10, choices=[('ug', 'UG'), ('pg', 'PG'), ('le', 'LE')])
-    department_preferences = models.JSONField(default=dict, blank=True)  # Store as {dept_name: preference_rank}
-    pg_dept = models.CharField(max_length=255, blank=True, null=True)  # For PG only
-
-    # Certificate Checklist
-    tc = models.FileField(upload_to=certificate_upload_path, blank=True)
-    community_cert = models.FileField(upload_to=certificate_upload_path, blank=True)
-    aadhaar = models.FileField(upload_to=certificate_upload_path, blank=True)
-    tenth_marksheet = models.FileField(upload_to=certificate_upload_path, blank=True)
-    twelfth_marksheet = models.FileField(upload_to=certificate_upload_path, blank=True, null=True)
-    photo = models.FileField(upload_to=photo_upload_path, blank=True)
-
-    # Fee Details
-    admission_fee = models.CharField(max_length=50, blank=True)
-    tuition_fee = models.CharField(max_length=50, blank=True)
-    college_fee = models.CharField(max_length=50, blank=True)
-    hostel_fee = models.CharField(max_length=50, blank=True)
-    bus_fee = models.CharField(max_length=50, blank=True)
-    transaction_id = models.CharField(max_length=50,null=True, blank=True)
-    transaction_date = models.DateTimeField(null=True, blank=True)
-    payment_screenshot = models.FileField(upload_to=payment_upload_path, blank=True)
-    had_paid=models.BooleanField(default=False)
-
-    # Marks Obtained
-    tenth_total = models.CharField(max_length=50, blank=True)
-    tenth_percentage = models.CharField(max_length=50, blank=True)
     twelfth_total = models.CharField(max_length=50, blank=True, null=True)
     twelfth_percentage = models.CharField(max_length=50, blank=True, null=True)
-    qualification = models.CharField(max_length=10, choices=[('12th', '12th'), ('Diploma', 'Diploma')], blank=True)
-    maths_marks = models.CharField(max_length=50, blank=True, null=True)
-    physics_marks = models.CharField(max_length=50, blank=True, null=True)
-    chemistry_marks = models.CharField(max_length=50, blank=True, null=True)
-    cutoff_marks = models.CharField(max_length=50, blank=True, null=True)
-    twelfth_major = models.CharField(max_length=255, blank=True,null= True)
+    twelfth_major = models.CharField(max_length=255, blank=True, null=True)
+    twelth_reg_no = models.CharField(max_length=50, blank=True, null=True)
 
-    #Diploma Details
+    maths_marks = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
+    physics_marks = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
+    chemistry_marks = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
+    cutoff_marks = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
+
     diploma_total = models.CharField(max_length=50, blank=True, null=True)
     diploma_percentage = models.CharField(max_length=50, blank=True, null=True)
-    diploma_major = models.CharField(max_length=255, blank=True)
+    diploma_major = models.CharField(max_length=255, blank=True, null=True)
 
-    # Academic Information
-    last_school = models.CharField(max_length=255, blank=True)
-    board = models.CharField(max_length=50, choices=[
-        ('State Board', 'State Board'),
-        ('CBSE', 'CBSE'),
-        ('ICSE', 'ICSE'),
-        ('Matriculation', 'Matriculation'),
-        ('Diploma', 'Diploma'),
-        ('Others', 'Others')
-    ], blank=True)
+    board = models.CharField(max_length=50, blank=True, null=True)
     year_passing = models.IntegerField(blank=True, null=True)
-    medium = models.CharField(max_length=50, choices=[
-        ('Tamil', 'Tamil'),
-        ('English', 'English'),
-        ('Others', 'Others')
-    ], blank=True)
-
-    # Vocational Details
-    vocational_stream = models.CharField(max_length=100, blank=True, null=True)
+    medium = models.CharField(max_length=50, blank=True, null=True)
+    last_school = models.CharField(max_length=255, blank=True, null=True)
+    vocational_stream = models.CharField(max_length=255, blank=True, null=True)
     skill_proof = models.FileField(upload_to=vocational_upload_path, blank=True, null=True)
 
-    # Transport Details
-    bus_needed = models.CharField(max_length=3, choices=[('yes', 'Yes'), ('no', 'No')], blank=True)
+    # =========================
+    # FEE DETAILS
+    # =========================
+    admission_fee = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    tuition_fee = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    college_fee = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    university_fee = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    hostel_fee = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    bus_fee = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    other_fee = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    paid_fee = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    concession_amount = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    balance_fee = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    pending_amount = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+
+    transaction_id = models.CharField(max_length=50, blank=True, null=True)
+    transaction_date = models.DateTimeField(blank=True, null=True)
+    had_paid = models.BooleanField(default=False, blank=True, null=True)
+
+    # =========================
+    # HOSTEL / TRANSPORT
+    # =========================
+    facility_type = models.CharField(max_length=20, blank=True, null=True)
+    hostel_name = models.CharField(max_length=100, blank=True, null=True)
     boarding_point = models.CharField(max_length=100, blank=True, null=True)
-    bus_route = models.CharField(max_length=100, blank=True, null=True)
+    bus_needed = models.CharField(max_length=10, blank=True, null=True)
+    bus_route = models.CharField(max_length=255, blank=True, null=True)
+    hostel_needed = models.CharField(max_length=10, blank=True, null=True)
+    hostel_type = models.CharField(max_length=100, blank=True, null=True)
+    room_type = models.CharField(max_length=100, blank=True, null=True)
+    mess_type = models.CharField(max_length=100, blank=True, null=True)
+    hostel_fee_amount = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
 
-    # Hostel Facilities
-    hostel_needed = models.CharField(max_length=3, choices=[('yes', 'Yes'), ('no', 'No')], blank=True)
-    hostel_type = models.CharField(max_length=50, blank=True, null=True)
-    room_type = models.CharField(max_length=50, blank=True, null=True)
-    mess_type = models.CharField(max_length=50, blank=True, null=True)
-    hostel_fee_amount = models.CharField(max_length=50, blank=True, null=True)
+    # =========================
+    # BANK DETAILS
+    # =========================
+    account_holder_name = models.CharField(max_length=255, blank=True, null=True)
+    account_number = models.CharField(max_length=30, blank=True, null=True)
+    bank_name = models.CharField(max_length=100, blank=True, null=True)
+    ifsc_code = models.CharField(max_length=15, blank=True, null=True)
+    bank_branch = models.CharField(max_length=100, blank=True, null=True)
+    seeding_status = models.CharField(max_length=50, blank=True, null=True)
 
-    # Reference Details
-    reference_name = models.CharField(max_length=255, blank=True)
-    contact_number = models.CharField(max_length=15, blank=True)
-    relationship = models.CharField(max_length=255,blank=True)
-    reference_mobile = models.CharField(max_length=15,blank=True)
-    reference_department = models.CharField(max_length=255,blank=True)
-    reference_designation = models.CharField(max_length=255,blank=True)
+    # =========================
+    # REFERENCES
+    # =========================
+    reference_name = models.CharField(max_length=255, blank=True, null=True)
+    contact_number = models.CharField(max_length=15, blank=True, null=True)
+    relationship = models.CharField(max_length=100, blank=True, null=True)
+    reference_mobile = models.CharField(max_length=15, blank=True, null=True)
+    reference_department = models.CharField(max_length=255, blank=True, null=True)
+    reference_designation = models.CharField(max_length=255, blank=True, null=True)
 
+    # =========================
+    # CERTIFICATES / PHOTO
+    # =========================
+    tc = models.FileField(upload_to=certificate_upload_path, blank=True, null=True)
+    community_cert = models.FileField(upload_to=certificate_upload_path, blank=True, null=True)
+    aadhaar = models.FileField(upload_to=certificate_upload_path, blank=True, null=True)
+    tenth_marksheet = models.FileField(upload_to=certificate_upload_path, blank=True, null=True)
+    twelfth_marksheet = models.FileField(upload_to=certificate_upload_path, blank=True, null=True)
+    photo = models.FileField(upload_to=photo_upload_path, blank=True, null=True)
+
+    # =========================
+    # SYSTEM
+    # =========================
     created_at = models.DateTimeField(auto_now_add=True)
 
-    @property
-    def first_preference_dept(self):
-        if self.department_preferences:
-            for dept, rank in self.department_preferences.items():
-                if rank == 1:
-                    return dept
-        return None
-
     def __str__(self):
-        return f"{self.student_name} - {self.register_number}"
-    
+        return f"{self.student_name} - {self.application_number}"
 
 
 class PaymentScreenshot(models.Model):

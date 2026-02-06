@@ -158,11 +158,11 @@ def student_applications_list(request):
 
         if isinstance(queryset, list):
             # Manual pagination for python list
-            paginator = Paginator(queryset, 10)
+            paginator = Paginator(queryset, 50)
             page_number = request.GET.get('page', 1)
             page_obj = paginator.get_page(page_number)
         else:
-            paginator = Paginator(queryset, 10)
+            paginator = Paginator(queryset, 50)
             page_number = request.GET.get('page')
             page_obj = paginator.get_page(page_number)
 

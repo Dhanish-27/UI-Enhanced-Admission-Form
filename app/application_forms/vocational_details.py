@@ -35,7 +35,7 @@ def vocational_details(request, pk):
                 admission.save()
                 logger.info(f"Vocational details saved for student: {admission.student_name}")
                 messages.success(request, 'Vocational details saved successfully!')
-                return redirect('transport_details', pk=pk)
+                return redirect('facility_details', pk=pk)
             except ValidationError as e:
                 logger.warning(f"Validation error in vocational details: {str(e)}")
                 messages.error(request, f'Validation error: {str(e)}')

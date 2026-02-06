@@ -1,0 +1,208 @@
+{% extends 'details_form/Created_base.html' %}
+
+{% block title %}Facility Details{% endblock %}
+
+{% block content %}
+{% include "details_form/tracker.html" %}
+<div class="col-span-1 lg:col-span-9">
+    <!-- Messages -->
+    {% if messages %}
+    <div class="mb-6 space-y-2">
+        {% for message in messages %}
+        <div
+            class="p-4 rounded-lg text-sm font-medium {% if message.tags   ==   'error' %}bg-red-50 text-red-600{% elif message.tags   ==   'success' %}bg-green-50 text-green-600{% else %}bg-blue-50 text-blue-600{% endif %}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Content Block -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+        <form method="post" enctype="multipart/form-data" action="{% url 'facility_details' admission.pk %}"
+            id="facilityForm">
+            {% csrf_token %}
+            <div class="max-w-5xl mx-auto bg-white shadow-lg rounded-xl p-8">
+                <h2 class="text-xl font-semibold mb-6 border-b pb-3">
+                    6. Facility Details
+                </h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div>
+                        <label class="block font-medium mb-1">
+                            Select Facility Required? <span class="text-red-600">*</span>
+                        </label>
+                        <select id="facilityType" name="facility_type" required onchange="toggleSections()"
+                            class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500">
+                            <option value="none" {% if not admission.bus_needed   ==   'yes' and not admission.hostel_needed  ==  'yes' %}selected{% endif %}>None</option>
+                            <option value="transport" {% if admission.bus_needed   ==   'yes' %}selected{% endif %}>Transport
+                            </option>
+                            <option value="hostel" {% if admission.hostel_needed   ==   'yes' %}selected{% endif %}>Hostel
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Transport Section -->
+                <div id="transportSection" class="hidden space-y-6">
+                    <h3 class="text-lg font-medium text-gray-700 border-l-4 border-blue-500 pl-3">Transport Details</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block font-medium mb-1">
+                                Bus Boarding Point <span class="text-red-600">*</span>
+                            </label>
+                            <select name="boarding_point" id="boarding_point"
+                                class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500">
+                                <option value="">Select your Boarding Point</option>
+                                <option {% if admission.boarding_point == 'Erode Bus Stand' %}selected{% endif %}>Erode
+                                    Bus Stand</option>
+                                <option {% if admission.boarding_point == 'Perundurai' %}selected{% endif %}>Perundurai
+                                </option>
+                                <option {% if admission.boarding_point == 'Gobichettipalayam' %}selected{% endif %}>
+                                    Gobichettipalayam</option>
+                                <option {% if admission.boarding_point == 'Bhavani' %}selected{% endif %}>Bhavani</option>
+                                <option {% if admission.boarding_point == 'Chennimalai' %}selected{% endif %}>Chennimalai
+                                </option>
+                                <option {% if admission.boarding_point == 'Sathyamangalam' %}selected{% endif %}>
+                                    Sathyamangalam</option>
+                                <option {% if admission.boarding_point == 'Kodumudi' %}selected{% endif %}>Kodumudi
+                                </option>
+                                <option {% if admission.boarding_point == 'Tiruchengode' %}selected{% endif %}>
+                                    Tiruchengode</option>
+                                <option {% if admission.boarding_point == 'Pallipalayam' %}selected{% endif %}>
+                                    Pallipalayam</option>
+                                <option {% if admission.boarding_point == 'Anthiyur' %}selected{% endif %}>Anthiyur
+                                </option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block font-medium mb-1">
+                                Bus Route Number <span class="text-red-600">*</span>
+                            </label>
+                            <select name="bus_route" id="bus_route"
+                                class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500">
+                                <option value="">Select Bus Route</option>
+                                <option value="1" {% if admission.bus_route == '1' %}selected{% endif %}>Route 1 - Erode
+                                </option>
+                                <option value="2" {% if admission.bus_route == '2' %}selected{% endif %}>Route 2 -
+                                    Perundurai</option>
+                                <option value="3" {% if admission.bus_route == '3' %}selected{% endif %}>Route 3 -
+                                    Gobichettipalayam</option>
+                                <option value="4" {% if admission.bus_route == '4' %}selected{% endif %}>Route 4 - Bhavani
+                                </option>
+                                <option value="5" {% if admission.bus_route == '5' %}selected{% endif %}>Route 5 -
+                                    Chennimalai</option>
+                                <option value="6" {% if admission.bus_route == '6' %}selected{% endif %}>Route 6 -
+                                    Sathyamangalam</option>
+                                <option value="7" {% if admission.bus_route == '7' %}selected{% endif %}>Route 7 -
+                                    Kodumudi</option>
+                                <option value="8" {% if admission.bus_route == '8' %}selected{% endif %}>Route 8 -
+                                    Tiruchengode</option>
+                                <option value="9" {% if admission.bus_route == '9' %}selected{% endif %}>Route 9 -
+                                    Pallipalayam</option>
+                                <option value="10" {% if admission.bus_route == '10' %}selected{% endif %}>Route 10 -
+                                    Anthiyur</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hostel Section -->
+                <div id="hostelSection" class="hidden space-y-6">
+                    <h3 class="text-lg font-medium text-gray-700 border-l-4 border-orange-500 pl-3">Hostel Details</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block font-medium mb-1">
+                                Hostel Name <span class="text-red-600">*</span>
+                            </label>
+                            <input type="text" name="hostel_name"
+                                value="{% if admission %}{{ admission.hostel_name }}{% endif %}"
+                                placeholder="Enter Hostel Name"
+                                class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block font-medium mb-1">
+                                Hostel Type <span class="text-red-600">*</span>
+                            </label>
+                            <select name="hostel_type" id="hostel_type"
+                                class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500">
+                                <option value="">Select Hostel Type</option>
+                                <option {% if admission.hostel_type == 'Boys Hostel' %}selected{% endif %}>Boys Hostel
+                                </option>
+                                <option {% if admission.hostel_type == 'Girls Hostel' %}selected{% endif %}>Girls Hostel
+                                </option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block font-medium mb-1">
+                                Room Type <span class="text-red-600">*</span>
+                            </label>
+                            <select name="room_type" id="room_type"
+                                class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500">
+                                <option value="">Select Room Type</option>
+                                <option {% if admission.room_type == '2-Sharing' %}selected{% endif %}>2-Sharing</option>
+                                <option {% if admission.room_type == '3-Sharing' %}selected{% endif %}>3-Sharing</option>
+                                <option {% if admission.room_type == '4-Sharing' %}selected{% endif %}>4-Sharing</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block font-medium mb-1">
+                                Mess Type <span class="text-red-600">*</span>
+                            </label>
+                            <select name="mess_type" id="mess_type"
+                                class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500">
+                                <option value="">Select Mess Type</option>
+                                <option {% if admission.mess_type == 'Vegetarian' %}selected{% endif %}>Vegetarian
+                                </option>
+                                <option {% if admission.mess_type == 'Non-Vegetarian' %}selected{% endif %}>Non-Vegetarian
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex justify-between mt-8">
+                    <button type="button" onclick="window.location.href='{% url 'vocational_details' admission.pk %}';"
+                        class="px-6 py-2 border rounded hover:bg-gray-100">
+                        Previous
+                    </button>
+                    <button type="submit" class="bg-orange-600 text-white px-6 py-2 rounded hover:bg-orange-700">
+                        Next
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function toggleSections() {
+        const facilityType = document.getElementById('facilityType').value;
+        const transportSection = document.getElementById('transportSection');
+        const hostelSection = document.getElementById('hostelSection');
+
+        // Reset visibility
+        transportSection.classList.add('hidden');
+        hostelSection.classList.add('hidden');
+
+        // Remove required attributes from all
+        const transportInputs = transportSection.querySelectorAll('select');
+        const hostelInputs = hostelSection.querySelectorAll('select');
+
+        transportInputs.forEach(input => input.removeAttribute('required'));
+        hostelInputs.forEach(input => input.removeAttribute('required'));
+
+        if (facilityType  == = 'transport') {
+            transportSection.classList.remove('hidden');
+            transportInputs.forEach(input => input.setAttribute('required', 'required'));
+        } else if (facilityType  == = 'hostel') {
+            hostelSection.classList.remove('hidden');
+            hostelInputs.forEach(input => input.setAttribute('required', 'required'));
+        }
+    }
+
+    // Initialize on load
+    document.addEventListener('DOMContentLoaded', toggleSections);
+</script>
+{% endblock %}
