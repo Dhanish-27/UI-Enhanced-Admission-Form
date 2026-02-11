@@ -10,7 +10,7 @@
   <div class="mb-6 space-y-2">
     {% for message in messages %}
     <div
-      class="p-4 rounded-lg text-sm font-medium {% if message.tags == 'error' %}bg-red-50 text-red-600{% elif message.tags == 'success' %}bg-green-50 text-green-600{% else %}bg-blue-50 text-blue-600{% endif %}">
+      class="p-4 rounded-lg text-sm font-medium {% if message.tags  ==  'error' %}bg-red-50 text-red-600{% elif message.tags  ==  'success' %}bg-green-50 text-green-600{% else %}bg-blue-50 text-blue-600{% endif %}">
       {{ message }}
     </div>
     {% endfor %}
@@ -59,10 +59,10 @@
             <select name="qualification" id="qualification" required
               class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500">
               <option value="">Select Qualification</option>
-              <option value="12th" {% if admission and admission.qualification=='12th' %}selected{% endif %}>
+              <option value="12th" {% if admission and admission.qualification == '12th' %}selected{% endif %}>
                 12th
               </option>
-              <option value="Diploma" {% if admission and admission.qualification=='Diploma' %}selected{% endif %}>
+              <option value="Diploma" {% if admission and admission.qualification == 'Diploma' %}selected{% endif %}>
                 Diploma
               </option>
             </select>
@@ -72,7 +72,7 @@
 
         <!-- 12th Fields -->
         <div id="twelfth_fields" class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6
-         {% if admission and admission.qualification == '12th' %}{% else %}hidden{% endif %}">
+         {% if admission and admission.qualification  ==  '12th' %}{% else %}hidden{% endif %}">
 
           <div>
             <label class="block font-medium mb-1">
@@ -114,10 +114,10 @@
             </label>
             <select name="twelfth_major" class="w-full border border-gray-300 rounded px-3 py-2">
               <option value="">Select Group</option>
-              <option value="Computer Science" {% if admission and admission.twelfth_major == 'Computer Science'%}selected{% endif %}>
+              <option value="Computer Science" {% if admission and admission.twelfth_major  ==  'Computer Science'%}selected{% endif %}>
                 Computer Science
               </option>
-              <option value="Biology" {% if admission and admission.twelfth_major == 'Biology'%}selected{% endif %}>
+              <option value="Biology" {% if admission and admission.twelfth_major  ==  'Biology'%}selected{% endif %}>
                 Biology
               </option>
             </select>
@@ -127,7 +127,7 @@
 
         <!-- Diploma Fields -->
         <div id="diploma_fields" class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6
-         {% if admission and admission.qualification == 'Diploma' %}{% else %}hidden{% endif %}">
+         {% if admission and admission.qualification  ==  'Diploma' %}{% else %}hidden{% endif %}">
 
           <div>
             <label class="block font-medium mb-1">
@@ -182,10 +182,10 @@
     const twelfthFields = document.getElementById('twelfth_fields');
     const diplomaFields = document.getElementById('diploma_fields');
 
-    if (qualification === '12th') {
+    if (qualification  == = '12th') {
       twelfthFields.style.display = 'block';
       diplomaFields.style.display = 'none';
-    } else if (qualification === 'Diploma') {
+    } else if (qualification  == = 'Diploma') {
       twelfthFields.style.display = 'none';
       diplomaFields.style.display = 'block';
     } else {
@@ -217,7 +217,7 @@
     });
 
     const qualification = document.getElementById('qualification').value;
-    if (qualification === '12th') {
+    if (qualification  == = '12th') {
       const twelfthRequired = ['maths_marks', 'physics_marks', 'chemistry_marks', 'group_major'];
       twelfthRequired.forEach(field => {
         const element = document.querySelector(`[name="${field}"]`);
@@ -226,7 +226,7 @@
           isValid = false;
         }
       });
-    } else if (qualification === 'Diploma') {
+    } else if (qualification  == = 'Diploma') {
       const element = document.querySelector(`[name="group_major"]`);
       if (!element.value.trim()) {
         showError('group_major', 'This field is required');

@@ -2,11 +2,16 @@ from django.urls import path
 from . import views, followup
 from .application_forms import personal_details, department_details, marks_obtained, academic_info, vocational_details, facility_details, fee_details, reference_details, certifications, extras, bank_details
 from .staff.functions import student_applications_list, admission_report, export_applications
+from .inline_views import admissions_list, admissions_update
 from .utils import update_field
 
 urlpatterns = [
     # To find the existing records
     path('admission_key/', update_field, name="update_field"),
+
+    # Inline editing table
+    path('admissions/', admissions_list, name='admissions_list'),
+    path('admissions/update/', admissions_update, name='admissions_update'),
 
     # For application
     path('', views.home, name='home'),
