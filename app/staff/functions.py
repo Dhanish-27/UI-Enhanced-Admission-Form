@@ -11,10 +11,11 @@ from django.shortcuts import render, redirect,get_object_or_404
 logger = logging.getLogger(__name__)
 import sys
 
-def student_applications_list(request):
+def student_applications_list(request,status=None):
     try:
         queryset = Admission.objects.all()
-
+        if status:
+            queryset = queryset.filter(admission_status=status)
         search_query = request.GET.get('search', '')
         if search_query:
             queryset = queryset.filter(
@@ -270,3 +271,39 @@ def export_applications(request):
 
     wb.save(response)
     return response
+
+
+from django.http import JsonResponse
+import json
+
+def update_admission_status(request, pk):
+    if request.method == 'POST':
+        try:
+            admission = get_object_or_404(Admission, pk=pk)
+            data = json.loads(request.body)
+            new_status = data.get('status')
+            
+            if new_status:
+                admission.admission_status = new_status
+                
+                if new_status == 'admitted':
+                    course = data.get('course')
+                    branch = data.get('branch')
+                    if course:
+                        admission.course = course
+                    if branch:
+                        admission.branch = branch
+                    admission.department_preferences=None
+
+                admission.save()
+                return JsonResponse({'status': 'success', 'message': 'Status updated successfully'})
+            else:
+                return JsonResponse({'status': 'error', 'message': 'No status provided'}, status=400)
+                
+        except json.JSONDecodeError:
+            return JsonResponse({'status': 'error', 'message': 'Invalid JSON'}, status=400)
+        except Exception as e:
+            logger.error(f"Error updating admission status for {pk}: {str(e)}")
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+            
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)

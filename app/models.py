@@ -55,6 +55,14 @@ class Admission(models.Model):
     # =========================
     # APPLICATION / ADMISSION META
     # =========================
+    ADMISSION_STATUS_CHOICES = (
+        ('enquired', 'Enquired'),
+        ('admitted', 'Admitted'),
+        ('discontinued', 'Discontinued'),
+        ('left', 'Left'),
+    )
+    admission_status = models.CharField(max_length=20, choices=ADMISSION_STATUS_CHOICES, default='enquired')
+
     application_number = models.CharField(max_length=100, blank=True, null=True)
     application_date = models.DateField(blank=True, null=True)
     admission_date = models.DateField(blank=True, null=True)
@@ -64,6 +72,11 @@ class Admission(models.Model):
     roll_number = models.CharField(max_length=100, blank=True, null=True)
     unique_id = models.CharField(max_length=100, blank=True, null=True)
     umis_number = models.CharField(max_length=100, blank=True, null=True)
+    
+    def save(self, *args, **kwargs):
+        if self.admission_status == 'admitted':
+            self.department_preferences = None
+        super().save(*args, **kwargs)
 
     # =========================
     # COURSE / DEPARTMENT

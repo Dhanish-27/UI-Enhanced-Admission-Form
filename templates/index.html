@@ -97,10 +97,12 @@
                             class="absolute left-0 top-1.5 w-2 h-2 rounded-full bg-primary border-2 border-white ring-4 ring-gray-50/50">
                         </div>
                         <div class="flex flex-col gap-1">
-                            <p class="text-xs font-black text-gray-900 leading-none truncate">{{ log.student.student_name }}</p>
+                            <p class="text-xs font-black text-gray-900 leading-none truncate">{{
+                                log.student.student_name }}</p>
                             <p class="text-[10px] text-gray-500 font-medium leading-relaxed">{{ log.action }}</p>
                             <div class="flex items-center justify-between">
-                                <span class="text-[8px] font-bold text-primary uppercase tracking-tighter">{{ log.created_at|timesince }} ago</span>
+                                <span class="text-[8px] font-bold text-primary uppercase tracking-tighter">{{
+                                    log.created_at|timesince }} ago</span>
                                 {% if log.followup and not log.followup.completed %}
                                 <select onchange="if(this.value==='Completed') completeFollowUp({{ log.followup.id }})"
                                     class="text-[8px] bg-amber-50 border-none rounded-md px-1 py-0.5 font-bold text-amber-600 focus:ring-0 cursor-pointer">
@@ -207,7 +209,7 @@
                                 </div>
                                 <div class="w-px h-8 bg-gray-100"></div>
                                 <div>
-                                    <h2 class="text-2xl font-black text-green-600 leading-none">{{ fee_followups_today  }}</h2>
+                                    <h2 class="text-2xl font-black text-green-600 leading-none">{{ fee_followups_today }}</h2>
                                     <p class="text-[8px] font-bold text-gray-400 uppercase mt-1">Fees</p>
                                 </div>
                             </div>
@@ -217,6 +219,61 @@
                             <i class="fas fa-bullseye font-black"></i>
                         </div>
                     </div>
+                </div>
+
+            </div>
+
+            <!-- NEW KPI CARDS (3 Columns) -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div
+                class="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm hover:shadow-md transition-all group">
+                <a href="{% url 'student_applications_list' 'enquired' %}">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-gray-400 text-[10px] font-black uppercase tracking-widest leading-none">
+                                Enquired Students</p>
+                            <h2 class="text-4xl font-black text-blue-600 mt-2 leading-none">{{ enquired_count }}</h2>
+                        </div>
+                        <div
+                            class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-400 group-hover:bg-blue-500 group-hover:text-white transition-all">
+                            <i class="fas fa-question font-black"></i>
+                        </div>
+                    </div>
+                    </a>
+                </div>
+
+                <div
+                    class="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm hover:shadow-md transition-all group">
+                    <a href="{% url 'student_applications_list' 'admitted' %}">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-gray-400 text-[10px] font-black uppercase tracking-widest leading-none">
+                                Admitted Students</p>
+                            <h2 class="text-4xl font-black text-green-600 mt-2 leading-none">{{ admitted_count }}</h2>
+                        </div>
+                        <div
+                            class="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center text-green-400 group-hover:bg-green-500 group-hover:text-white transition-all">
+                            <i class="fas fa-user-check font-black"></i>
+                        </div>
+                    </div>
+                    </a>
+                </div>
+
+                <div
+                    class="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm hover:shadow-md transition-all group">
+                    <a href="{% url 'student_applications_list' 'discontinued' %}">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-gray-400 text-[10px] font-black uppercase tracking-widest leading-none">Left
+                                / Discontinued</p>
+                            <h2 class="text-4xl font-black text-red-600 mt-2 leading-none">{{ left_count }}</h2>
+                        </div>
+                        <div
+                            class="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center text-red-400 group-hover:bg-red-500 group-hover:text-white transition-all">
+                            <i class="fas fa-user-times font-black"></i>
+                        </div>
+                    </div>
+                    </a>
                 </div>
             </div>
 
@@ -254,11 +311,13 @@
                                 <tr class="hover:bg-gray-50/50 transition-all group">
                                     <td class="px-6 py-4">
                                         <span
-                                            class="text-sm font-bold text-gray-900 tracking-tight transition-colors">{{ fu.student.student_name }}</span>
+                                            class="text-sm font-bold text-gray-900 tracking-tight transition-colors">{{
+                                            fu.student.student_name }}</span>
                                     </td>
                                     <td class="px-6 py-4">
                                         <span
-                                            class="text-sm font-bold text-gray-900 tracking-tight transition-colors">{{ fu.student.student_mobile }}</span>
+                                            class="text-sm font-bold text-gray-900 tracking-tight transition-colors">{{
+                                            fu.student.student_mobile }}</span>
                                     </td>
                                     <td class="px-6 py-4">
                                         <span
@@ -288,7 +347,8 @@
                     <div class="px-6 py-4 border-b border-gray-50 bg-red-50/20 flex justify-between items-center">
                         <h2 class="text-base font-black text-red-700 tracking-tight uppercase">Urgent Attention</h2>
                         <span
-                            class="bg-red-100 text-red-600 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest">{{ overdue_followups.count }} Overdue</span>
+                            class="bg-red-100 text-red-600 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest">{{
+                            overdue_followups.count }} Overdue</span>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left">
@@ -315,17 +375,21 @@
                                 {% for fu in overdue_followups %}
                                 <tr class="hover:bg-red-50/10 transition-all group">
                                     <td class="px-6 py-4">
-                                        <span class="text-sm font-bold text-gray-900 tracking-tight">{{ fu.student.student_name }}</span>
+                                        <span class="text-sm font-bold text-gray-900 tracking-tight">{{
+                                            fu.student.student_name }}</span>
                                     </td>
                                     <td class="px-6 py-4">
-                                        <span class="text-sm font-bold text-gray-900 tracking-tight">{{ fu.student.student_mobile }}</span>
+                                        <span class="text-sm font-bold text-gray-900 tracking-tight">{{
+                                            fu.student.student_mobile }}</span>
                                     </td>
                                     <td class="px-6 py-4">
                                         <span
-                                            class="inline-flex px-2 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider bg-gray-50 text-gray-600">{{ fu.get_followup_type_display }}</span>
+                                            class="inline-flex px-2 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider bg-gray-50 text-gray-600">{{
+                                            fu.get_followup_type_display }}</span>
                                     </td>
                                     <td class="px-6 py-4">
-                                        <span class="text-[10px] font-black uppercase text-red-600">{{ fu.expected_date|timesince }} overdue</span>
+                                        <span class="text-[10px] font-black uppercase text-red-600">{{
+                                            fu.expected_date|timesince }} overdue</span>
                                     </td>
                                     <td class="px-6 py-4 text-right">
                                         <a href="{% url 'student_detail' pk=fu.student.pk %}"

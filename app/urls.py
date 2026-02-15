@@ -1,7 +1,7 @@
 from django.urls import path
 from . import views, followup
 from .application_forms import personal_details, department_details, marks_obtained, academic_info, vocational_details, facility_details, fee_details, reference_details, certifications, extras, bank_details
-from .staff.functions import student_applications_list, admission_report, export_applications
+from .staff.functions import student_applications_list, admission_report, export_applications, update_admission_status
 from .inline_views import admissions_list, admissions_update
 from .utils import update_field
 
@@ -30,6 +30,8 @@ urlpatterns = [
     path('success/<str:identifier>/', extras.success, name='success'),
     # Staff Dashboard URLs
     path('staff/applications/', student_applications_list, name='student_applications_list'),
+    path('staff/applications/<str:status>/', student_applications_list, name='student_applications_list'),
+    path('staff/applications/update-status/<int:pk>/', update_admission_status, name='update_admission_status'),
     path('staff/student/pdf/<int:pk>/', admission_report, name='admission_report'),
     # Followups
     path('students/<int:pk>/', followup.student_detail, name='student_detail'),

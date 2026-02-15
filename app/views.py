@@ -35,6 +35,10 @@ def home(request):
 
         # KPI Summary Cards
         total_students = Admission.objects.count()
+        enquired_count = Admission.objects.filter(admission_status='enquired').count()
+        admitted_count = Admission.objects.filter(admission_status='admitted').count()
+        left_count = Admission.objects.filter(admission_status__in=['left', 'discontinued']).count()
+        
         visits_today = FollowUp.objects.filter(followup_type='visit', expected_date=today, completed=False).count()
         fee_followups_today = FollowUp.objects.filter(followup_type='fee', expected_date=today, completed=False).count()
         
@@ -58,6 +62,9 @@ def home(request):
             'today_count': today_count,
             'tomorrow_count': tomorrow_count,
             'total_students': total_students,
+            'enquired_count': enquired_count,
+            'admitted_count': admitted_count,
+            'left_count': left_count,
             'visits_today': visits_today,
             'fee_followups_today': fee_followups_today,
             'today_followups': today_followups,
