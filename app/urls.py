@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views, followup
-from .application_forms import personal_details, department_details, marks_obtained, academic_info, vocational_details, facility_details, fee_details, reference_details, certifications, extras, bank_details
+from .application_forms import personal_details, department_details, marks_obtained, academic_info, vocational_details, facility_details, fee_details, reference_details, certifications, extras, bank_details, scholarship_details
 from .staff.functions import student_applications_list, admission_report, export_applications, update_admission_status
 from .inline_views import admissions_list, admissions_update
 from .utils import update_field
@@ -23,6 +23,7 @@ urlpatterns = [
     path('vocational_details/<int:pk>/', vocational_details.vocational_details, name='vocational_details'),
     path('facility_details/<int:pk>/', facility_details.facility_details, name='facility_details'),
     path('fee_details/<int:pk>/', fee_details.fee_details, name='fee_details'),
+    path('scholarship_details/<int:pk>/', scholarship_details.scholarship_details, name='scholarship_details'),
     path('reference_details/<int:pk>/', reference_details.reference_details, name='reference_details'),
     path('bank_details/<int:pk>/', bank_details.bank_details, name='bank_details'),
     path('certificate_checklist/<int:pk>/', certifications.certificate_checklist, name='certificate_checklist'),

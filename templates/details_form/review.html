@@ -484,7 +484,7 @@
                 knowledge and belief.
             </p>
             <div class="pt-4">
-                <a href="{% url 'success' admission.unique_id %}"
+                <a href="#" onclick="showSuccessPopup(event)"
                     class="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-8 py-3 rounded-xl font-medium shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5">
                     <span>Confirm & Final Submit</span>
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -496,4 +496,46 @@
 
     </div>
 </div>
+<!-- Success Popup Modal -->
+<div id="successPopup"
+     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+
+    <div class="bg-white rounded-2xl shadow-xl p-8 max-w-sm w-full text-center animate-fadeIn">
+        <div class="text-green-500 text-5xl mb-4">✔</div>
+
+        <h2 class="text-xl font-semibold text-gray-800">
+            Admission Saved Successfully
+        </h2>
+
+        <p class="text-gray-500 mt-2">
+            You will be redirected to the home page in
+            <span id="countdown">5</span> seconds...
+        </p>
+    </div>
+</div>
+
+<script>
+// Show popup when Confirm button is clicked
+function showSuccessPopup(event) {
+    event.preventDefault(); // stop navigation
+
+    const popup = document.getElementById("successPopup");
+    const countdownEl = document.getElementById("countdown");
+
+    popup.classList.remove("hidden");
+
+    let seconds = 5;
+
+    const timer = setInterval(() => {
+        seconds--;
+        countdownEl.textContent = seconds;
+
+        if (seconds <= 0) {
+            clearInterval(timer);
+            window.location.href = "/"; // redirect to home page
+        }
+    }, 1000);
+}
+
+</script>
 {% endblock %}

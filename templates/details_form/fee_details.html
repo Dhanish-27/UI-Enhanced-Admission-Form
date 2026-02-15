@@ -101,32 +101,6 @@
             <span class="error-message" id="payment_screenshots_error"></span>
           </div>
 
-          <!-- PMSS & FG Options -->
-          <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-            <div class="flex items-center gap-3">
-              <input type="checkbox" name="pmss" id="pmss" {% if admission and admission.pmss %}checked{% endif %}
-                class="w-5 h-5 text-orange-600 border-gray-300 rounded focus:ring-orange-500">
-              <label for="pmss" class="font-medium">PMSS Scholarship</label>
-            </div>
-
-            <div class="flex flex-col gap-3">
-              <div class="flex items-center gap-3">
-                <input type="checkbox" name="is_fg" id="is_fg" onchange="toggleFGNumber()" {% if admission and admission.is_fg %}checked{% endif %}
-                  class="w-5 h-5 text-orange-600 border-gray-300 rounded focus:ring-orange-500">
-                <label for="is_fg" class="font-medium">First Graduate (FG)</label>
-              </div>
-
-              <div id="fg_number_container"
-                style="{% if admission and admission.is_fg %}display: block;{% else %}display: none;{% endif %}">
-                <label class="block text-sm font-medium mb-1">FG Number</label>
-                <input type="text" name="fg_number" value="{% if admission %}{{ admission.fg_number }}{% endif %}"
-                  placeholder="Enter FG number"
-                  class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500">
-                <span class="error-message" id="fg_number_error"></span>
-              </div>
-            </div>
-          </div>
-
         </div>
 
         <!-- Actions -->
@@ -148,18 +122,10 @@
 </div>
 
 <script>
-  function toggleFGNumber() {
-    const isFG = document.getElementById('is_fg').checked;
-    const container = document.getElementById('fg_number_container');
-    container.style.display = isFG ? 'block' : 'none';
-  }
-
   document.getElementById('feeForm').addEventListener('submit', function (e) {
     let isValid = true;
     clearAllErrors();
 
-
-    // Fee amount validation (must be positive numbers if provided)
     const feeFields = ['admission_fee', 'tuition_fee', 'college_fee', 'hostel_fee', 'bus_fee'];
     feeFields.forEach(field => {
       const element = document.querySelector(`[name="${field}"]`);

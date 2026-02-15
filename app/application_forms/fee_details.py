@@ -24,9 +24,7 @@ def fee_details(request, pk):
             transaction_date_str = request.POST.get('transaction_date', '').strip()
             payment_screenshots = request.FILES.getlist('payment_screenshots')
             
-            pmss = request.POST.get('pmss') == 'on'
-            is_fg = request.POST.get('is_fg') == 'on'
-            fg_number = request.POST.get('fg_number', '').strip()
+            # Scholarship fields moved to scholarship_details view
 
             # Validate payment screenshot
             if payment_screenshots:
@@ -67,9 +65,7 @@ def fee_details(request, pk):
                 admission.bus_fee = bus_fee
                 admission.transaction_id = transaction_id
                 admission.transaction_date = transaction_date
-                admission.pmss = pmss
-                admission.is_fg = is_fg
-                admission.fg_number = fg_number if is_fg else ""
+                # Scholarship fields moved to scholarship_details view
                 admission.full_clean()
                 admission.save()
 
@@ -80,7 +76,7 @@ def fee_details(request, pk):
 
                 logger.info(f"Fee details saved for student: {admission.student_name}")
                 messages.success(request, 'Fee details saved successfully!')
-                return redirect('reference_details', pk=pk)
+                return redirect('scholarship_details', pk=pk)
             except ValidationError as e:
                 logger.warning(f"Validation error in fee details: {str(e)}")
                 messages.error(request, f'Validation error: {str(e)}')

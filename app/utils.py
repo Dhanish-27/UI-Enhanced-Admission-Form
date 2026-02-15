@@ -55,10 +55,11 @@ def get_steps():
         {"number": 5, "label": "Vocational Details"},
         {"number": 6, "label": "Facility Details"},
         {"number": 7, "label": "Fees Details"},
-        {"number": 8, "label": "Reference Details"},
-        {"number": 9, "label": "Bank Details"},
-        {"number": 10, "label": "Certificate Details"},
-        {"number": 11, "label": "Complete"},
+        {"number": 8, "label": "Scholarship Details"},
+        {"number": 9, "label": "Reference Details"},
+        {"number": 10, "label": "Bank Details"},
+        {"number": 11, "label": "Certificate Details"},
+        {"number": 12, "label": "Complete"},
     ]
 
 
