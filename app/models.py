@@ -203,12 +203,17 @@ class Admission(models.Model):
     # =========================
     # REFERENCES
     # =========================
-    reference_name = models.CharField(max_length=255, blank=True, null=True)
-    contact_number = models.CharField(max_length=15, blank=True, null=True)
-    relationship = models.CharField(max_length=100, blank=True, null=True)
-    reference_mobile = models.CharField(max_length=15, blank=True, null=True)
-    reference_department = models.CharField(max_length=255, blank=True, null=True)
-    reference_designation = models.CharField(max_length=255, blank=True, null=True)
+    # =========================
+    # REFERENCES
+    # =========================
+    # reference_name = models.CharField(max_length=255, blank=True, null=True)
+    # contact_number = models.CharField(max_length=15, blank=True, null=True)
+    # relationship = models.CharField(max_length=100, blank=True, null=True)
+    # reference_mobile = models.CharField(max_length=15, blank=True, null=True)
+    # reference_department = models.CharField(max_length=255, blank=True, null=True)
+    # reference_designation = models.CharField(max_length=255, blank=True, null=True)
+
+
 
     # =========================
     # CERTIFICATES / PHOTO
@@ -307,3 +312,15 @@ class FeePayment(models.Model):
 
     def __str__(self):
         return f"{self.student} - {self.amount}"
+
+
+class Reference(models.Model):
+    admission = models.ForeignKey(Admission, on_delete=models.CASCADE, related_name='references')
+    name = models.CharField(max_length=255)
+    mobile = models.CharField(max_length=15)
+    relationship = models.CharField(max_length=100)
+    department = models.CharField(max_length=255, blank=True, null=True)
+    designation = models.CharField(max_length=255, blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.name} ({self.relationship})"

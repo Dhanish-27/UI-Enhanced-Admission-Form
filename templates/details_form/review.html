@@ -355,20 +355,41 @@
                     class="text-sm font-medium text-orange-600 hover:text-orange-700 hover:underline">Edit</a>
             </div>
             <div class="p-6">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-y-6 gap-x-4">
-                    <div>
-                        <p class="text-xs text-gray-400 uppercase tracking-wider font-semibold">Name</p>
-                        <p class="text-gray-900 font-medium mt-1">{{ admission.reference_name }}</p>
-                    </div>
-                    <div>
-                        <p class="text-xs text-gray-400 uppercase tracking-wider font-semibold">Relationship</p>
-                        <p class="text-gray-900 font-medium mt-1">{{ admission.relationship }}</p>
-                    </div>
-                    <div>
-                        <p class="text-xs text-gray-400 uppercase tracking-wider font-semibold">Mobile</p>
-                        <p class="text-gray-900 font-medium mt-1">{{ admission.reference_mobile }}</p>
+                {% if admission.references.exists %}
+                {% for ref in admission.references.all %}
+                <div class="mb-6 last:mb-0 border-b last:border-0 pb-6 last:pb-0 border-gray-100">
+                    <h3 class="text-sm font-semibold text-gray-500 mb-3">Reference #{{ forloop.counter }}</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-y-4 gap-x-4">
+                        <div>
+                            <p class="text-xs text-gray-400 uppercase tracking-wider font-semibold">Name</p>
+                            <p class="text-gray-900 font-medium mt-1">{{ ref.name }}</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-400 uppercase tracking-wider font-semibold">Relationship</p>
+                            <p class="text-gray-900 font-medium mt-1">{{ ref.relationship }}</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-400 uppercase tracking-wider font-semibold">Mobile</p>
+                            <p class="text-gray-900 font-medium mt-1">{{ ref.mobile }}</p>
+                        </div>
+                        {% if ref.department %}
+                        <div>
+                            <p class="text-xs text-gray-400 uppercase tracking-wider font-semibold">Department</p>
+                            <p class="text-gray-900 font-medium mt-1">{{ ref.department }}</p>
+                        </div>
+                        {% endif %}
+                        {% if ref.designation %}
+                        <div>
+                            <p class="text-xs text-gray-400 uppercase tracking-wider font-semibold">Designation</p>
+                            <p class="text-gray-900 font-medium mt-1">{{ ref.designation }}</p>
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
+                {% endfor %}
+                {% else %}
+                <p class="text-gray-500 italic">No references details provided.</p>
+                {% endif %}
             </div>
         </div>
 
@@ -497,8 +518,7 @@
     </div>
 </div>
 <!-- Success Popup Modal -->
-<div id="successPopup"
-     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+<div id="successPopup" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
 
     <div class="bg-white rounded-2xl shadow-xl p-8 max-w-sm w-full text-center animate-fadeIn">
         <div class="text-green-500 text-5xl mb-4">✔</div>
@@ -515,27 +535,27 @@
 </div>
 
 <script>
-// Show popup when Confirm button is clicked
-function showSuccessPopup(event) {
-    event.preventDefault(); // stop navigation
+    // Show popup when Confirm button is clicked
+    function showSuccessPopup(event) {
+        event.preventDefault(); // stop navigation
 
-    const popup = document.getElementById("successPopup");
-    const countdownEl = document.getElementById("countdown");
+        const popup = document.getElementById("successPopup");
+        const countdownEl = document.getElementById("countdown");
 
-    popup.classList.remove("hidden");
+        popup.classList.remove("hidden");
 
-    let seconds = 5;
+        let seconds = 3;
 
-    const timer = setInterval(() => {
-        seconds--;
-        countdownEl.textContent = seconds;
+        const timer = setInterval(() => {
+            seconds--;
+            countdownEl.textContent = seconds;
 
-        if (seconds <= 0) {
-            clearInterval(timer);
-            window.location.href = "/"; // redirect to home page
-        }
-    }, 1000);
-}
+            if (seconds <= 0) {
+                clearInterval(timer);
+                window.location.href = "/"; // redirect to home page
+            }
+        }, 1000);
+    }
 
 </script>
 {% endblock %}

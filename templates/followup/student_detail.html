@@ -36,8 +36,10 @@
                     <div>
                         <h2 class="text-2xl font-bold">{{ admission.student_name }}</h2>
                         <p class="text-sm opacity-90 flex items-center gap-2">
-                            <span class="bg-white/20 px-2 py-0.5 rounded text-xs">APP NO: {{ admission.Application_number|default:"N/A" }}</span>
-                            <span class="bg-white/20 px-2 py-0.5 rounded text-xs">REG: {{ admission.register_number }}</span>
+                            <span class="bg-white/20 px-2 py-0.5 rounded text-xs">APP NO: {{
+                                admission.Application_number|default:"N/A" }}</span>
+                            <span class="bg-white/20 px-2 py-0.5 rounded text-xs">REG: {{ admission.register_number
+                                }}</span>
                         </p>
                     </div>
                 </div>
@@ -89,7 +91,8 @@
                         </div>
                         <div>
                             <p class="text-gray-500 text-xs uppercase font-semibold">Unique ID</p>
-                            <p class="font-medium text-gray-900 text-xs font-mono">{{ admission.unique_id|default:"N/A" }}</p>
+                            <p class="font-medium text-gray-900 text-xs font-mono">{{ admission.unique_id|default:"N/A"
+                                }}</p>
                         </div>
                     </div>
                 </div>
@@ -184,103 +187,103 @@
 
             <!-- Marks -->
             <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-    <div class="px-4 py-3 bg-gray-50 border-b border-gray-100 flex items-center gap-2">
-        <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
-            </path>
-        </svg>
-        <h3 class="font-bold text-gray-800">
-            Performance ({{ admission.qualification|default:"N/A" }})
-        </h3>
-    </div>
+                <div class="px-4 py-3 bg-gray-50 border-b border-gray-100 flex items-center gap-2">
+                    <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+                        </path>
+                    </svg>
+                    <h3 class="font-bold text-gray-800">
+                        Performance ({{ admission.qualification|default:"N/A" }})
+                    </h3>
+                </div>
 
-    <div class="p-5 text-sm space-y-4">
+                <div class="p-5 text-sm space-y-4">
 
-        <!-- ===== COMMON METRICS ===== -->
-        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
-            <div>
-                <p class="text-gray-500 text-xs uppercase font-semibold">Cutoff Marks</p>
-                <p class="text-2xl font-bold text-primary">
-                    {{ admission.cutoff_marks|default:"N/A" }}
-                </p>
-            </div>
+                    <!-- ===== COMMON METRICS ===== -->
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
+                        <div>
+                            <p class="text-gray-500 text-xs uppercase font-semibold">Cutoff Marks</p>
+                            <p class="text-2xl font-bold text-primary">
+                                {{ admission.cutoff_marks|default:"N/A" }}
+                            </p>
+                        </div>
 
-            <div class="text-right">
-                <p class="text-gray-500 text-xs uppercase font-semibold">Percentage</p>
+                        <div class="text-right">
+                            <p class="text-gray-500 text-xs uppercase font-semibold">Percentage</p>
 
-                {% if admission.qualification == "12th" %}
-                    <p class="text-2xl font-bold text-green-600">
-                        {{ admission.twelfth_percentage|default:"N/A" }}%
+                            {% if admission.qualification == "12th" %}
+                            <p class="text-2xl font-bold text-green-600">
+                                {{ admission.twelfth_percentage|default:"N/A" }}%
+                            </p>
+                            {% elif admission.qualification == "Diploma" %}
+                            <p class="text-2xl font-bold text-green-600">
+                                {{ admission.diploma_percentage|default:"N/A" }}%
+                            </p>
+                            {% else %}
+                            <p class="text-2xl font-bold text-gray-400">—</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- ===== 12TH DETAILS ===== -->
+                    {% if admission.qualification == "12th" %}
+                    <div class="grid grid-cols-3 gap-2">
+                        <div class="bg-white p-2 border rounded-lg text-center">
+                            <p class="text-xs text-gray-500">Physics</p>
+                            <p class="font-bold text-gray-900">
+                                {{ admission.physics_marks|default:"—" }}
+                            </p>
+                        </div>
+                        <div class="bg-white p-2 border rounded-lg text-center">
+                            <p class="text-xs text-gray-500">Chemistry</p>
+                            <p class="font-bold text-gray-900">
+                                {{ admission.chemistry_marks|default:"—" }}
+                            </p>
+                        </div>
+                        <div class="bg-white p-2 border rounded-lg text-center">
+                            <p class="text-xs text-gray-500">Maths</p>
+                            <p class="font-bold text-gray-900">
+                                {{ admission.maths_marks|default:"—" }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="p-2 bg-gray-50 rounded-lg">
+                        <p class="text-xs text-gray-500 uppercase font-bold">12th Major</p>
+                        <p class="text-gray-900">
+                            {{ admission.twelfth_major|default:"N/A" }}
+                        </p>
+                    </div>
+                    {% endif %}
+
+                    <!-- ===== DIPLOMA DETAILS ===== -->
+                    {% if admission.qualification == "Diploma" %}
+                    <div class="grid grid-cols-2 gap-2">
+                        <div class="bg-white p-2 border rounded-lg text-center">
+                            <p class="text-xs text-gray-500">Diploma Total</p>
+                            <p class="font-bold text-gray-900">
+                                {{ admission.diploma_total|default:"—" }}
+                            </p>
+                        </div>
+                        <div class="bg-white p-2 border rounded-lg text-center">
+                            <p class="text-xs text-gray-500">Diploma Major</p>
+                            <p class="font-bold text-gray-900">
+                                {{ admission.diploma_major|default:"—" }}
+                            </p>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- ===== FALLBACK ===== -->
+                    {% if not admission.qualification %}
+                    <p class="text-center text-gray-400 text-sm">
+                        Qualification details not available
                     </p>
-                {% elif admission.qualification == "Diploma" %}
-                    <p class="text-2xl font-bold text-green-600">
-                        {{ admission.diploma_percentage|default:"N/A" }}%
-                    </p>
-                {% else %}
-                    <p class="text-2xl font-bold text-gray-400">—</p>
-                {% endif %}
-            </div>
-        </div>
+                    {% endif %}
 
-        <!-- ===== 12TH DETAILS ===== -->
-        {% if admission.qualification == "12th" %}
-        <div class="grid grid-cols-3 gap-2">
-            <div class="bg-white p-2 border rounded-lg text-center">
-                <p class="text-xs text-gray-500">Physics</p>
-                <p class="font-bold text-gray-900">
-                    {{ admission.physics_marks|default:"—" }}
-                </p>
+                </div>
             </div>
-            <div class="bg-white p-2 border rounded-lg text-center">
-                <p class="text-xs text-gray-500">Chemistry</p>
-                <p class="font-bold text-gray-900">
-                    {{ admission.chemistry_marks|default:"—" }}
-                </p>
-            </div>
-            <div class="bg-white p-2 border rounded-lg text-center">
-                <p class="text-xs text-gray-500">Maths</p>
-                <p class="font-bold text-gray-900">
-                    {{ admission.maths_marks|default:"—" }}
-                </p>
-            </div>
-        </div>
-
-        <div class="p-2 bg-gray-50 rounded-lg">
-            <p class="text-xs text-gray-500 uppercase font-bold">12th Major</p>
-            <p class="text-gray-900">
-                {{ admission.twelfth_major|default:"N/A" }}
-            </p>
-        </div>
-        {% endif %}
-
-        <!-- ===== DIPLOMA DETAILS ===== -->
-        {% if admission.qualification == "Diploma" %}
-        <div class="grid grid-cols-2 gap-2">
-            <div class="bg-white p-2 border rounded-lg text-center">
-                <p class="text-xs text-gray-500">Diploma Total</p>
-                <p class="font-bold text-gray-900">
-                    {{ admission.diploma_total|default:"—" }}
-                </p>
-            </div>
-            <div class="bg-white p-2 border rounded-lg text-center">
-                <p class="text-xs text-gray-500">Diploma Major</p>
-                <p class="font-bold text-gray-900">
-                    {{ admission.diploma_major|default:"—" }}
-                </p>
-            </div>
-        </div>
-        {% endif %}
-
-        <!-- ===== FALLBACK ===== -->
-        {% if not admission.qualification %}
-        <p class="text-center text-gray-400 text-sm">
-            Qualification details not available
-        </p>
-        {% endif %}
-
-    </div>
-</div>
 
         </div>
 
@@ -317,7 +320,8 @@
                         <div
                             class="flex items-center justify-between p-3 border rounded-xl hover:bg-gray-50 transition-colors">
                             <span class="font-medium text-gray-700">{{ dept }}</span>
-                            <span class="bg-gray-200 text-gray-800 text-xs font-bold px-2 py-1 rounded-full">Choice {{ rank }}</span>
+                            <span class="bg-gray-200 text-gray-800 text-xs font-bold px-2 py-1 rounded-full">Choice {{
+                                rank }}</span>
                         </div>
                         {% endfor %}
                         {% else %}
@@ -377,21 +381,25 @@
                         <div class="flex items-center justify-between mb-3">
                             <span class="font-bold text-gray-800">Facility Required</span>
                             {% if admission.facility_type == 'none' or not admission.bus_needed and not admission.hostel_needed %}
-                                <span class="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-xs font-bold uppercase border border-gray-300">
-                                    Not Needed
-                                </span>
+                            <span
+                                class="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-xs font-bold uppercase border border-gray-300">
+                                Not Needed
+                            </span>
                             {% elif admission.facility_type == 'transport' or admission.bus_needed == 'yes' %}
-                                <span class="px-3 py-1 bg-blue-100 text-blue-600 rounded-full text-xs font-bold uppercase border border-blue-300">
-                                    Transport
-                                </span>
+                            <span
+                                class="px-3 py-1 bg-blue-100 text-blue-600 rounded-full text-xs font-bold uppercase border border-blue-300">
+                                Transport
+                            </span>
                             {% elif admission.facility_type == 'hostel' or admission.hostel_needed == 'yes' %}
-                                <span class="px-3 py-1 bg-orange-100 text-orange-600 rounded-full text-xs font-bold uppercase border border-orange-300">
-                                    Hostel
-                                </span>
+                            <span
+                                class="px-3 py-1 bg-orange-100 text-orange-600 rounded-full text-xs font-bold uppercase border border-orange-300">
+                                Hostel
+                            </span>
                             {% else %}
-                                <span class="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-xs font-bold uppercase border border-gray-300">
-                                    Not Specified
-                                </span>
+                            <span
+                                class="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-xs font-bold uppercase border border-gray-300">
+                                Not Specified
+                            </span>
                             {% endif %}
                         </div>
                     </div>
@@ -400,7 +408,8 @@
                     {% if admission.facility_type == 'transport' or admission.bus_needed == 'yes' %}
                     <div class="p-4 bg-blue-50 rounded-xl border border-blue-200">
                         <div class="flex items-center gap-2 mb-3">
-                            <span class="w-8 h-8 rounded-lg bg-blue-500 text-white flex items-center justify-center text-sm font-bold">T</span>
+                            <span
+                                class="w-8 h-8 rounded-lg bg-blue-500 text-white flex items-center justify-center text-sm font-bold">T</span>
                             <h4 class="font-bold text-blue-900">Transport Facility</h4>
                         </div>
                         <div class="grid grid-cols-1 gap-2 text-gray-700">
@@ -420,7 +429,8 @@
                     {% if admission.facility_type == 'hostel' or admission.hostel_needed == 'yes' %}
                     <div class="p-4 bg-orange-50 rounded-xl border border-orange-200">
                         <div class="flex items-center gap-2 mb-3">
-                            <span class="w-8 h-8 rounded-lg bg-orange-500 text-white flex items-center justify-center text-sm font-bold">H</span>
+                            <span
+                                class="w-8 h-8 rounded-lg bg-orange-500 text-white flex items-center justify-center text-sm font-bold">H</span>
                             <h4 class="font-bold text-orange-900">Hostel Facility</h4>
                         </div>
                         <div class="grid grid-cols-1 gap-2 text-gray-700">
@@ -463,7 +473,8 @@
                     <div class="p-4 bg-gray-50 rounded-xl border border-gray-200 text-center">
                         <div class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center mx-auto mb-3">
                             <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
                         </div>
                         <p class="text-gray-600 font-medium">No campus facilities required</p>
@@ -481,27 +492,38 @@
                     </svg>
                     <h3 class="font-bold text-gray-800">Referral Details</h3>
                 </div>
-                <div class="p-5 text-sm space-y-4">
-                    <div>
-                        <p class="text-xs text-gray-500 font-bold uppercase">Referred By</p>
-                        <p class="font-bold text-gray-900 text-base">{{ admission.reference_name|default:"—" }}</p>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4">
+                <div class="p-5 text-sm space-y-6">
+                    {% for ref in admission.references.all %}
+                    <div class="{% if not forloop.last %}border-b border-gray-100 pb-4{% endif %}">
                         <div>
-                            <p class="text-xs text-gray-500 font-bold">Mobile</p>
-                            <p class="font-medium">{{ admission.reference_mobile|default:"—" }}</p>
+                            <p class="text-xs text-gray-500 font-bold uppercase">Referred By</p>
+                            <p class="font-bold text-gray-900 text-base">{{ ref.name }}</p>
                         </div>
-                        <div>
-                            <p class="text-xs text-gray-500 font-bold">Relation</p>
-                            <p class="font-medium">{{ admission.relationship|default:"—" }}</p>
+                        <div class="grid grid-cols-2 gap-4 mt-2">
+                            <div>
+                                <p class="text-xs text-gray-500 font-bold">Mobile</p>
+                                <p class="font-medium">{{ ref.mobile }}</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500 font-bold">Relation</p>
+                                <p class="font-medium">{{ ref.relationship }}</p>
+                            </div>
                         </div>
+                        {% if ref.department or ref.designation %}
+                        <div class="p-3 bg-accent/5 rounded-xl border border-accent/10 mt-3">
+                            <p class="text-xs text-dark/70 font-bold uppercase">Contact Context</p>
+                            <p class="text-dark">
+                                {{ ref.department|default:"" }}
+                                {% if ref.department and ref.designation %} ({% endif %}
+                                {{ ref.designation|default:"" }}
+                                {% if ref.department and ref.designation %}){% endif %}
+                            </p>
+                        </div>
+                        {% endif %}
                     </div>
-                    {% if admission.reference_department %}
-                    <div class="p-3 bg-accent/5 rounded-xl border border-accent/10">
-                        <p class="text-xs text-dark/70 font-bold uppercase">Contact Context</p>
-                        <p class="text-dark">{{ admission.reference_department }} ({{ admission.reference_designation }})</p>
-                    </div>
-                    {% endif %}
+                    {% empty %}
+                    <p class="text-gray-400 italic">No references provided.</p>
+                    {% endfor %}
                 </div>
             </div>
         </div>
@@ -555,7 +577,8 @@
                     </div>
                     <div class="md:text-right">
                         <p class="text-xs uppercase font-bold opacity-70">Payment Date</p>
-                        <p class="font-bold">{{ admission.transaction_date|default:admission.created_at|date:"D d M, Y" }}</p>
+                        <p class="font-bold">{{ admission.transaction_date|default:admission.created_at|date:"D d M, Y"
+                            }}</p>
                     </div>
                 </div>
             </div>
