@@ -308,8 +308,9 @@
                             <td class="px-6 py-4 text-center">
                                 <span class="text-sm font-black text-dark">{{ admission.cutoff_marks|default:"N/A" }}</span>
                             </td>
-                            <td class="px-6 py-4">
-                                <span class="text-[11px] font-bold text-gray-600 line-clamp-1  uppercase"
+
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="text-[11px] font-bold text-gray-600 uppercase"
                                     title="{{ admission.first_preference_dept }}">
                                     {{ admission.branch|default:"N/A" }}
                                 </span>
@@ -485,24 +486,22 @@
                         <div class="mt-4 space-y-4">
                             <div>
                                 <label for="modalCourse" class="block text-sm font-medium text-gray-700">Course</label>
-                                <select id="modalCourse"
-                                    class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm rounded-md">
-                                    <option value="" disabled selected>Select Course</option>
-                                    <option value="Course 1">Course 1</option>
-                                    <option value="Course 2">Course 2</option>
-                                    <option value="Course 3">Course 3</option>
-                                </select>
+                                <select id="modalCourse" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm rounded-md">
+                                <option value="" disabled selected>Select Course</option>
+                                <option value="BTECH">B.Tech</option>
+                                <option value="BE">B.E</option>
+                                <option value="PG">PG Course</option>
+                            </select>
                             </div>
                             <div>
                                 <label for="modalBranch" class="block text-sm font-medium text-gray-700">Branch</label>
-                                <select id="modalBranch"
-                                    class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm rounded-md">
-                                    <option value="" disabled selected>Select Branch</option>
-                                    <option value="Branch 1">Branch 1</option>
-                                    <option value="Branch 2">Branch 2</option>
-                                    <option value="Branch 3">Branch 3</option>
-                                </select>
+                                <select id="modalBranch" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm rounded-md">
+    <option value="" disabled selected>Select Branch</option>
+</select>
+
                             </div>
+                            
+
                             <div id="modalError" class="text-red-500 text-xs hidden">Please select both Course and
                                 Branch.</div>
                         </div>
@@ -624,6 +623,83 @@
             element.classList.add('bg-blue-50', 'text-blue-700', 'border-blue-200');
         }
     }
+    const ugDepts = [
+  'B.TECH (AI & DS) - Artificial Intelligence and Data Science',
+  'B.TECH (IT) - Information Technology',
+  'B.TECH (CH) - Chemical Engineering',
+  'B.TECH (AE) - Agricultural Engineering',
+  'B.TECH (BT) - Bio Technology',
+  'B.E (ME) - Mechanical Engineering (Tamil Medium)',
+  'B.E (ME) - Mechanical Engineering (English Medium)',
+  'B.E (BME) - Biomedical Engineering',
+  'B.E (CSE(IOT)) - Computer Science and Engineering (Internet Of Things)',
+  'B.E (CSE) - Computer Science and Engineering',
+  'B.E (CSD) - Computer Science and Design',
+  'B.E (CSE(AI & ML)) - Computer Science and Engineering (AI & ML)',
+  'B.E (CSE(CS)) - Computer Science and Engineering (Cyber Security)',
+  'B.E (ECE) - Electronics and Communication Engineering',
+  'B.E (CE) - Civil Engineering',
+  'B.E (EEE) - Electrical and Electronics Engineering',
+  'B.E (RAE) - Robotics & Automation',
+  'B.E (EIE) - Electronics and Instrumentation Engineering'
+];
+
+const pgDepts = [
+  'MBA',
+  'MCA',
+  'M.E. Computer Science',
+  'M.E. Applied Electronics',
+  'M.E. Manufacturing Engineering',
+  'M.E. Environmental Engineering',
+  'M.E. Power Electronics and Drives',
+  'M.E. Industrial Safety Engineering',
+  'M.E. Structural Engineering',
+  'M.TECH (CH) - Chemical Engineering'
+];
+
+const courseSelect = document.getElementById("modalCourse");
+const branchSelect = document.getElementById("modalBranch");
+
+// Example admission level variable (replace with real value)
+let admissionLevel = "UG"; // "UG" | "LE" | "PG"
+
+function populateBranches() {
+  const selectedCourse = courseSelect.value;
+
+  // Clear existing branches
+  branchSelect.innerHTML = '<option value="" disabled selected>Select Branch</option>';
+
+  let filteredBranches = [];
+
+  // PG → show PG departments only
+  if (admissionLevel === "PG") {
+    filteredBranches = pgDepts;
+  } 
+  else {
+    // UG / LE filtering by course
+    if (selectedCourse === "BTECH") {
+      filteredBranches = ugDepts.filter(dept => dept.startsWith("B.TECH"));
+    } 
+    else if (selectedCourse === "BE") {
+      filteredBranches = ugDepts.filter(dept => dept.startsWith("B.E"));
+    }
+  }
+
+  // Add options to dropdown
+  filteredBranches.forEach(branch => {
+    const option = document.createElement("option");
+    option.value = branch;
+    option.textContent = branch;
+    branchSelect.appendChild(option);
+  });
+}
+
+// Trigger when course changes
+courseSelect.addEventListener("change", populateBranches);
+
+// Initial load (optional)
+populateBranches();
+
 
     function performStatusUpdate(newStatus, course, branch) {
         const selectElement = currentSelectElement;

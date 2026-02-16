@@ -160,17 +160,13 @@ class Admission(models.Model):
     # =========================
     # FEE DETAILS
     # =========================
-    admission_fee = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    tuition_fee = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     college_fee = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    university_fee = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     hostel_fee = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     bus_fee = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     other_fee = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     paid_fee = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     concession_amount = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    balance_fee = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    pending_amount = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    unpaid_fee = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
 
     transaction_id = models.CharField(max_length=50, blank=True, null=True)
     transaction_date = models.DateTimeField(blank=True, null=True)
@@ -307,6 +303,8 @@ class FeePayment(models.Model):
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     payment_date = models.DateField()
     payment_mode = models.CharField(max_length=50)
+    transaction_id = models.CharField(max_length=100, blank=True, null=True)
+    remarks = models.TextField(blank=True, null=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
 

@@ -55,6 +55,7 @@ def _get_editable_fields():
             'input_type': INPUT_TYPE_MAP.get(class_name, 'text'),
             'step': step,
             'class_name': class_name,
+            'readonly': f.name == 'unpaid_fee',
         })
     return fields
 
@@ -230,8 +231,13 @@ def admissions_update(request):
             return JsonResponse({'success': False, 'error': 'Missing pk or field_name'}, status=400)
 
         # Validate field name is allowed
-        allowed = {f['name'] for f in _get_editable_fields()}
-        if field_name not in allowed:
+        editable_fields = _get_editable_fields()
+        allowed = {f['name'] for f in editable_fields}
+        
+        # Determine if field is readonly
+        is_readonly = next((f.get('readonly', False) for f in editable_fields if f['name'] == field_name), False)
+        
+        if field_name not in allowed or is_readonly:
             return JsonResponse({'success': False, 'error': f'Field "{field_name}" is not editable'}, status=400)
 
         # Get the model field to cast value
@@ -244,9 +250,34 @@ def admissions_update(request):
         # Update
         admission = Admission.objects.get(pk=pk)
         setattr(admission, field_name, value)
-        admission.save(update_fields=[field_name])
+        
+        update_fields = [field_name]
+        response_data = {'success': True}
 
-        return JsonResponse({'success': True})
+        # Auto-calculate unpaid_fee if a fee component is changed
+        fee_fields = {'college_fee', 'hostel_fee', 'bus_fee', 'other_fee', 'paid_fee', 'concession_amount'}
+        if field_name in fee_fields:
+            # Create a helper to safely get decimal values (treating None as 0)
+            def get_dec(attr):
+                val = getattr(admission, attr)
+                return val if val is not None else Decimal('0.00')
+
+            # Recalculate using current values (which include the newly set value)
+            total = (get_dec('college_fee') + 
+                     get_dec('hostel_fee') + 
+                     get_dec('bus_fee') + 
+                     get_dec('other_fee'))
+            
+            deductions = get_dec('paid_fee') + get_dec('concession_amount')
+            
+            new_unpaid = total - deductions
+            admission.unpaid_fee = new_unpaid
+            update_fields.append('unpaid_fee')
+            response_data['new_unpaid_fee'] = str(new_unpaid)
+
+        admission.save(update_fields=update_fields)
+
+        return JsonResponse(response_data)
 
     except Admission.DoesNotExist:
         return JsonResponse({'success': False, 'error': 'Record not found'}, status=404)

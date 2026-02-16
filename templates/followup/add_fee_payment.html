@@ -51,7 +51,7 @@
 
                     <div class="space-y-2">
                         <label class="block text-sm font-semibold text-gray-700">Payment Mode</label>
-                        <select name="payment_mode" required
+                        <select name="payment_mode" id="paymentMode" required onchange="toggleTransactionField()"
                             class="w-full p-3 rounded-xl border-2 border-gray-100 focus:border-dark focus:ring-0 outline-none transition-all text-gray-700 bg-gray-50/50">
                             <option value="Cash">Cash</option>
                             <option value="GPay/PhonePe">GPay / PhonePe</option>
@@ -60,7 +60,40 @@
                             <option value="Scholarship">Scholarship</option>
                         </select>
                     </div>
+
+                    <div class="space-y-2" id="transactionField" style="display:none;">
+                        <label class="block text-sm font-semibold text-gray-700">Transaction ID / Ref No</label>
+                        <input type="text" name="transaction_id" id="transactionInput"
+                            class="w-full p-3 rounded-xl border-2 border-gray-100 focus:border-dark focus:ring-0 outline-none transition-all text-gray-700 bg-gray-50/50"
+                            placeholder="Enter Transaction ID">
+                    </div>
+
+                    <div class="space-y-2 md:col-span-2">
+                        <label class="block text-sm font-semibold text-gray-700">Remarks (Optional)</label>
+                        <textarea name="remarks" rows="2"
+                            class="w-full p-3 rounded-xl border-2 border-gray-100 focus:border-dark focus:ring-0 outline-none transition-all text-gray-700 bg-gray-50/50"
+                            placeholder="e.g. Part payment for tuition fee..."></textarea>
+                    </div>
                 </div>
+
+                <script>
+                    function toggleTransactionField() {
+                        const mode = document.getElementById('paymentMode').value;
+                        const field = document.getElementById('transactionField');
+                        const input = document.getElementById('transactionInput');
+
+                        if (mode === 'Cash') {
+                            field.style.display = 'none';
+                            input.required = false;
+                            input.value = '';
+                        } else {
+                            field.style.display = 'block';
+                            input.required = true;
+                        }
+                    }
+                    // Run on load
+                    document.addEventListener('DOMContentLoaded', toggleTransactionField);
+                </script>
 
                 <div class="pt-6 border-t border-gray-50 flex flex-wrap gap-4">
                     <button type="submit"

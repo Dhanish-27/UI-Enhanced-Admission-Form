@@ -17,6 +17,8 @@ from weasyprint import HTML
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core.mail import EmailMessage
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.http import HttpResponse
 
 
 # Set up logging

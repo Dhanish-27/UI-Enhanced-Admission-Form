@@ -95,22 +95,66 @@ def student_detail(request, pk):
 
 
 
+from decimal import Decimal
+
 def add_fee_payment(request, pk):
     student = get_object_or_404(Admission, pk=pk)
     if not student.had_paid:
         student.had_paid = True
         student.save()
+        
     if request.method == 'POST':
+        amount_str = request.POST['amount']
+        payment_date = request.POST['payment_date']
+        payment_mode = request.POST['payment_mode']
+        transaction_id = request.POST.get('transaction_id', '').strip()
+        remarks = request.POST.get('remarks', '').strip()
+        
+        # If Cash, force transaction_id to be empty
+        if payment_mode == 'Cash':
+            transaction_id = ''
+            
+        amount = Decimal(amount_str)
+
+        # Create Payment Record
         FeePayment.objects.create(
             student=student,
-            amount=request.POST['amount'],
-            payment_date=request.POST['payment_date'],
-            payment_mode=request.POST['payment_mode']
+            amount=amount,
+            payment_date=payment_date,
+            payment_mode=payment_mode,
+            transaction_id=transaction_id,
+            remarks=remarks
         )
+
+        # Update Admission Totals
+        # Helper to get decimal value safely
+        def get_dec(val):
+            return val if val is not None else Decimal('0.00')
+
+        # Update paid_fee
+        current_paid = get_dec(student.paid_fee)
+        student.paid_fee = current_paid + amount
+        
+        # Recalculate unpaid_fee
+        total_fee = (get_dec(student.college_fee) + 
+                     get_dec(student.hostel_fee) + 
+                     get_dec(student.bus_fee) + 
+                     get_dec(student.other_fee))
+                     
+        total_paid = student.paid_fee + get_dec(student.concession_amount)
+        
+        student.unpaid_fee = total_fee - total_paid
+        
+        # Update transaction info on student record if relevant
+        if transaction_id:
+            student.transaction_id = transaction_id
+            student.transaction_date = timezone.now()
+
+        student.save()
 
         ActivityLog.objects.create(
             student=student,
-            action=f"Fee payment of {request.POST['amount']} received",
+            action=f"Fee payment of {amount} received via {payment_mode}",
             created_by=request.user,
             is_completed=True
         )

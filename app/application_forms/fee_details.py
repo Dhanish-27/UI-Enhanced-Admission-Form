@@ -15,11 +15,13 @@ def fee_details(request, pk):
             return redirect('personal_details')
 
         if request.method == 'POST':
-            admission_fee = request.POST.get('admission_fee', '').strip()
-            tuition_fee = request.POST.get('tuition_fee', '').strip()
             college_fee = request.POST.get('college_fee', '').strip()
             hostel_fee = request.POST.get('hostel_fee', '').strip()
             bus_fee = request.POST.get('bus_fee', '').strip()
+            other_fee = request.POST.get('other_fee', '').strip()
+            paid_fee = request.POST.get('paid_fee', '').strip()
+            concession_amount = request.POST.get('concession_amount', '').strip()
+            unpaid_fee = request.POST.get('unpaid_fee', '').strip()
             transaction_id = request.POST.get('transaction_id', '').strip()
             transaction_date_str = request.POST.get('transaction_date', '').strip()
             payment_screenshots = request.FILES.getlist('payment_screenshots')
@@ -37,16 +39,20 @@ def fee_details(request, pk):
 
             # Validate amounts are numeric
             try:
-                if admission_fee:
-                    float(admission_fee)
-                if tuition_fee:
-                    float(tuition_fee)
                 if college_fee:
                     float(college_fee)
                 if hostel_fee:
                     float(hostel_fee)
                 if bus_fee:
                     float(bus_fee)
+                if other_fee:
+                    float(other_fee)
+                if paid_fee:
+                    float(paid_fee)
+                if concession_amount:
+                    float(concession_amount)
+                if unpaid_fee:
+                    float(unpaid_fee)
             except ValueError:
                 messages.error(request, 'Fee amounts must be valid numbers.')
                 return render(request, 'details_form/fee_details.html', {'admission': admission})
@@ -58,11 +64,13 @@ def fee_details(request, pk):
                 return render(request, 'details_form/fee_details.html', {'admission': admission})
 
             try:
-                admission.admission_fee = admission_fee
-                admission.tuition_fee = tuition_fee
                 admission.college_fee = college_fee
                 admission.hostel_fee = hostel_fee
                 admission.bus_fee = bus_fee
+                admission.other_fee = other_fee
+                admission.paid_fee = paid_fee
+                admission.concession_amount = concession_amount
+                admission.unpaid_fee = unpaid_fee
                 admission.transaction_id = transaction_id
                 admission.transaction_date = transaction_date
                 # Scholarship fields moved to scholarship_details view

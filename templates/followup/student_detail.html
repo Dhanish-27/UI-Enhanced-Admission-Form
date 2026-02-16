@@ -36,10 +36,8 @@
                     <div>
                         <h2 class="text-2xl font-bold">{{ admission.student_name }}</h2>
                         <p class="text-sm opacity-90 flex items-center gap-2">
-                            <span class="bg-white/20 px-2 py-0.5 rounded text-xs">APP NO: {{
-                                admission.Application_number|default:"N/A" }}</span>
-                            <span class="bg-white/20 px-2 py-0.5 rounded text-xs">REG: {{ admission.register_number
-                                }}</span>
+                            <span class="bg-white/20 px-2 py-0.5 rounded text-xs">APP NO: {{ admission.Application_number|default:"N/A" }}</span>
+                            <span class="bg-white/20 px-2 py-0.5 rounded text-xs">REG: {{ admission.register_number }}</span>
                         </p>
                     </div>
                 </div>
@@ -91,8 +89,7 @@
                         </div>
                         <div>
                             <p class="text-gray-500 text-xs uppercase font-semibold">Unique ID</p>
-                            <p class="font-medium text-gray-900 text-xs font-mono">{{ admission.unique_id|default:"N/A"
-                                }}</p>
+                            <p class="font-medium text-gray-900 text-xs font-mono">{{ admission.unique_id|default:"N/A" }}</p>
                         </div>
                     </div>
                 </div>
@@ -546,15 +543,7 @@
                 </div>
             </div>
             <div class="p-6">
-                <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
-                    <div class="p-3 border rounded-xl bg-gray-50/50">
-                        <p class="text-[10px] uppercase font-bold text-gray-400">Admission</p>
-                        <p class="font-bold">₹{{ admission.admission_fee|default:"0" }}</p>
-                    </div>
-                    <div class="p-3 border rounded-xl bg-gray-50/50">
-                        <p class="text-[10px] uppercase font-bold text-gray-400">Tuition</p>
-                        <p class="font-bold">₹{{ admission.tuition_fee|default:"0" }}</p>
-                    </div>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                     <div class="p-3 border rounded-xl bg-gray-50/50">
                         <p class="text-[10px] uppercase font-bold text-gray-400">College</p>
                         <p class="font-bold">₹{{ admission.college_fee|default:"0" }}</p>
@@ -567,6 +556,22 @@
                         <p class="text-[10px] uppercase font-bold text-gray-400">Bus</p>
                         <p class="font-bold">₹{{ admission.bus_fee|default:"0" }}</p>
                     </div>
+                    <div class="p-3 border rounded-xl bg-gray-50/50">
+                        <p class="text-[10px] uppercase font-bold text-gray-400">Other</p>
+                        <p class="font-bold">₹{{ admission.other_fee|default:"0" }}</p>
+                    </div>
+                    <div class="p-3 border rounded-xl bg-green-50/50 border-green-100">
+                        <p class="text-[10px] uppercase font-bold text-green-600">Paid Fee</p>
+                        <p class="font-bold text-green-700">₹{{ admission.paid_fee|default:"0" }}</p>
+                    </div>
+                    <div class="p-3 border rounded-xl bg-blue-50/50 border-blue-100">
+                        <p class="text-[10px] uppercase font-bold text-blue-600">Concession</p>
+                        <p class="font-bold text-blue-700">₹{{ admission.concession_amount|default:"0" }}</p>
+                    </div>
+                    <div class="p-3 border rounded-xl bg-red-50/50 border-red-100 col-span-2 md:col-span-2">
+                        <p class="text-[10px] uppercase font-bold text-red-600">Unpaid Balance</p>
+                        <p class="font-bold text-red-700">₹{{ admission.unpaid_fee|default:"0" }}</p>
+                    </div>
                 </div>
 
                 <div class="p-4 bg-primary text-white rounded-2xl flex flex-col md:flex-row justify-between gap-4">
@@ -577,8 +582,7 @@
                     </div>
                     <div class="md:text-right">
                         <p class="text-xs uppercase font-bold opacity-70">Payment Date</p>
-                        <p class="font-bold">{{ admission.transaction_date|default:admission.created_at|date:"D d M, Y"
-                            }}</p>
+                        <p class="font-bold">{{ admission.transaction_date|default:admission.created_at|date:"D d M, Y" }}</p>
                     </div>
                 </div>
             </div>

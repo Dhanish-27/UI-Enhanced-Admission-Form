@@ -32,29 +32,11 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-          <!-- Admission Fee -->
-          <div>
-            <label class="block font-medium mb-1">Admission Fee</label>
-            <input type="text" name="admission_fee" value="{% if admission %}{{ admission.admission_fee }}{% endif %}"
-              placeholder="Enter amount"
-              class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500">
-            <span class="error-message" id="admission_fee_error"></span>
-          </div>
-
-          <!-- Tuition Fee -->
-          <div>
-            <label class="block font-medium mb-1">Tuition Fee</label>
-            <input type="text" name="tuition_fee" value="{% if admission %}{{ admission.tuition_fee }}{% endif %}"
-              placeholder="Enter amount"
-              class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500">
-            <span class="error-message" id="tuition_fee_error"></span>
-          </div>
-
           <!-- College Fee -->
           <div>
             <label class="block font-medium mb-1">College Fee</label>
-            <input type="text" name="college_fee" value="{% if admission %}{{ admission.college_fee }}{% endif %}"
-              placeholder="Enter amount"
+            <input type="text" name="college_fee"
+              value="{% if admission.college_fee %}{{ admission.college_fee }}{% endif %}" placeholder="Enter amount"
               class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500">
             <span class="error-message" id="college_fee_error"></span>
           </div>
@@ -62,8 +44,8 @@
           <!-- Hostel Fee -->
           <div>
             <label class="block font-medium mb-1">Hostel Fee</label>
-            <input type="text" name="hostel_fee" value="{% if admission %}{{ admission.hostel_fee }}{% endif %}"
-              placeholder="Enter amount"
+            <input type="text" name="hostel_fee"
+              value="{% if admission.hostel_fee %}{{ admission.hostel_fee }}{% endif %}" placeholder="Enter amount"
               class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500">
             <span class="error-message" id="hostel_fee_error"></span>
           </div>
@@ -71,10 +53,48 @@
           <!-- Bus Fee -->
           <div>
             <label class="block font-medium mb-1">Bus Fee</label>
-            <input type="text" name="bus_fee" value="{% if admission %}{{ admission.bus_fee }}{% endif %}"
+            <input type="text" name="bus_fee" value="{% if admission.bus_fee %}{{ admission.bus_fee }}{% endif %}"
               placeholder="Enter amount"
               class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500">
             <span class="error-message" id="bus_fee_error"></span>
+          </div>
+
+          <!-- Other Fee -->
+          <div>
+            <label class="block font-medium mb-1">Other Fee</label>
+            <input type="text" name="other_fee" value="{% if admission.other_fee %}{{ admission.other_fee }}{% endif %}"
+              placeholder="Enter amount"
+              class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500">
+            <span class="error-message" id="other_fee_error"></span>
+          </div>
+
+          <!-- Paid Fee -->
+          <div>
+            <label class="block font-medium mb-1">Paid Fee</label>
+            <input type="text" name="paid_fee" value="{% if admission.paid_fee %}{{ admission.paid_fee }}{% endif %}"
+              placeholder="Enter amount"
+              class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500">
+            <span class="error-message" id="paid_fee_error"></span>
+          </div>
+
+          <!-- Concession Amount -->
+          <div>
+            <label class="block font-medium mb-1">Concession Amount</label>
+            <input type="text" name="concession_amount"
+              value="{% if admission.concession_amount %}{{ admission.concession_amount }}{% endif %}"
+              placeholder="Enter amount"
+              class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500">
+            <span class="error-message" id="concession_amount_error"></span>
+          </div>
+
+          <!-- Unpaid Fee -->
+          <div>
+            <label class="block font-medium mb-1">Unpaid Fee</label>
+            <input type="text" name="unpaid_fee"
+              value="{% if admission.unpaid_fee %}{{ admission.unpaid_fee }}{% endif %}" placeholder="Auto-calculated"
+              readonly
+              class="w-full border border-gray-300 rounded px-3 py-2 bg-gray-100 focus:ring-2 focus:ring-blue-500 cursor-not-allowed">
+            <span class="error-message" id="unpaid_fee_error"></span>
           </div>
 
           <!-- Transaction ID -->
@@ -89,7 +109,7 @@
           <div>
             <label class="block font-medium mb-1">Transaction Date</label>
             <input type="datetime-local" name="transaction_date"
-              value="{% if admission and admission.transaction_date %}{{ admission.transaction_date|date:'Y-m-d\\TH:i' }}{% endif %}"
+              value="{% if admission and admission.transaction_date %}{{ admission.transaction_date|date:'Y-m-d\TH:i' }}{% endif %}"
               class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500">
           </div>
 
@@ -122,11 +142,39 @@
 </div>
 
 <script>
+  const feeFields = ['college_fee', 'hostel_fee', 'bus_fee', 'other_fee', 'paid_fee', 'concession_amount', 'unpaid_fee'];
+
+  function calculateUnpaidFee() {
+    const getVal = (name) => {
+      const el = document.querySelector(`[name="${name}"]`);
+      return el && el.value ? parseFloat(el.value) || 0 : 0;
+    };
+
+    const total = getVal('college_fee') + getVal('hostel_fee') + getVal('bus_fee') + getVal('other_fee');
+    const deductions = getVal('paid_fee') + getVal('concession_amount');
+    const unpaid = total - deductions;
+
+    const unpaidInput = document.querySelector('[name="unpaid_fee"]');
+    if (unpaidInput) {
+      unpaidInput.value = unpaid >= 0 ? unpaid.toFixed(2) : 0;
+    }
+  }
+
+  // Attach listeners
+  feeFields.forEach(field => {
+    const element = document.querySelector(`[name="${field}"]`);
+    if (element && field !== 'unpaid_fee') {
+      element.addEventListener('input', calculateUnpaidFee);
+    }
+  });
+
+  // Initial calculation
+  calculateUnpaidFee();
+
   document.getElementById('feeForm').addEventListener('submit', function (e) {
     let isValid = true;
     clearAllErrors();
 
-    const feeFields = ['admission_fee', 'tuition_fee', 'college_fee', 'hostel_fee', 'bus_fee'];
     feeFields.forEach(field => {
       const element = document.querySelector(`[name="${field}"]`);
       if (element) {
@@ -135,8 +183,6 @@
           showError(field, 'Fee amount must be a valid positive number');
           isValid = false;
         }
-      } else {
-        console.warn('Field not found:', field);
       }
     });
 

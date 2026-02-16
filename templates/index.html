@@ -44,6 +44,14 @@
                         </div>
                         Applications List
                     </a>
+                    <a href="{% url 'admissions_list' %}"
+                        class="flex items-center gap-3 px-4 py-3 rounded-2xl text-gray-600 hover:bg-gray-50 hover:text-primary font-bold text-sm transition-all group">
+                        <div
+                            class="w-8 h-8 rounded-lg bg-gray-50 group-hover:bg-primary/10 flex items-center justify-center transition-all">
+                            <i class="fas fa-users text-xs"></i>
+                        </div>
+                        All Admissions
+                    </a>
 
                     <!-- Follow-up Section -->
                     <div class="pt-4 px-4 pb-2">
@@ -97,12 +105,10 @@
                             class="absolute left-0 top-1.5 w-2 h-2 rounded-full bg-primary border-2 border-white ring-4 ring-gray-50/50">
                         </div>
                         <div class="flex flex-col gap-1">
-                            <p class="text-xs font-black text-gray-900 leading-none truncate">{{
-                                log.student.student_name }}</p>
+                            <p class="text-xs font-black text-gray-900 leading-none truncate">{{ log.student.student_name }}</p>
                             <p class="text-[10px] text-gray-500 font-medium leading-relaxed">{{ log.action }}</p>
                             <div class="flex items-center justify-between">
-                                <span class="text-[8px] font-bold text-primary uppercase tracking-tighter">{{
-                                    log.created_at|timesince }} ago</span>
+                                <span class="text-[8px] font-bold text-primary uppercase tracking-tighter">{{ log.created_at|timesince }} ago</span>
                                 {% if log.followup and not log.followup.completed %}
                                 <select onchange="if(this.value==='Completed') completeFollowUp({{ log.followup.id }})"
                                     class="text-[8px] bg-amber-50 border-none rounded-md px-1 py-0.5 font-bold text-amber-600 focus:ring-0 cursor-pointer">
@@ -347,8 +353,7 @@
                     <div class="px-6 py-4 border-b border-gray-50 bg-red-50/20 flex justify-between items-center">
                         <h2 class="text-base font-black text-red-700 tracking-tight uppercase">Urgent Attention</h2>
                         <span
-                            class="bg-red-100 text-red-600 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest">{{
-                            overdue_followups.count }} Overdue</span>
+                            class="bg-red-100 text-red-600 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest">{{ overdue_followups.count }} Overdue</span>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left">
