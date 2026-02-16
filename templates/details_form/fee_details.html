@@ -36,7 +36,7 @@
           <div>
             <label class="block font-medium mb-1">College Fee</label>
             <input type="text" name="college_fee"
-              value="{% if admission.college_fee %}{{ admission.college_fee }}{% endif %}" placeholder="Enter amount"
+              value="{% if admission.college_fee %}{{ admission.college_fee }}{% else %}0{% endif %}" placeholder="Enter amount"
               class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500">
             <span class="error-message" id="college_fee_error"></span>
           </div>
@@ -45,7 +45,7 @@
           <div>
             <label class="block font-medium mb-1">Hostel Fee</label>
             <input type="text" name="hostel_fee"
-              value="{% if admission.hostel_fee %}{{ admission.hostel_fee }}{% endif %}" placeholder="Enter amount"
+              value="{% if admission.hostel_fee %}{{ admission.hostel_fee }}{% else %}0{% endif %}" placeholder="Enter amount"
               class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500">
             <span class="error-message" id="hostel_fee_error"></span>
           </div>
@@ -53,7 +53,7 @@
           <!-- Bus Fee -->
           <div>
             <label class="block font-medium mb-1">Bus Fee</label>
-            <input type="text" name="bus_fee" value="{% if admission.bus_fee %}{{ admission.bus_fee }}{% endif %}"
+            <input type="text" name="bus_fee" value="{% if admission.bus_fee %}{{ admission.bus_fee }}{% else %}0{% endif %}"
               placeholder="Enter amount"
               class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500">
             <span class="error-message" id="bus_fee_error"></span>
@@ -62,7 +62,7 @@
           <!-- Other Fee -->
           <div>
             <label class="block font-medium mb-1">Other Fee</label>
-            <input type="text" name="other_fee" value="{% if admission.other_fee %}{{ admission.other_fee }}{% endif %}"
+            <input type="text" name="other_fee" value="{% if admission.other_fee %}{{ admission.other_fee}}{% else %}0{% endif %}"
               placeholder="Enter amount"
               class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500">
             <span class="error-message" id="other_fee_error"></span>
@@ -71,7 +71,7 @@
           <!-- Paid Fee -->
           <div>
             <label class="block font-medium mb-1">Paid Fee</label>
-            <input type="text" name="paid_fee" value="{% if admission.paid_fee %}{{ admission.paid_fee }}{% endif %}"
+            <input type="text" name="paid_fee" value="{% if admission.paid_fee %}{{ admission.paid_fee }}{% else %}0{% endif %}"
               placeholder="Enter amount"
               class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500">
             <span class="error-message" id="paid_fee_error"></span>
@@ -81,7 +81,7 @@
           <div>
             <label class="block font-medium mb-1">Concession Amount</label>
             <input type="text" name="concession_amount"
-              value="{% if admission.concession_amount %}{{ admission.concession_amount }}{% endif %}"
+              value="{% if admission.concession_amount %}{{ admission.concession_amount }}{% else %}0{% endif %}"
               placeholder="Enter amount"
               class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500">
             <span class="error-message" id="concession_amount_error"></span>
@@ -91,7 +91,7 @@
           <div>
             <label class="block font-medium mb-1">Unpaid Fee</label>
             <input type="text" name="unpaid_fee"
-              value="{% if admission.unpaid_fee %}{{ admission.unpaid_fee }}{% endif %}" placeholder="Auto-calculated"
+              value="{% if admission.unpaid_fee %}{{ admission.unpaid_fee }}{% else %}0{% endif %}" placeholder="Auto-calculated"
               readonly
               class="w-full border border-gray-300 rounded px-3 py-2 bg-gray-100 focus:ring-2 focus:ring-blue-500 cursor-not-allowed">
             <span class="error-message" id="unpaid_fee_error"></span>

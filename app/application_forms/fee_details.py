@@ -88,8 +88,10 @@ def fee_details(request, pk):
             except ValidationError as e:
                 logger.warning(f"Validation error in fee details: {str(e)}")
                 messages.error(request, f'Validation error: {str(e)}')
+                print(e)
                 return render(request, 'details_form/fee_details.html', {'admission': admission})
             except Exception as e:
+                print(e)
                 logger.error(f"Error saving fee details: {str(e)}")
                 messages.error(request, 'An error occurred while saving fee details.')
                 return render(request, 'details_form/fee_details.html', {'admission': admission})

@@ -320,13 +320,27 @@
                                 <td class="py-2 text-gray-500">College Fee</td>
                                 <td class="py-2 text-right font-medium text-gray-900">₹{{ admission.college_fee }}</td>
                             </tr>
-                            <tr>
-                                <td class="py-2 text-gray-500">PMSS Scholarship</td>
-                                <td class="py-2 text-right font-medium text-gray-900">
-                                    {% if admission.pmss %}<span class="text-green-600">Yes</span>{% else %}No{% endif%}
-                                </td>
+                            
+                            
+                            <tr class="bg-gray-50/50">
+                                <td class="py-3 font-semibold text-gray-700">Transaction ID</td>
+                                <td class="py-3 text-right font-mono text-gray-600">{{ admission.transaction_id }}</td>
                             </tr>
-                            <tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- 8. Scholarship Details -->
+<div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+    <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+        <h2 class="text-lg font-semibold text-gray-800">8. Scholarship Details</h2>
+        <a href="{% url 'scholarship_details' admission.pk %}"
+            class="text-sm font-medium text-orange-600 hover:text-orange-700 hover:underline">Edit</a>
+    </div>
+    <div class="p-6">
+        <table class="w-full text-sm">
+            <tbody class="divide-y divide-gray-50">
+                <tr>
                                 <td class="py-2 text-gray-500">First Graduate</td>
                                 <td class="py-2 text-right font-medium text-gray-900">
                                     {% if admission.is_fg %}
@@ -336,21 +350,29 @@
                                     {% endif %}
                                 </td>
                             </tr>
-                            <tr class="bg-gray-50/50">
-                                <td class="py-3 font-semibold text-gray-700">Transaction ID</td>
-                                <td class="py-3 text-right font-mono text-gray-600">{{ admission.transaction_id }}</td>
+                            <tr>
+                                <td class="py-2 text-gray-500">PMSS Scholarship</td>
+                                <td class="py-2 text-right font-medium text-gray-900">
+                                    {% if admission.pmss %}<span class="text-green-600">Yes</span>{% else %}No{% endif%}
+                                </td>
                             </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+                            <tr>
+                                <td class="py-2 text-gray-500">7.5% Scholarship</td>
+                                <td class="py-2 text-right font-medium text-gray-900">{% if admission.seven_five %}<span class="text-green-600">Yes</span>{% else %}No{% endif%}</td>
+                            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
         </div>
 
 
-        <!-- 9. Reference Details -->
+
+
+        <!-- 10. Reference Details -->
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
             <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
-                <h2 class="text-lg font-semibold text-gray-800">8. Reference Details</h2>
+                <h2 class="text-lg font-semibold text-gray-800">9. Reference Details</h2>
                 <a href="{% url 'reference_details' admission.pk %}"
                     class="text-sm font-medium text-orange-600 hover:text-orange-700 hover:underline">Edit</a>
             </div>
@@ -396,7 +418,7 @@
         <!-- 10. Bank Details -->
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
             <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
-                <h2 class="text-lg font-semibold text-gray-800">9. Bank Details</h2>
+                <h2 class="text-lg font-semibold text-gray-800">10. Bank Details</h2>
                 <a href="{% url 'bank_details' admission.pk %}"
                     class="text-sm font-medium text-orange-600 hover:text-orange-700 hover:underline">Edit</a>
             </div>
@@ -431,7 +453,7 @@
         <!-- 11. Certificates Stats -->
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
             <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
-                <h2 class="text-lg font-semibold text-gray-800">10. Uploaded Documents</h2>
+                <h2 class="text-lg font-semibold text-gray-800">11. Uploaded Documents</h2>
                 <a href="{% url 'certificate_checklist' admission.pk %}"
                     class="text-sm font-medium text-orange-600 hover:text-orange-700 hover:underline">Edit</a>
             </div>
