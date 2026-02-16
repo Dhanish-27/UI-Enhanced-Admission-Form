@@ -39,6 +39,7 @@ urlpatterns = [
     path('followups/create/<int:pk>/', followup.create_followup, name='create_followup'),
     path('followups/', followup.followup_list, name='followup_list'),
     path('followups/complete/<int:followup_id>/', followup.complete_followup, name='complete_followup'),
+    path('followups/reschedule/<int:followup_id>/', followup.reschedule_followup, name='reschedule_followup'),
     path('fees/add/<int:pk>/', followup.add_fee_payment, name='add_fee_payment'),
     path('activities/<int:pk>/', followup.student_activity_log, name='student_activity_log'),
     # Excel Export

@@ -9,6 +9,9 @@ from .models import FollowUp, ActivityLog, Admission, FeePayment
 
 
 
+import json
+from django.views.decorators.csrf import csrf_exempt
+
 def create_followup(request, pk):
     student = get_object_or_404(Admission, pk=pk)
     if request.method == 'POST':
@@ -71,6 +74,34 @@ def complete_followup(request, followup_id):
     )
 
     return JsonResponse({'status': 'success'})
+
+
+def reschedule_followup(request, followup_id):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            new_date = data.get('new_date')
+            
+            if not new_date:
+                return JsonResponse({'status': 'error', 'message': 'Date is required'}, status=400)
+
+            followup = get_object_or_404(FollowUp, id=followup_id)
+            old_date = followup.expected_date
+            followup.expected_date = new_date
+            followup.save()
+
+            ActivityLog.objects.create(
+                student=followup.student,
+                followup=followup,
+                action=f"Follow-up rescheduled from {old_date} to {new_date}",
+                created_by=request.user
+            )
+
+            return JsonResponse({'status': 'success'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+    
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)
 
 
 
