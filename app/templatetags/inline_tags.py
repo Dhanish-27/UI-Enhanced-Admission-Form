@@ -13,3 +13,11 @@ def get_field_value(obj, field_name):
     if isinstance(val, (dict, list)):
         return json.dumps(val)
     return val
+
+
+@register.filter
+def jsonify(obj):
+    """Return JSON string representation of object."""
+    if obj is None:
+        return 'null'
+    return json.dumps(obj)

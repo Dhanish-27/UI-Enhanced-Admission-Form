@@ -16,6 +16,7 @@ from .models import Admission
 
 logger = logging.getLogger(__name__)
 
+
 # ── Field type helpers ──────────────────────────────────────────────────────
 
 EXCLUDED_FIELD_TYPES = (models.FileField, models.ImageField, models.AutoField,
@@ -35,27 +36,150 @@ INPUT_TYPE_MAP = {
 }
 
 
+# ── Choices Constants ────────────────────────────────────────────────────────
+
+LEVEL_CHOICES = [
+    ('UG', 'UG'), ('PG', 'PG'), ('LE', 'LE')
+]
+
+BOARD_CHOICES = [
+    ('State Board', 'State Board'),
+    ('CBSE', 'CBSE'),
+    ('ICSE', 'ICSE'),
+    ('Others', 'Others')
+]
+
+COMMUNITY_CHOICES = [
+    ('OC', 'OC'), ('BC', 'BC'), ('MBC', 'MBC'),
+    ('SC', 'SC'), ('ST', 'ST'), ('DNC', 'DNC')
+]
+
+GENDER_CHOICES = [
+    ('Male', 'Male'), ('Female', 'Female'), ('Transgender', 'Transgender')
+]
+
+YES_NO_CHOICES = [
+    ('yes', 'Yes'), ('no', 'No')
+]
+
+QUALIFICATION_CHOICES = [
+    ('12th', '12th'), ('Diploma', 'Diploma')
+]
+
+QUOTA_CHOICES = [
+    ('Government', 'Government'), ('Management', 'Management')
+]
+
+MEDIUM_CHOICES = [
+    ('Tamil', 'Tamil'), ('English', 'English'), ('Others', 'Others')
+]
+
+UG_DEPT_CHOICES = [
+    ('B.TECH (AI & DS) - Artificial Intelligence and Data Science', 'B.TECH (AI & DS)'),
+    ('B.TECH (IT) - Information Technology', 'B.TECH (IT)'),
+    ('B.TECH (CH) - Chemical Engineering', 'B.TECH (CH)'),
+    ('B.TECH (AE) - Agricultural Engineering', 'B.TECH (AE)'),
+    ('B.TECH (BT) - Bio Technology', 'B.TECH (BT)'),
+    ('B.E (ME) - Mechanical Engineering (Tamil Medium)', 'B.E (ME-TM)'),
+    ('B.E (ME) - Mechanical Engineering (English Medium)', 'B.E (ME-EM)'),
+    ('B.E (BME) - Biomedical Engineering', 'B.E (BME)'),
+    ('B.E (CSE(IOT)) - Computer Science and Engineering (Internet Of Things)', 'B.E (CSE-IOT)'),
+    ('B.E (CSE) - Computer Science and Engineering', 'B.E (CSE)'),
+    ('B.E (CSD) - Computer Science and Design', 'B.E (CSD)'),
+    ('B.E (CSE(AI & ML)) - Computer Science and Engineering (AI & ML)', 'B.E (CSE-AI&ML)'),
+    ('B.E (CSE(CS)) - Computer Science and Engineering (Cyber Security)', 'B.E (CSE-CS)'),
+    ('B.E (ECE) - Electronics and Communication Engineering', 'B.E (ECE)'),
+    ('B.E (CE) - Civil Engineering', 'B.E (CE)'),
+    ('B.E (EEE) - Electrical and Electronics Engineering', 'B.E (EEE)'),
+    ('B.E (RAE) - Robotics & Automation', 'B.E (RAE)'),
+    ('B.E (EIE) - Electronics and Instrumentation Engineering', 'B.E (EIE)'),
+    ('M.Tech (CSE) 5 Years Integrated Course', 'M.Tech (CSE) 5 Yr')
+]
+
+PG_DEPT_CHOICES = [
+    ('MBA', 'MBA'),
+    ('MCA', 'MCA'),
+    ('M.E. Computer Science', 'M.E. CSE'),
+    ('M.E. Applied Electronics', 'M.E. App Elec'),
+    ('M.E. Manufacturing Engineering', 'M.E. Mfg Eng'),
+    ('M.E. Environmental Engineering', 'M.E. Env Eng'),
+    ('M.E. Power Electronics and Drives', 'M.E. PED'),
+    ('M.E. Industrial Safety Engineering', 'M.E. ISE'),
+    ('M.E. Structural Engineering', 'M.E. Str Eng'),
+    ('M.TECH (CH) - Chemical Engineering', 'M.TECH (CH)')
+]
+
+
 def _get_editable_fields():
     """Return list of dicts describing each editable field."""
     fields = []
+    
+    # Map field names to their specific choices
+    choice_map = {
+        'admission_status': Admission.ADMISSION_STATUS_CHOICES,
+        'level': LEVEL_CHOICES,
+        'board': BOARD_CHOICES,
+        'community': COMMUNITY_CHOICES,
+        'gender': GENDER_CHOICES,
+        'hostel_needed': YES_NO_CHOICES,
+        'bus_needed': YES_NO_CHOICES,
+        'qualification': QUALIFICATION_CHOICES,
+        'quota': QUOTA_CHOICES,
+        'medium': MEDIUM_CHOICES,
+        
+        # Special handling for dept preferences - passing list of dicts/tuples
+        # For simplicity in template, we'll format options as list of {'value': v, 'label': l}
+        'pg_dept': PG_DEPT_CHOICES,
+    }
+
     for f in Admission._meta.concrete_fields:
         if isinstance(f, EXCLUDED_FIELD_TYPES):
             continue
         if f.name in EXCLUDED_FIELD_NAMES:
             continue
+            
         class_name = f.__class__.__name__
         step = ''
+        input_type = INPUT_TYPE_MAP.get(class_name, 'text')
+        options = []
+
         if class_name == 'DecimalField':
             step = '0.01'
         elif class_name == 'IntegerField':
             step = '1'
+
+        # Override input_type if we have choices for this field
+        if f.name in choice_map:
+            input_type = 'select'
+            # Convert tuples to list of dicts for template
+            options = [{'value': c[0], 'label': c[1]} for c in choice_map[f.name]]
+        
+        elif f.name == 'department_preferences':
+            input_type = 'select'
+            # For JSON field, we'll use the UG choices but value will be the JSON structure string
+            # We use the full name as the key (c[0]) and short name/full name as label
+            # However, to save valid JSON into the field, value needs to be e.g. '{"B.E (CSE)": 1}'
+            # We'll construct that here.
+            options = []
+            for full_name, short_name in UG_DEPT_CHOICES:
+                # Create a single-preference JSON string.
+                # Note: This overrides any existing multi-preferences if edited inline.
+                val_dict = {full_name: 1}
+                val_json = json.dumps(val_dict)
+                options.append({'value': val_json, 'label': short_name})
+
+        elif f.name == 'pg_dept':
+             input_type = 'select'
+             options = [{'value': c[0], 'label': c[1]} for c in PG_DEPT_CHOICES]
+
         fields.append({
             'name': f.name,
             'verbose': f.verbose_name.replace('_', ' ').title(),
-            'input_type': INPUT_TYPE_MAP.get(class_name, 'text'),
+            'input_type': input_type,
             'step': step,
             'class_name': class_name,
             'readonly': f.name == 'unpaid_fee',
+            'options': options,  # List of {value, label}
         })
     return fields
 
