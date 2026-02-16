@@ -425,8 +425,7 @@
                             {{ num }}</a>
                             {% elif num  ==  page_obj.paginator.page_range.0 or num  ==  page_obj.paginator.page_range.last %}
                             <a href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ num }}"
-                                class="w-10 h-10 bg-gray-50 text-gray-700 rounded-xl text-sm font-bold hover:bg-gray-100 transition-all flex items-center justify-center">{{
-                                num }}</a>
+                                class="w-10 h-10 bg-gray-50 text-gray-700 rounded-xl text-sm font-bold hover:bg-gray-100 transition-all flex items-center justify-center">{{ num }}</a>
                             {% elif num  ==  page_obj.number|add:'-4' or num  ==  page_obj.number|add:'4' %}
                             <span
                                 class="w-10 h-10 bg-gray-50 text-gray-400 rounded-xl text-sm font-bold flex items-center justify-center">...</span>

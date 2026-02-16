@@ -45,7 +45,7 @@ def followup_list(request):
 
     filter_type = request.GET.get('filter')
 
-    qs = FollowUp.objects.filter(completed=False)
+    qs = FollowUp.objects.filter(completed=False).select_related('student')
 
     if filter_type == 'today':
         qs = qs.filter(expected_date=today)
@@ -106,7 +106,16 @@ def reschedule_followup(request, followup_id):
 
 
 def student_detail(request, pk):
-    student = get_object_or_404(Admission, pk=pk)
+    student = get_object_or_404(
+        Admission.objects.prefetch_related(
+            'followups', 
+            'activities', 
+            'fee_payments', 
+            'references',
+            'payment_screenshots'
+        ), 
+        pk=pk
+    )
 
     followups = student.followups.all().order_by('-expected_date')
     activities = student.activities.all().order_by('-created_at')

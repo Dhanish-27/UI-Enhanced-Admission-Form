@@ -162,7 +162,8 @@ def student_applications_list(request,status=None):
 
         context = {
             'page_obj': page_obj,
-            'all_admissions_json': json.dumps(list(queryset.values()) if not isinstance(queryset, list) else [obj.__dict__ for obj in queryset], cls=DjangoJSONEncoder),
+            'page_obj': page_obj,
+            #'all_admissions_json': json.dumps(list(queryset.values()) if not isinstance(queryset, list) else [obj.__dict__ for obj in queryset], cls=DjangoJSONEncoder),
             'search_query': search_query,
             'level_filter': level_filter,
             'board_filter': board_filter,

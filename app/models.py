@@ -61,7 +61,7 @@ class Admission(models.Model):
         ('discontinued', 'Discontinued'),
         ('left', 'Left'),
     )
-    admission_status = models.CharField(max_length=20, choices=ADMISSION_STATUS_CHOICES, default='enquired')
+    admission_status = models.CharField(max_length=20, choices=ADMISSION_STATUS_CHOICES, default='enquired', db_index=True)
 
     application_number = models.CharField(max_length=100, blank=True, null=True)
     application_date = models.DateField(blank=True, null=True)
@@ -81,7 +81,7 @@ class Admission(models.Model):
     # =========================
     # COURSE / DEPARTMENT
     # =========================
-    level = models.CharField(max_length=10, blank=True, null=True)
+    level = models.CharField(max_length=10, blank=True, null=True, db_index=True)
     course = models.CharField(max_length=100, blank=True, null=True)
     branch = models.CharField(max_length=100, blank=True, null=True)
     department_preferences = models.JSONField(default=dict, blank=True, null=True)
@@ -101,7 +101,7 @@ class Admission(models.Model):
     student_name = models.CharField(max_length=255, blank=True, null=True)
     dob = models.DateField(blank=True, null=True)
     gender = models.CharField(max_length=10, blank=True, null=True)
-    community = models.CharField(max_length=50, blank=True, null=True)
+    community = models.CharField(max_length=50, blank=True, null=True, db_index=True)
     caste = models.CharField(max_length=100, blank=True, null=True)
     region = models.CharField(max_length=100, blank=True, null=True)
     aadhaar_number = models.CharField(max_length=12, blank=True, null=True)
@@ -144,13 +144,13 @@ class Admission(models.Model):
     maths_marks = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
     physics_marks = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
     chemistry_marks = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
-    cutoff_marks = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
+    cutoff_marks = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True, db_index=True)
 
     diploma_total = models.CharField(max_length=50, blank=True, null=True)
     diploma_percentage = models.CharField(max_length=50, blank=True, null=True)
     diploma_major = models.CharField(max_length=255, blank=True, null=True)
 
-    board = models.CharField(max_length=50, blank=True, null=True)
+    board = models.CharField(max_length=50, blank=True, null=True, db_index=True)
     year_passing = models.IntegerField(blank=True, null=True)
     medium = models.CharField(max_length=50, blank=True, null=True)
     last_school = models.CharField(max_length=255, blank=True, null=True)

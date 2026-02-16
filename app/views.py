@@ -57,7 +57,7 @@ def home(request):
         ).select_related('student').order_by('expected_date')
 
         # Recent Activity Timeline
-        recent_activities = ActivityLog.objects.select_related('student').order_by('-created_at')[:10]
+        recent_activities = ActivityLog.objects.select_related('student', 'followup').order_by('-created_at')[:10]
 
         context = {
             'overdue_count': overdue_count,
