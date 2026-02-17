@@ -316,9 +316,8 @@
                         {% for dept, rank in admission.department_preferences.items %}
                         <div
                             class="flex items-center justify-between p-3 border rounded-xl hover:bg-gray-50 transition-colors">
-                            <span class="font-medium text-gray-700">{{ dept }}</span>
-                            <span class="bg-gray-200 text-gray-800 text-xs font-bold px-2 py-1 rounded-full">Choice {{
-                                rank }}</span>
+                            <span class="font-medium text-gray-700">{{ dept|upper }}</span>
+                            <span class="bg-gray-200 text-gray-800 text-xs font-bold px-2 py-1 rounded-full"> {{ rank }}</span>
                         </div>
                         {% endfor %}
                         {% else %}

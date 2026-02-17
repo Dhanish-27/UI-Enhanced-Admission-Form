@@ -257,25 +257,80 @@ def admissions_list(request):
     dept_filter = request.GET.get('dept', '')
 
     if dept_filter:
+        # Aggressive normalization: lowercase, remove all spaces and underscores
+        # This handles "AI & DS" vs "AI&DS" and "b.tech_" vs "b.tech "
+        dept_normalized_input = dept_filter.lower().replace('_', '').replace(' ', '').strip()
+        
         if pref_filter in ['1', '2', '3']:
             queryset = list(queryset)
-            queryset = [
-                obj for obj in queryset
-                if obj.department_preferences
-                and dept_filter in obj.department_preferences
-                and obj.department_preferences[dept_filter] == int(pref_filter)
-            ]
+            filtered_queryset = []
+            try:
+                target_pref = int(pref_filter)
+                for obj in queryset:
+                    if not isinstance(obj.department_preferences, dict):
+                        continue
+                    
+                    match = False
+                    for key, val in obj.department_preferences.items():
+                        # Normalize key from DB
+                        key_normalized = key.lower().replace('_', '').replace(' ', '').strip()
+                        if key_normalized == dept_normalized_input:
+                            try:
+                                if int(val) == target_pref:
+                                    match = True
+                                    break
+                            except (ValueError, TypeError):
+                                pass
+                    
+                    if match:
+                        filtered_queryset.append(obj)
+                
+                queryset = filtered_queryset
+            except ValueError:
+                pass
+
         elif pref_filter == '3+':
             queryset = list(queryset)
-            queryset = [
-                obj for obj in queryset
-                if obj.department_preferences
-                and dept_filter in obj.department_preferences
-                and obj.department_preferences[dept_filter] > 3
-            ]
+            filtered_queryset = []
+            
+            for obj in queryset:
+                if not isinstance(obj.department_preferences, dict):
+                    continue
+                
+                match = False
+                for key, val in obj.department_preferences.items():
+                    key_normalized = key.lower().replace('_', '').replace(' ', '').strip()
+                    if key_normalized == dept_normalized_input:
+                        try:
+                            if int(val) >= 3:
+                                match = True
+                                break
+                        except (ValueError, TypeError):
+                            pass
+                
+                if match:
+                    filtered_queryset.append(obj)
+            
+            queryset = filtered_queryset
+        
         else:
-            queryset = queryset.filter(
-                department_preferences__icontains=dept_filter)
+             # Filter by department only (no specific preference)
+             queryset = list(queryset)
+             filtered_queryset = []
+             for obj in queryset:
+                 if not isinstance(obj.department_preferences, dict):
+                     continue
+                 
+                 match = False
+                 for key in obj.department_preferences.keys():
+                     key_normalized = key.lower().replace('_', '').replace(' ', '').strip()
+                     if key_normalized == dept_normalized_input:
+                         match = True
+                         break
+                 
+                 if match:
+                     filtered_queryset.append(obj)
+             queryset = filtered_queryset
 
     # ── Sorting ──────────────────────────────────────────────────────────
     sort_by = request.GET.get('sort', '-created_at')
