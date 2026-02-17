@@ -11,3 +11,4 @@ Migrations/
 .env
 .idea/
 .vscode/
+db.sqlite3

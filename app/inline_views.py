@@ -200,6 +200,10 @@ def admissions_list(request):
             Q(application_number__icontains=search_query)
         )
 
+    status_filter = request.GET.get('status', '')
+    if status_filter:
+        queryset = queryset.filter(admission_status__iexact=status_filter)
+
     level_filter = request.GET.get('level', '')
     if level_filter:
         queryset = queryset.filter(level=level_filter)
@@ -235,6 +239,12 @@ def admissions_list(request):
 
     cutoff_from = request.GET.get('cutoff_from', '')
     cutoff_to = request.GET.get('cutoff_to', '')
+    
+    pref_filter = request.GET.get('preference', '')
+    dept_filter = request.GET.get('dept', '')
+
+    logger.info(f"Filtering params: status={status_filter}, level={level_filter}, dept={dept_filter}, pref={pref_filter}")
+    
     if cutoff_from:
         try:
             queryset = queryset.filter(cutoff_marks__gte=float(cutoff_from))
@@ -253,8 +263,8 @@ def admissions_list(request):
     if date_to:
         queryset = queryset.filter(created_at__date__lte=date_to)
 
-    pref_filter = request.GET.get('preference', '')
-    dept_filter = request.GET.get('dept', '')
+    if date_to:
+        queryset = queryset.filter(created_at__date__lte=date_to)
 
     if dept_filter:
         # Aggressive normalization: lowercase, remove all spaces and underscores
@@ -267,12 +277,20 @@ def admissions_list(request):
             try:
                 target_pref = int(pref_filter)
                 for obj in queryset:
-                    if not isinstance(obj.department_preferences, dict):
+                    # Ensure department_preferences is a dictionary
+                    dep_prefs = obj.department_preferences
+                    if isinstance(dep_prefs, str):
+                        try:
+                            dep_prefs = json.loads(dep_prefs)
+                        except (json.JSONDecodeError, TypeError):
+                            continue
+                            
+                    if not isinstance(dep_prefs, dict):
                         continue
                     
                     match = False
-                    for key, val in obj.department_preferences.items():
-                        # Normalize key from DB
+                    for key, val in dep_prefs.items():
+                        # Normalize stored key similarly
                         key_normalized = key.lower().replace('_', '').replace(' ', '').strip()
                         if key_normalized == dept_normalized_input:
                             try:
@@ -290,39 +308,52 @@ def admissions_list(request):
                 pass
 
         elif pref_filter == '3+':
-            queryset = list(queryset)
-            filtered_queryset = []
-            
-            for obj in queryset:
-                if not isinstance(obj.department_preferences, dict):
-                    continue
-                
-                match = False
-                for key, val in obj.department_preferences.items():
-                    key_normalized = key.lower().replace('_', '').replace(' ', '').strip()
-                    if key_normalized == dept_normalized_input:
-                        try:
-                            if int(val) >= 3:
-                                match = True
-                                break
-                        except (ValueError, TypeError):
-                            pass
-                
-                if match:
-                    filtered_queryset.append(obj)
-            
-            queryset = filtered_queryset
+             queryset = list(queryset)
+             filtered_queryset = []
+             for obj in queryset:
+                 dep_prefs = obj.department_preferences
+                 if isinstance(dep_prefs, str):
+                     try:
+                         dep_prefs = json.loads(dep_prefs)
+                     except (json.JSONDecodeError, TypeError):
+                         continue
+                         
+                 if not isinstance(dep_prefs, dict):
+                     continue
+                 
+                 match = False
+                 for key, val in dep_prefs.items():
+                     key_normalized = key.lower().replace('_', '').replace(' ', '').strip()
+                     if key_normalized == dept_normalized_input:
+                         try:
+                             if int(val) >= 3:
+                                 match = True
+                                 break
+                         except (ValueError, TypeError):
+                             pass
+                 
+                 if match:
+                     filtered_queryset.append(obj)
+             
+             queryset = filtered_queryset
         
         else:
              # Filter by department only (no specific preference)
              queryset = list(queryset)
              filtered_queryset = []
              for obj in queryset:
-                 if not isinstance(obj.department_preferences, dict):
+                 dep_prefs = obj.department_preferences
+                 if isinstance(dep_prefs, str):
+                     try:
+                         dep_prefs = json.loads(dep_prefs)
+                     except (json.JSONDecodeError, TypeError):
+                         continue
+
+                 if not isinstance(dep_prefs, dict):
                      continue
                  
                  match = False
-                 for key in obj.department_preferences.keys():
+                 for key in dep_prefs.keys():
                      key_normalized = key.lower().replace('_', '').replace(' ', '').strip()
                      if key_normalized == dept_normalized_input:
                          match = True
@@ -375,6 +406,7 @@ def admissions_list(request):
         'page_obj': page_obj,
         'fields': fields,
         'search_query': search_query,
+        'status_filter': status_filter,
         'level_filter': level_filter,
         'board_filter': board_filter,
         'community_filter': community_filter,
