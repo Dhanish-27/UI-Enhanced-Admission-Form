@@ -1,740 +1,833 @@
 {% extends 'followup/new_base.html' %}
 {% load static %}
-
 {% block title %}Student Details - {{ admission.student_name }}{% endblock %}
-
 {% block content %}
-<div class="flex flex-col lg:flex-row gap-8">
-    <!-- Sidebar Stepper -->
-    <div class="lg:w-1/4">
-        <div class="sticky top-24">
-            <h3 class="text-lg font-bold mb-4 text-gray-800 px-2">Admission Progress</h3>
-            {% include 'followup/stepper.html' %}
+    <div class="flex flex-col lg:flex-row gap-8">
+        <!-- Sidebar Stepper -->
+        <div class="lg:w-1/4">
+            <div class="sticky top-24">
+                <h3 class="text-lg font-bold mb-4 text-gray-800 px-2">Admission Progress</h3>
+                {% include 'followup/stepper.html' %}
+            </div>
         </div>
-    </div>
-
-    <!-- Main Content -->
-    <div class="lg:w-3/4 space-y-6">
-        {% if admission %}
-        <!-- Header Section -->
-        <div
-            class="bg-gradient-to-r from-primary to-accent text-white rounded-2xl p-6 shadow-sm border border-primary/10">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <div class="flex items-center gap-4">
-                    {% if admission.photo %}
-                    <img src="{{ admission.photo.url }}" alt="Photo"
-                        class="w-16 h-16 rounded-full object-cover border-2 border-white/50 shadow-sm">
-                    {% else %}
-                    <div
-                        class="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center border-2 border-white/50 shadow-sm">
-                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                        </svg>
-                    </div>
-                    {% endif %}
-                    <div>
-                        <h2 class="text-2xl font-bold">{{ admission.student_name }}</h2>
-                        <p class="text-sm opacity-90 flex items-center gap-2">
-                            <span class="bg-white/20 px-2 py-0.5 rounded text-xs">APP NO: {{ admission.Application_number|default:"N/A" }}</span>
-                            <span class="bg-white/20 px-2 py-0.5 rounded text-xs">REG: {{ admission.register_number }}</span>
-                        </p>
+        <!-- Main Content -->
+        <div class="lg:w-3/4 space-y-6">
+            {% if admission %}
+                <!-- Header Section -->
+                <div class="bg-gradient-to-r from-primary to-accent text-white rounded-2xl p-6 shadow-sm border border-primary/10">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                        <div class="flex items-center gap-4">
+                            {% if admission.photo %}
+                                <img src="{{ admission.photo.url }}"
+                                     alt="Photo"
+                                     class="w-16 h-16 rounded-full object-cover border-2 border-white/50 shadow-sm">
+                            {% else %}
+                                <div class="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center border-2 border-white/50 shadow-sm">
+                                    <svg class="w-8 h-8 text-white"
+                                         fill="none"
+                                         stroke="currentColor"
+                                         viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z">
+                                        </path>
+                                    </svg>
+                                </div>
+                            {% endif %}
+                            <div>
+                                <h2 class="text-2xl font-bold">{{ admission.student_name }}</h2>
+                                <p class="text-sm opacity-90 flex items-center gap-2">
+                                    <span class="bg-white/20 px-2 py-0.5 rounded text-xs">APP NO: {{ admission.application_number|default:"N/A" }}</span>
+                                    <span class="bg-white/20 px-2 py-0.5 rounded text-xs">REG: {{ admission.allotment_number|default:"N/A" }}</span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="flex gap-2">
+                            <a href="{% url 'admission_form:admission_report' admission.id %}"
+                               target="_blank"
+                               class="bg-white text-primary hover:bg-gray-100 transition-colors px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 shadow-sm">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                                    </path>
+                                </svg>
+                                Download Profile PDF
+                            </a>
+                        </div>
                     </div>
                 </div>
-                <div class="flex gap-2">
-                    <a href="{% url 'admission_report' admission.id %}" target="_blank"
-                        class="bg-white text-primary hover:bg-gray-100 transition-colors px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 shadow-sm">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Basic Personal Info -->
+                    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                        <div class="px-4 py-3 bg-gray-50 border-b border-gray-100 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-primary"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z">
+                                </path>
+                            </svg>
+                            <h3 class="font-bold text-gray-800">Personal Information</h3>
+                        </div>
+                        <div class="p-5 space-y-4">
+                            <div class="grid grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <p class="text-gray-500 text-xs uppercase font-semibold">Email Address</p>
+                                    <p class="font-medium text-gray-900 break-all">{{ admission.email }}</p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-500 text-xs uppercase font-semibold">Mobile Number</p>
+                                    <p class="font-medium text-gray-900">{{ admission.student_mobile|default:"N/A" }}</p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-500 text-xs uppercase font-semibold">Date of Birth</p>
+                                    <p class="font-medium text-gray-900">{{ admission.dob|date:"D d M, Y" }}</p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-500 text-xs uppercase font-semibold">Gender</p>
+                                    <p class="font-medium text-gray-900">{{ admission.gender }}</p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-500 text-xs uppercase font-semibold">Community</p>
+                                    <p class="font-medium text-gray-900">{{ admission.get_community_display }}</p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-500 text-xs uppercase font-semibold">Unique ID</p>
+                                    <p class="font-medium text-gray-900 text-xs font-mono">{{ admission.unique_id|default:"N/A" }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Family Details -->
+                    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                        <div class="px-4 py-3 bg-gray-50 border-b border-gray-100 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-primary"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
+                                </path>
+                            </svg>
+                            <h3 class="font-bold text-gray-800">Family Details</h3>
+                        </div>
+                        <div class="p-5 space-y-4 text-sm">
+                            <div class="grid grid-cols-2 gap-x-4 gap-y-3">
+                                <div class="col-span-1">
+                                    <p class="text-gray-500 text-xs uppercase font-semibold">Father's Name</p>
+                                    <p class="font-medium text-gray-900">{{ admission.father_name }}</p>
+                                </div>
+                                <div class="col-span-1 text-right">
+                                    <p class="text-gray-500 text-xs uppercase font-semibold">Mobile</p>
+                                    <p class="font-medium text-gray-900">{{ admission.father_mobile|default:"N/A" }}</p>
+                                </div>
+                                <div class="col-span-1 pt-2">
+                                    <p class="text-gray-500 text-xs uppercase font-semibold">Mother's Name</p>
+                                    <p class="font-medium text-gray-900">{{ admission.mother_name }}</p>
+                                </div>
+                                <div class="col-span-1 pt-2 text-right">
+                                    <p class="text-gray-500 text-xs uppercase font-semibold">Mobile</p>
+                                    <p class="font-medium text-gray-900">{{ admission.mother_mobile|default:"N/A" }}</p>
+                                </div>
+                                {% if admission.guardian_name %}
+                                    <div class="col-span-1 pt-2">
+                                        <p class="text-gray-500 text-xs uppercase font-semibold">Guardian's Name</p>
+                                        <p class="font-medium text-gray-900">{{ admission.guardian_name }}</p>
+                                    </div>
+                                    <div class="col-span-1 pt-2 text-right">
+                                        <p class="text-gray-500 text-xs uppercase font-semibold">Mobile</p>
+                                        <p class="font-medium text-gray-900">{{ admission.guardian_mobile|default:"N/A" }}</p>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Academic Info -->
+                    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                        <div class="px-4 py-3 bg-gray-50 border-b border-gray-100 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-primary"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"></path>
+                                <path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z">
+                                </path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z">
+                                </path>
+                            </svg>
+                            <h3 class="font-bold text-gray-800">Academic Background</h3>
+                        </div>
+                        <div class="p-5 space-y-4 text-sm">
+                            <div>
+                                <p class="text-gray-500 text-xs uppercase font-semibold">Last School / Institution</p>
+                                <p class="font-medium text-gray-900">{{ admission.last_school }}</p>
+                            </div>
+                            <div class="grid grid-cols-3 gap-4">
+                                <div>
+                                    <p class="text-gray-500 text-xs uppercase font-semibold">Board</p>
+                                    <p class="font-medium text-gray-900">{{ admission.board }}</p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-500 text-xs uppercase font-semibold">Year</p>
+                                    <p class="font-medium text-gray-900">{{ admission.year_passing }}</p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-500 text-xs uppercase font-semibold">Medium</p>
+                                    <p class="font-medium text-gray-900">{{ admission.medium }}</p>
+                                </div>
+                            </div>
+                            {% if admission.qualification == "Diploma" or admission.level == "LE" %}
+                                <div class="mt-4 pt-4 border-t border-gray-100">
+                                    <p class="text-gray-500 text-xs uppercase font-semibold mb-2">Diploma / LE College Information</p>
+                                    <div class="grid grid-cols-1 gap-2">
+                                        <div class="p-3 bg-indigo-50 border border-indigo-100 rounded-xl mb-2">
+                                            <p class="text-indigo-500 text-xs uppercase font-semibold">College Name</p>
+                                            <p class="font-bold text-indigo-900">{{ admission.diploma_college|default:"N/A" }}</p>
+                                        </div>
+                                        <div class="grid grid-cols-2 gap-4">
+                                            <div>
+                                                <p class="text-gray-500 text-xs uppercase font-semibold">Year of Passing</p>
+                                                <p class="font-medium text-gray-900">{{ admission.diploma_year_passing|default:"N/A" }}</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-gray-500 text-xs uppercase font-semibold">District/State</p>
+                                                <p class="font-medium text-gray-900">
+                                                    {{ admission.college_district|default:"-" }} / {{ admission.college_state|default:"-" }}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        {% if admission.college_address1 %}
+                                            <div class="mt-2">
+                                                <p class="text-gray-500 text-xs uppercase font-semibold">Address</p>
+                                                <p class="font-medium text-gray-900">{{ admission.college_address1 }}</p>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endif %}
+                            {% if admission.vocational_stream %}
+                                <div class="p-3 bg-blue-50 border border-blue-100 rounded-xl mt-4">
+                                    <p class="text-blue-500 text-xs uppercase font-semibold">Vocational Stream</p>
+                                    <p class="font-medium text-blue-900">{{ admission.vocational_stream }}</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <!-- Marks -->
+                    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                        <div class="px-4 py-3 bg-gray-50 border-b border-gray-100 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-primary"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+                                </path>
+                            </svg>
+                            <h3 class="font-bold text-gray-800">Performance ({{ admission.qualification|default:"N/A" }})</h3>
+                        </div>
+                        <div class="p-5 text-sm space-y-4">
+                            <!-- ===== COMMON METRICS ===== -->
+                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
+                                <div>
+                                    <p class="text-gray-500 text-xs uppercase font-semibold">Cutoff Marks</p>
+                                    <p class="text-2xl font-bold text-primary">{{ admission.cutoff_marks|default:"N/A" }}</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-gray-500 text-xs uppercase font-semibold">Percentage</p>
+                                    {% if admission.qualification == "12th" %}
+                                        <p class="text-2xl font-bold text-green-600">{{ admission.twelfth_percentage|default:"N/A" }}%</p>
+                                    {% elif admission.qualification == "Diploma" %}
+                                        <p class="text-2xl font-bold text-green-600">{{ admission.diploma_percentage|default:"N/A" }}%</p>
+                                    {% else %}
+                                        <p class="text-2xl font-bold text-gray-400">—</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <!-- ===== 12TH DETAILS ===== -->
+                            {% if admission.qualification == "12th" %}
+                                <div class="grid grid-cols-3 gap-2">
+                                    <div class="bg-white p-2 border rounded-lg text-center">
+                                        <p class="text-xs text-gray-500">Physics</p>
+                                        <p class="font-bold text-gray-900">{{ admission.physics_marks|default:"—" }}</p>
+                                    </div>
+                                    <div class="bg-white p-2 border rounded-lg text-center">
+                                        <p class="text-xs text-gray-500">Chemistry</p>
+                                        <p class="font-bold text-gray-900">{{ admission.chemistry_marks|default:"—" }}</p>
+                                    </div>
+                                    <div class="bg-white p-2 border rounded-lg text-center">
+                                        <p class="text-xs text-gray-500">Maths</p>
+                                        <p class="font-bold text-gray-900">{{ admission.maths_marks|default:"—" }}</p>
+                                    </div>
+                                </div>
+                                <div class="p-2 bg-gray-50 rounded-lg">
+                                    <p class="text-xs text-gray-500 uppercase font-bold">12th Major</p>
+                                    <p class="text-gray-900">{{ admission.twelfth_major|default:"N/A" }}</p>
+                                </div>
+                            {% endif %}
+                            <!-- ===== DIPLOMA DETAILS ===== -->
+                            {% if admission.qualification == "Diploma" %}
+                                <div class="grid grid-cols-2 gap-2">
+                                    <div class="bg-white p-2 border rounded-lg text-center">
+                                        <p class="text-xs text-gray-500">Diploma Total</p>
+                                        <p class="font-bold text-gray-900">{{ admission.diploma_total|default:"—" }}</p>
+                                    </div>
+                                    <div class="bg-white p-2 border rounded-lg text-center">
+                                        <p class="text-xs text-gray-500">Diploma Major</p>
+                                        <p class="font-bold text-gray-900">{{ admission.diploma_major|default:"—" }}</p>
+                                    </div>
+                                </div>
+                            {% endif %}
+                            <!-- ===== FALLBACK ===== -->
+                            {% if not admission.qualification %}
+                                <p class="text-center text-gray-400 text-sm">Qualification details not available</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <!-- Preferences & Address Section -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Course Preferences -->
+                    <div class="md:col-span-2 bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                        <div class="px-4 py-3 bg-gray-50 border-b border-gray-100 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-primary"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01">
+                                </path>
+                            </svg>
+                            <h3 class="font-bold text-gray-800">Course Selection</h3>
+                        </div>
+                        <div class="p-5">
+                            <div class="flex flex-wrap gap-4 mb-4">
+                                <div class="px-4 py-2 bg-primary/10 rounded-xl border border-primary/20">
+                                    <span class="text-xs text-primary font-bold uppercase">Program Level</span>
+                                    <p class="font-bold text-primary">{{ admission.level|upper }}</p>
+                                </div>
+                                {% if admission.pg_dept %}
+                                    <div class="px-4 py-2 bg-accent/10 rounded-xl border border-accent/20">
+                                        <span class="text-xs text-dark font-bold uppercase">PG Specialization</span>
+                                        <p class="font-bold text-dark">{{ admission.pg_dept }}</p>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <p class="text-xs text-gray-500 font-bold uppercase mb-2">Department Priorities</p>
+                            <div class="flex flex-col gap-2">
+                                {% if admission.department_preferences %}
+                                    {% for dept, rank in admission.department_preferences.items %}
+                                        <div class="flex items-center justify-between p-3 border rounded-xl hover:bg-gray-50 transition-colors">
+                                            <span class="font-medium text-gray-700">{{ dept|upper }}</span>
+                                            <span class="bg-gray-200 text-gray-800 text-xs font-bold px-2 py-1 rounded-full">{{ rank }}</span>
+                                        </div>
+                                    {% endfor %}
+                                {% else %}
+                                    <p class="text-gray-400 italic text-sm">No preferences defined.</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Address Card -->
+                    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                        <div class="px-4 py-3 bg-gray-50 border-b border-gray-100 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-primary"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z">
+                                </path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                            <h3 class="font-bold text-gray-800">Current Address</h3>
+                        </div>
+                        <div class="p-5 text-sm space-y-4">
+                            <p class="text-gray-700 leading-relaxed">{{ admission.address }}</p>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <p class="text-xs text-gray-500 font-bold">District</p>
+                                    <p class="font-medium">{{ admission.district|default:"N/A" }}</p>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-gray-500 font-bold">State</p>
+                                    <p class="font-medium">{{ admission.state|default:"N/A" }}</p>
+                                </div>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500 font-bold">Country</p>
+                                <p class="font-medium">{{ admission.country|default:"India" }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Scholarship and Bank Details Section -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Scholarship Details -->
+                    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                        <div class="px-4 py-3 bg-gray-50 border-b border-gray-100 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-primary"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                                </path>
+                            </svg>
+                            <h3 class="font-bold text-gray-800">Scholarship Details</h3>
+                        </div>
+                        <div class="p-5 text-sm space-y-4">
+                            {% if admission.is_fg or admission.pmss or admission.seven_five %}
+                                <div class="grid grid-cols-2 gap-2 text-gray-700">
+                                    <div class="flex justify-between items-center p-2 bg-gray-50 rounded-lg">
+                                        <span class="text-sm font-medium">Is First Grad (FG):</span>
+                                        <span class="font-bold {% if admission.is_fg %}text-green-600{% else %}text-red-500{% endif %}">
+                                            {{ admission.is_fg|yesno:"Yes,No" }}
+                                        </span>
+                                    </div>
+                                    {% if admission.is_fg %}
+                                        <div class="flex justify-between items-center p-2 bg-gray-50 rounded-lg">
+                                            <span class="text-sm font-medium">FG Number:</span>
+                                            <span class="font-bold text-primary">{{ admission.fg_number|default:"—" }}</span>
+                                        </div>
+                                    {% endif %}
+                                    <div class="flex justify-between items-center p-2 bg-gray-50 rounded-lg">
+                                        <span class="text-sm font-medium">PMSS Eligible:</span>
+                                        <span class="font-bold {% if admission.pmss %}text-green-600{% else %}text-red-500{% endif %}">
+                                            {{ admission.pmss|yesno:"Yes,No" }}
+                                        </span>
+                                    </div>
+                                    <div class="flex justify-between items-center p-2 bg-gray-50 rounded-lg">
+                                        <span class="text-sm font-medium">7.5% Category:</span>
+                                        <span class="font-bold {% if admission.seven_five %}text-green-600{% else %}text-red-500{% endif %}">
+                                            {{ admission.seven_five|yesno:"Yes,No" }}
+                                        </span>
+                                    </div>
+                                </div>
+                            {% else %}
+                                <div class="p-4 bg-gray-50 rounded-xl border border-gray-200 text-center">
+                                    <p class="text-gray-600 font-medium">No scholarships recorded for this applicant.</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <!-- Bank Details -->
+                    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                        <div class="px-4 py-3 bg-gray-50 border-b border-gray-100 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-primary"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z">
+                                </path>
+                            </svg>
+                            <h3 class="font-bold text-gray-800">Bank Details</h3>
+                        </div>
+                        <div class="p-5 text-sm space-y-4">
+                            {% if admission.account_number and admission.bank_name %}
+                                <div class="grid grid-cols-2 gap-x-4 gap-y-3">
+                                    <div class="col-span-2">
+                                        <p class="text-gray-500 text-xs uppercase font-semibold">Account Holder Name</p>
+                                        <p class="font-medium text-gray-900">{{ admission.account_holder_name|default:"N/A" }}</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-gray-500 text-xs uppercase font-semibold">Account Number</p>
+                                        <p class="font-medium text-gray-900 font-mono tracking-wider">{{ admission.account_number }}</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-gray-500 text-xs uppercase font-semibold">Bank Name</p>
+                                        <p class="font-medium text-gray-900">{{ admission.bank_name|default:"N/A" }}</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-gray-500 text-xs uppercase font-semibold">Branch Name</p>
+                                        <p class="font-medium text-gray-900">{{ admission.bank_branch|default:"N/A" }}</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-gray-500 text-xs uppercase font-semibold">IFSC Code</p>
+                                        <p class="font-medium text-gray-900">{{ admission.ifsc_code|default:"N/A" }}</p>
+                                    </div>
+                                    <div class="col-span-2 mt-2">
+                                        <div class="flex items-center gap-2">
+                                            <p class="text-gray-500 text-xs uppercase font-semibold">Aadhaar Seeding Status:</p>
+                                            <span class="px-2 py-0.5 {% if admission.seeding_status == 'Active' or admission.seeding_status == 'Mapped' %}bg-green-100 text-green-700{% else %}bg-gray-100 text-gray-700{% endif %} rounded text-xs font-bold">
+                                                {{ admission.seeding_status|default:"Not Available" }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% else %}
+                                <div class="p-4 bg-gray-50 rounded-xl border border-gray-200 text-center">
+                                    <p class="text-gray-600 font-medium">Bank details not provided.</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <!-- Facilities & Reference Section -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Facility Details -->
+                    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                        <div class="px-4 py-3 bg-gray-50 border-b border-gray-100 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-primary"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
+                                </path>
+                            </svg>
+                            <h3 class="font-bold text-gray-800">Facility Details</h3>
+                        </div>
+                        <div class="p-5 text-sm space-y-4">
+                            <!-- Facility Type Overview -->
+                            <div class="p-4 bg-gradient-to-r from-gray-50 to-blue-50 rounded-xl border border-gray-200">
+                                <div class="flex items-center justify-between mb-3">
+                                    <span class="font-bold text-gray-800">Facility Required</span>
+                                    {% if admission.facility_type == 'none' or not admission.bus_needed and not admission.hostel_needed %}
+                                        <span class="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-xs font-bold uppercase border border-gray-300">
+                                            Not Needed
+                                        </span>
+                                    {% elif admission.facility_type == 'transport' or admission.bus_needed == 'yes' %}
+                                        <span class="px-3 py-1 bg-blue-100 text-blue-600 rounded-full text-xs font-bold uppercase border border-blue-300">
+                                            Transport
+                                        </span>
+                                    {% elif admission.facility_type == 'hostel' or admission.hostel_needed == 'yes' %}
+                                        <span class="px-3 py-1 bg-orange-100 text-orange-600 rounded-full text-xs font-bold uppercase border border-orange-300">
+                                            Hostel
+                                        </span>
+                                    {% else %}
+                                        <span class="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-xs font-bold uppercase border border-gray-300">
+                                            Not Specified
+                                        </span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <!-- Transport Details -->
+                            {% if admission.facility_type == 'transport' or admission.bus_needed == 'yes' %}
+                                <div class="p-4 bg-blue-50 rounded-xl border border-blue-200">
+                                    <div class="flex items-center gap-2 mb-3">
+                                        <span class="w-8 h-8 rounded-lg bg-blue-500 text-white flex items-center justify-center text-sm font-bold">T</span>
+                                        <h4 class="font-bold text-blue-900">Transport Facility</h4>
+                                    </div>
+                                    <div class="grid grid-cols-1 gap-2 text-gray-700">
+                                        <div class="flex justify-between items-center p-2 bg-white rounded-lg">
+                                            <span class="text-sm font-medium">Boarding Point:</span>
+                                            <span class="font-bold text-blue-600">{{ admission.boarding_point|default:"—" }}</span>
+                                        </div>
+                                        <div class="flex justify-between items-center p-2 bg-white rounded-lg">
+                                            <span class="text-sm font-medium">Bus Route:</span>
+                                            <span class="font-bold text-blue-600">Route {{ admission.bus_route|default:"—" }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                            <!-- Hostel Details -->
+                            {% if admission.facility_type == 'hostel' or admission.hostel_needed == 'yes' %}
+                                <div class="p-4 bg-orange-50 rounded-xl border border-orange-200">
+                                    <div class="flex items-center gap-2 mb-3">
+                                        <span class="w-8 h-8 rounded-lg bg-orange-500 text-white flex items-center justify-center text-sm font-bold">H</span>
+                                        <h4 class="font-bold text-orange-900">Hostel Facility</h4>
+                                    </div>
+                                    <div class="grid grid-cols-1 gap-2 text-gray-700">
+                                        {% if admission.hostel_name %}
+                                            <div class="flex justify-between items-center p-2 bg-white rounded-lg">
+                                                <span class="text-sm font-medium">Hostel Name:</span>
+                                                <span class="font-bold text-orange-600">{{ admission.hostel_name }}</span>
+                                            </div>
+                                        {% endif %}
+                                        {% if admission.hostel_type %}
+                                            <div class="flex justify-between items-center p-2 bg-white rounded-lg">
+                                                <span class="text-sm font-medium">Hostel Type:</span>
+                                                <span class="font-bold text-orange-600">{{ admission.hostel_type }}</span>
+                                            </div>
+                                        {% endif %}
+                                        {% if admission.room_type %}
+                                            <div class="flex justify-between items-center p-2 bg-white rounded-lg">
+                                                <span class="text-sm font-medium">Room Type:</span>
+                                                <span class="font-bold text-orange-600">{{ admission.room_type }}</span>
+                                            </div>
+                                        {% endif %}
+                                        {% if admission.mess_type %}
+                                            <div class="flex justify-between items-center p-2 bg-white rounded-lg">
+                                                <span class="text-sm font-medium">Mess Type:</span>
+                                                <span class="font-bold text-orange-600">{{ admission.mess_type }}</span>
+                                            </div>
+                                        {% endif %}
+                                        {% if admission.hostel_fee_amount %}
+                                            <div class="flex justify-between items-center p-2 bg-white rounded-lg">
+                                                <span class="text-sm font-medium">Hostel Fee:</span>
+                                                <span class="font-bold text-orange-600">₹{{ admission.hostel_fee_amount }}</span>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endif %}
+                            <!-- No Facility Selected -->
+                            {% if admission.facility_type == 'none' or not admission.bus_needed and not admission.hostel_needed %}
+                                <div class="p-4 bg-gray-50 rounded-xl border border-gray-200 text-center">
+                                    <div class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center mx-auto mb-3">
+                                        <svg class="w-6 h-6 text-gray-400"
+                                             fill="none"
+                                             stroke="currentColor"
+                                             viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z">
+                                            </path>
+                                        </svg>
+                                    </div>
+                                    <p class="text-gray-600 font-medium">No campus facilities required</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <!-- References -->
+                    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                        <div class="px-4 py-3 bg-gray-50 border-b border-gray-100 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-primary"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                                </path>
+                            </svg>
+                            <h3 class="font-bold text-gray-800">Referral Details</h3>
+                        </div>
+                        <div class="p-5 text-sm space-y-6">
+                            {% for ref in admission.references.all %}
+                                <div class="{% if not forloop.last %}border-b border-gray-100 pb-4{% endif %}">
+                                    <div>
+                                        <p class="text-xs text-gray-500 font-bold uppercase">Referred By</p>
+                                        <p class="font-bold text-gray-900 text-base">{{ ref.name }}</p>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-4 mt-2">
+                                        <div>
+                                            <p class="text-xs text-gray-500 font-bold">Mobile</p>
+                                            <p class="font-medium">{{ ref.mobile }}</p>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs text-gray-500 font-bold">Relation</p>
+                                            <p class="font-medium">{{ ref.relationship }}</p>
+                                        </div>
+                                    </div>
+                                    {% if ref.department or ref.designation %}
+                                        <div class="p-3 bg-accent/5 rounded-xl border border-accent/10 mt-3">
+                                            <p class="text-xs text-dark/70 font-bold uppercase">Contact Context</p>
+                                            <p class="text-dark">
+                                                {{ ref.department|default:"" }}
+                                                {% if ref.department and ref.designation %}({% endif %}
+                                                {{ ref.designation|default:"" }}
+                                                {% if ref.department and ref.designation %}){% endif %}
+                                            </p>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            {% empty %}
+                                <p class="text-gray-400 italic">No references provided.</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <!-- Fee & Payments (Combined Admission & Followup) -->
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                    <div class="px-4 py-3 bg-gray-50 border-b border-gray-100 flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <svg class="w-5 h-5 text-primary"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                                </path>
+                            </svg>
+                            <h3 class="font-bold text-gray-800">Financial Overview</h3>
+                        </div>
+                        <div class="flex gap-2">
+                            <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-[10px] font-bold uppercase">Admission
+                            Fees</span>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                            <div class="p-3 border rounded-xl bg-gray-50/50">
+                                <p class="text-[10px] uppercase font-bold text-gray-400">College</p>
+                                <p class="font-bold">₹{{ admission.college_fee|default:"0" }}</p>
+                            </div>
+                            <div class="p-3 border rounded-xl bg-gray-50/50">
+                                <p class="text-[10px] uppercase font-bold text-gray-400">Hostel</p>
+                                <p class="font-bold">₹{{ admission.hostel_fee|default:"0" }}</p>
+                            </div>
+                            <div class="p-3 border rounded-xl bg-gray-50/50">
+                                <p class="text-[10px] uppercase font-bold text-gray-400">Bus</p>
+                                <p class="font-bold">₹{{ admission.bus_fee|default:"0" }}</p>
+                            </div>
+                            <div class="p-3 border rounded-xl bg-gray-50/50">
+                                <p class="text-[10px] uppercase font-bold text-gray-400">Other</p>
+                                <p class="font-bold">₹{{ admission.other_fee|default:"0" }}</p>
+                            </div>
+                            <div class="p-3 border rounded-xl bg-green-50/50 border-green-100">
+                                <p class="text-[10px] uppercase font-bold text-green-600">Paid Fee</p>
+                                <p class="font-bold text-green-700">₹{{ admission.paid_fee|default:"0" }}</p>
+                            </div>
+                            <div class="p-3 border rounded-xl bg-blue-50/50 border-blue-100">
+                                <p class="text-[10px] uppercase font-bold text-blue-600">Concession</p>
+                                <p class="font-bold text-blue-700">₹{{ admission.concession_amount|default:"0" }}</p>
+                            </div>
+                            <div class="p-3 border rounded-xl bg-red-50/50 border-red-100 col-span-2 md:col-span-2">
+                                <p class="text-[10px] uppercase font-bold text-red-600">Unpaid Balance</p>
+                                <p class="font-bold text-red-700">₹{{ admission.unpaid_fee|default:"0" }}</p>
+                            </div>
+                        </div>
+                        <div class="p-4 bg-primary text-white rounded-2xl flex flex-col md:flex-row justify-between gap-4">
+                            <div>
+                                <p class="text-xs uppercase font-bold opacity-70">Major Transaction (Admission)</p>
+                                <p class="font-mono text-lg font-bold">{{ admission.transaction_id|default:"MANUAL RECORD" }}</p>
+                            </div>
+                            <div class="md:text-right">
+                                <p class="text-xs uppercase font-bold opacity-70">Payment Date</p>
+                                <p class="font-bold">{{ admission.transaction_date|default:admission.created_at|date:"D d M, Y" }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Documents Vault -->
+                <div class="bg-gray-800 text-white rounded-3xl p-8">
+                    <h3 class="text-xl font-bold mb-6 flex items-center gap-3">
+                        <svg class="w-6 h-6 text-accent"
+                             fill="none"
+                             stroke="currentColor"
+                             viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
                             </path>
                         </svg>
-                        Download Profile PDF
+                        Verified Document Repository
+                    </h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+                        {% if admission.tc %}
+                            <a href="{{ admission.tc.url }}"
+                               target="_blank"
+                               class="group p-4 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-all flex items-center gap-4">
+                                <div class="w-10 h-10 rounded-xl bg-red-500/20 flex items-center justify-center text-red-500">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z">
+                                        </path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-bold text-white/50 uppercase">TC</p>
+                                    <p class="text-sm font-semibold group-hover:text-accent transition-colors">Transfer Cert</p>
+                                </div>
+                            </a>
+                        {% endif %}
+                        {% if admission.tenth_marksheet %}
+                            <a href="{{ admission.tenth_marksheet.url }}"
+                               target="_blank"
+                               class="group p-4 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-all flex items-center gap-4">
+                                <div class="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-500">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z">
+                                        </path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-bold text-white/50 uppercase">Mark Sheet</p>
+                                    <p class="text-sm font-semibold group-hover:text-accent transition-colors">10th Std</p>
+                                </div>
+                            </a>
+                        {% endif %}
+                        {% if admission.twelfth_marksheet %}
+                            <a href="{{ admission.twelfth_marksheet.url }}"
+                               target="_blank"
+                               class="group p-4 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-all flex items-center gap-4">
+                                <div class="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-500">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z">
+                                        </path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-bold text-white/50 uppercase">Mark Sheet</p>
+                                    <p class="text-sm font-semibold group-hover:text-accent transition-colors">12th / Diploma</p>
+                                </div>
+                            </a>
+                        {% endif %}
+                        {% if admission.community_cert %}
+                            <a href="{{ admission.community_cert.url }}"
+                               target="_blank"
+                               class="group p-4 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-all flex items-center gap-4">
+                                <div class="w-10 h-10 rounded-xl bg-amber-500/20 flex items-center justify-center text-amber-500">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
+                                        </path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-bold text-white/50 uppercase">Community</p>
+                                    <p class="text-sm font-semibold group-hover:text-accent transition-colors">Certificate</p>
+                                </div>
+                            </a>
+                        {% endif %}
+                        {% if admission.aadhaar %}
+                            <a href="{{ admission.aadhaar.url }}"
+                               target="_blank"
+                               class="group p-4 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-all flex items-center gap-4">
+                                <div class="w-10 h-10 rounded-xl bg-green-500/20 flex items-center justify-center text-green-500">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z">
+                                        </path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-bold text-white/50 uppercase">Aadhaar</p>
+                                    <p class="text-sm font-semibold group-hover:text-accent transition-colors">Identification</p>
+                                </div>
+                            </a>
+                        {% endif %}
+                        {% if admission.skill_proof %}
+                            <a href="{{ admission.skill_proof.url }}"
+                               target="_blank"
+                               class="group p-4 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-all flex items-center gap-4">
+                                <div class="w-10 h-10 rounded-xl bg-accent/20 flex items-center justify-center text-accent">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-bold text-white/50 uppercase">Vocational</p>
+                                    <p class="text-sm font-semibold group-hover:text-accent transition-colors">Skill Proof</p>
+                                </div>
+                            </a>
+                        {% endif %}
+                        {% for ps in admission.payment_screenshots.all %}
+                            <a href="{{ ps.image.url }}"
+                               target="_blank"
+                               class="group p-4 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-all flex items-center gap-4">
+                                <div class="w-10 h-10 rounded-xl bg-indigo-500/20 flex items-center justify-center text-indigo-500">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z">
+                                        </path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-bold text-white/50 uppercase">Payment</p>
+                                    <p class="text-sm font-semibold group-hover:text-accent transition-colors">Receipt {{ forloop.counter }}</p>
+                                </div>
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% else %}
+                <div class="p-12 bg-white rounded-3xl border border-dashed border-gray-200 text-center space-y-4">
+                    <div class="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto">
+                        <svg class="w-10 h-10 text-gray-300"
+                             fill="none"
+                             stroke="currentColor"
+                             viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 9.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                            </path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-800">Student Profile Not Found</h3>
+                        <p class="text-gray-500 max-w-sm mx-auto">
+                            The requested student admission record could not be loaded.
+                            Please ensure the ID is correct.
+                        </p>
+                    </div>
+                    <a href="{% url 'admission_form:student_applications_list' %}"
+                       class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-6 py-2 rounded-lg font-medium transition-colors flex items-center justify-center">
+                        Back to Dashboard
                     </a>
                 </div>
-            </div>
+            {% endif %}
         </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- Basic Personal Info -->
-            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-                <div class="px-4 py-3 bg-gray-50 border-b border-gray-100 flex items-center gap-2">
-                    <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                    </svg>
-                    <h3 class="font-bold text-gray-800">Personal Information</h3>
-                </div>
-                <div class="p-5 space-y-4">
-                    <div class="grid grid-cols-2 gap-4 text-sm">
-                        <div>
-                            <p class="text-gray-500 text-xs uppercase font-semibold">Email Address</p>
-                            <p class="font-medium text-gray-900 break-all">{{ admission.email }}</p>
-                        </div>
-                        <div>
-                            <p class="text-gray-500 text-xs uppercase font-semibold">Mobile Number</p>
-                            <p class="font-medium text-gray-900">{{ admission.student_mobile|default:"N/A" }}</p>
-                        </div>
-                        <div>
-                            <p class="text-gray-500 text-xs uppercase font-semibold">Date of Birth</p>
-                            <p class="font-medium text-gray-900">{{ admission.dob|date:"D d M, Y" }}</p>
-                        </div>
-                        <div>
-                            <p class="text-gray-500 text-xs uppercase font-semibold">Gender</p>
-                            <p class="font-medium text-gray-900">{{ admission.gender }}</p>
-                        </div>
-                        <div>
-                            <p class="text-gray-500 text-xs uppercase font-semibold">Community</p>
-                            <p class="font-medium text-gray-900">{{ admission.get_community_display }}</p>
-                        </div>
-                        <div>
-                            <p class="text-gray-500 text-xs uppercase font-semibold">Unique ID</p>
-                            <p class="font-medium text-gray-900 text-xs font-mono">{{ admission.unique_id|default:"N/A" }}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Family Details -->
-            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-                <div class="px-4 py-3 bg-gray-50 border-b border-gray-100 flex items-center gap-2">
-                    <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
-                        </path>
-                    </svg>
-                    <h3 class="font-bold text-gray-800">Family Details</h3>
-                </div>
-                <div class="p-5 space-y-4 text-sm">
-                    <div class="grid grid-cols-2 gap-x-4 gap-y-3">
-                        <div class="col-span-1">
-                            <p class="text-gray-500 text-xs uppercase font-semibold">Father's Name</p>
-                            <p class="font-medium text-gray-900">{{ admission.father_name }}</p>
-                        </div>
-                        <div class="col-span-1 text-right">
-                            <p class="text-gray-500 text-xs uppercase font-semibold">Mobile</p>
-                            <p class="font-medium text-gray-900">{{ admission.father_mobile|default:"N/A" }}</p>
-                        </div>
-
-                        <div class="col-span-1 pt-2">
-                            <p class="text-gray-500 text-xs uppercase font-semibold">Mother's Name</p>
-                            <p class="font-medium text-gray-900">{{ admission.mother_name }}</p>
-                        </div>
-                        <div class="col-span-1 pt-2 text-right">
-                            <p class="text-gray-500 text-xs uppercase font-semibold">Mobile</p>
-                            <p class="font-medium text-gray-900">{{ admission.mother_mobile|default:"N/A" }}</p>
-                        </div>
-
-                        {% if admission.guardian_name %}
-                        <div class="col-span-1 pt-2">
-                            <p class="text-gray-500 text-xs uppercase font-semibold">Guardian's Name</p>
-                            <p class="font-medium text-gray-900">{{ admission.guardian_name }}</p>
-                        </div>
-                        <div class="col-span-1 pt-2 text-right">
-                            <p class="text-gray-500 text-xs uppercase font-semibold">Mobile</p>
-                            <p class="font-medium text-gray-900">{{ admission.guardian_mobile|default:"N/A" }}</p>
-                        </div>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-
-            <!-- Academic Info -->
-            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-                <div class="px-4 py-3 bg-gray-50 border-b border-gray-100 flex items-center gap-2">
-                    <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 14l9-5-9-5-9 5 9 5z"></path>
-                        <path
-                            d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z">
-                        </path>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z">
-                        </path>
-                    </svg>
-                    <h3 class="font-bold text-gray-800">Academic Background</h3>
-                </div>
-                <div class="p-5 space-y-4 text-sm">
-                    <div>
-                        <p class="text-gray-500 text-xs uppercase font-semibold">Last School / Institution</p>
-                        <p class="font-medium text-gray-900">{{ admission.last_school }}</p>
-                    </div>
-                    <div class="grid grid-cols-3 gap-4">
-                        <div>
-                            <p class="text-gray-500 text-xs uppercase font-semibold">Board</p>
-                            <p class="font-medium text-gray-900">{{ admission.board }}</p>
-                        </div>
-                        <div>
-                            <p class="text-gray-500 text-xs uppercase font-semibold">Year</p>
-                            <p class="font-medium text-gray-900">{{ admission.year_passing }}</p>
-                        </div>
-                        <div>
-                            <p class="text-gray-500 text-xs uppercase font-semibold">Medium</p>
-                            <p class="font-medium text-gray-900">{{ admission.medium }}</p>
-                        </div>
-                    </div>
-                    {% if admission.vocational_stream %}
-                    <div class="p-3 bg-blue-50 border border-blue-100 rounded-xl">
-                        <p class="text-blue-500 text-xs uppercase font-semibold">Vocational Stream</p>
-                        <p class="font-medium text-blue-900">{{ admission.vocational_stream }}</p>
-                    </div>
-                    {% endif %}
-                </div>
-            </div>
-
-            <!-- Marks -->
-            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-                <div class="px-4 py-3 bg-gray-50 border-b border-gray-100 flex items-center gap-2">
-                    <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
-                        </path>
-                    </svg>
-                    <h3 class="font-bold text-gray-800">
-                        Performance ({{ admission.qualification|default:"N/A" }})
-                    </h3>
-                </div>
-
-                <div class="p-5 text-sm space-y-4">
-
-                    <!-- ===== COMMON METRICS ===== -->
-                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
-                        <div>
-                            <p class="text-gray-500 text-xs uppercase font-semibold">Cutoff Marks</p>
-                            <p class="text-2xl font-bold text-primary">
-                                {{ admission.cutoff_marks|default:"N/A" }}
-                            </p>
-                        </div>
-
-                        <div class="text-right">
-                            <p class="text-gray-500 text-xs uppercase font-semibold">Percentage</p>
-
-                            {% if admission.qualification == "12th" %}
-                            <p class="text-2xl font-bold text-green-600">
-                                {{ admission.twelfth_percentage|default:"N/A" }}%
-                            </p>
-                            {% elif admission.qualification == "Diploma" %}
-                            <p class="text-2xl font-bold text-green-600">
-                                {{ admission.diploma_percentage|default:"N/A" }}%
-                            </p>
-                            {% else %}
-                            <p class="text-2xl font-bold text-gray-400">—</p>
-                            {% endif %}
-                        </div>
-                    </div>
-
-                    <!-- ===== 12TH DETAILS ===== -->
-                    {% if admission.qualification == "12th" %}
-                    <div class="grid grid-cols-3 gap-2">
-                        <div class="bg-white p-2 border rounded-lg text-center">
-                            <p class="text-xs text-gray-500">Physics</p>
-                            <p class="font-bold text-gray-900">
-                                {{ admission.physics_marks|default:"—" }}
-                            </p>
-                        </div>
-                        <div class="bg-white p-2 border rounded-lg text-center">
-                            <p class="text-xs text-gray-500">Chemistry</p>
-                            <p class="font-bold text-gray-900">
-                                {{ admission.chemistry_marks|default:"—" }}
-                            </p>
-                        </div>
-                        <div class="bg-white p-2 border rounded-lg text-center">
-                            <p class="text-xs text-gray-500">Maths</p>
-                            <p class="font-bold text-gray-900">
-                                {{ admission.maths_marks|default:"—" }}
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="p-2 bg-gray-50 rounded-lg">
-                        <p class="text-xs text-gray-500 uppercase font-bold">12th Major</p>
-                        <p class="text-gray-900">
-                            {{ admission.twelfth_major|default:"N/A" }}
-                        </p>
-                    </div>
-                    {% endif %}
-
-                    <!-- ===== DIPLOMA DETAILS ===== -->
-                    {% if admission.qualification == "Diploma" %}
-                    <div class="grid grid-cols-2 gap-2">
-                        <div class="bg-white p-2 border rounded-lg text-center">
-                            <p class="text-xs text-gray-500">Diploma Total</p>
-                            <p class="font-bold text-gray-900">
-                                {{ admission.diploma_total|default:"—" }}
-                            </p>
-                        </div>
-                        <div class="bg-white p-2 border rounded-lg text-center">
-                            <p class="text-xs text-gray-500">Diploma Major</p>
-                            <p class="font-bold text-gray-900">
-                                {{ admission.diploma_major|default:"—" }}
-                            </p>
-                        </div>
-                    </div>
-                    {% endif %}
-
-                    <!-- ===== FALLBACK ===== -->
-                    {% if not admission.qualification %}
-                    <p class="text-center text-gray-400 text-sm">
-                        Qualification details not available
-                    </p>
-                    {% endif %}
-
-                </div>
-            </div>
-
-        </div>
-
-        <!-- Preferences & Address Section -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <!-- Course Preferences -->
-            <div class="md:col-span-2 bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-                <div class="px-4 py-3 bg-gray-50 border-b border-gray-100 flex items-center gap-2">
-                    <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01">
-                        </path>
-                    </svg>
-                    <h3 class="font-bold text-gray-800">Course Selection</h3>
-                </div>
-                <div class="p-5">
-                    <div class="flex flex-wrap gap-4 mb-4">
-                        <div class="px-4 py-2 bg-primary/10 rounded-xl border border-primary/20">
-                            <span class="text-xs text-primary font-bold uppercase">Program Level</span>
-                            <p class="font-bold text-primary">{{ admission.level|upper }}</p>
-                        </div>
-                        {% if admission.pg_dept %}
-                        <div class="px-4 py-2 bg-accent/10 rounded-xl border border-accent/20">
-                            <span class="text-xs text-dark font-bold uppercase">PG Specialization</span>
-                            <p class="font-bold text-dark">{{ admission.pg_dept }}</p>
-                        </div>
-                        {% endif %}
-                    </div>
-
-                    <p class="text-xs text-gray-500 font-bold uppercase mb-2">Department Priorities</p>
-                    <div class="flex flex-col gap-2">
-                        {% if admission.department_preferences %}
-                        {% for dept, rank in admission.department_preferences.items %}
-                        <div
-                            class="flex items-center justify-between p-3 border rounded-xl hover:bg-gray-50 transition-colors">
-                            <span class="font-medium text-gray-700">{{ dept|upper }}</span>
-                            <span class="bg-gray-200 text-gray-800 text-xs font-bold px-2 py-1 rounded-full"> {{ rank }}</span>
-                        </div>
-                        {% endfor %}
-                        {% else %}
-                        <p class="text-gray-400 italic text-sm">No preferences defined.</p>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-
-            <!-- Address Card -->
-            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-                <div class="px-4 py-3 bg-gray-50 border-b border-gray-100 flex items-center gap-2">
-                    <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z">
-                        </path>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                    </svg>
-                    <h3 class="font-bold text-gray-800">Current Address</h3>
-                </div>
-                <div class="p-5 text-sm space-y-4">
-                    <p class="text-gray-700 leading-relaxed">{{ admission.address }}</p>
-                    <div class="grid grid-cols-2 gap-2">
-                        <div>
-                            <p class="text-xs text-gray-500 font-bold">District</p>
-                            <p class="font-medium">{{ admission.district|default:"N/A" }}</p>
-                        </div>
-                        <div>
-                            <p class="text-xs text-gray-500 font-bold">State</p>
-                            <p class="font-medium">{{ admission.state|default:"N/A" }}</p>
-                        </div>
-                    </div>
-                    <div>
-                        <p class="text-xs text-gray-500 font-bold">Country</p>
-                        <p class="font-medium">{{ admission.country|default:"India" }}</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Facilities & Reference Section -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- Facility Details -->
-            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-                <div class="px-4 py-3 bg-gray-50 border-b border-gray-100 flex items-center gap-2">
-                    <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
-                        </path>
-                    </svg>
-                    <h3 class="font-bold text-gray-800">Facility Details</h3>
-                </div>
-                <div class="p-5 text-sm space-y-4">
-                    <!-- Facility Type Overview -->
-                    <div class="p-4 bg-gradient-to-r from-gray-50 to-blue-50 rounded-xl border border-gray-200">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="font-bold text-gray-800">Facility Required</span>
-                            {% if admission.facility_type == 'none' or not admission.bus_needed and not admission.hostel_needed %}
-                            <span
-                                class="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-xs font-bold uppercase border border-gray-300">
-                                Not Needed
-                            </span>
-                            {% elif admission.facility_type == 'transport' or admission.bus_needed == 'yes' %}
-                            <span
-                                class="px-3 py-1 bg-blue-100 text-blue-600 rounded-full text-xs font-bold uppercase border border-blue-300">
-                                Transport
-                            </span>
-                            {% elif admission.facility_type == 'hostel' or admission.hostel_needed == 'yes' %}
-                            <span
-                                class="px-3 py-1 bg-orange-100 text-orange-600 rounded-full text-xs font-bold uppercase border border-orange-300">
-                                Hostel
-                            </span>
-                            {% else %}
-                            <span
-                                class="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-xs font-bold uppercase border border-gray-300">
-                                Not Specified
-                            </span>
-                            {% endif %}
-                        </div>
-                    </div>
-
-                    <!-- Transport Details -->
-                    {% if admission.facility_type == 'transport' or admission.bus_needed == 'yes' %}
-                    <div class="p-4 bg-blue-50 rounded-xl border border-blue-200">
-                        <div class="flex items-center gap-2 mb-3">
-                            <span
-                                class="w-8 h-8 rounded-lg bg-blue-500 text-white flex items-center justify-center text-sm font-bold">T</span>
-                            <h4 class="font-bold text-blue-900">Transport Facility</h4>
-                        </div>
-                        <div class="grid grid-cols-1 gap-2 text-gray-700">
-                            <div class="flex justify-between items-center p-2 bg-white rounded-lg">
-                                <span class="text-sm font-medium">Boarding Point:</span>
-                                <span class="font-bold text-blue-600">{{ admission.boarding_point|default:"—" }}</span>
-                            </div>
-                            <div class="flex justify-between items-center p-2 bg-white rounded-lg">
-                                <span class="text-sm font-medium">Bus Route:</span>
-                                <span class="font-bold text-blue-600">Route {{ admission.bus_route|default:"—" }}</span>
-                            </div>
-                        </div>
-                    </div>
-                    {% endif %}
-
-                    <!-- Hostel Details -->
-                    {% if admission.facility_type == 'hostel' or admission.hostel_needed == 'yes' %}
-                    <div class="p-4 bg-orange-50 rounded-xl border border-orange-200">
-                        <div class="flex items-center gap-2 mb-3">
-                            <span
-                                class="w-8 h-8 rounded-lg bg-orange-500 text-white flex items-center justify-center text-sm font-bold">H</span>
-                            <h4 class="font-bold text-orange-900">Hostel Facility</h4>
-                        </div>
-                        <div class="grid grid-cols-1 gap-2 text-gray-700">
-                            {% if admission.hostel_name %}
-                            <div class="flex justify-between items-center p-2 bg-white rounded-lg">
-                                <span class="text-sm font-medium">Hostel Name:</span>
-                                <span class="font-bold text-orange-600">{{ admission.hostel_name }}</span>
-                            </div>
-                            {% endif %}
-                            {% if admission.hostel_type %}
-                            <div class="flex justify-between items-center p-2 bg-white rounded-lg">
-                                <span class="text-sm font-medium">Hostel Type:</span>
-                                <span class="font-bold text-orange-600">{{ admission.hostel_type }}</span>
-                            </div>
-                            {% endif %}
-                            {% if admission.room_type %}
-                            <div class="flex justify-between items-center p-2 bg-white rounded-lg">
-                                <span class="text-sm font-medium">Room Type:</span>
-                                <span class="font-bold text-orange-600">{{ admission.room_type }}</span>
-                            </div>
-                            {% endif %}
-                            {% if admission.mess_type %}
-                            <div class="flex justify-between items-center p-2 bg-white rounded-lg">
-                                <span class="text-sm font-medium">Mess Type:</span>
-                                <span class="font-bold text-orange-600">{{ admission.mess_type }}</span>
-                            </div>
-                            {% endif %}
-                            {% if admission.hostel_fee_amount %}
-                            <div class="flex justify-between items-center p-2 bg-white rounded-lg">
-                                <span class="text-sm font-medium">Hostel Fee:</span>
-                                <span class="font-bold text-orange-600">₹{{ admission.hostel_fee_amount }}</span>
-                            </div>
-                            {% endif %}
-                        </div>
-                    </div>
-                    {% endif %}
-
-                    <!-- No Facility Selected -->
-                    {% if admission.facility_type == 'none' or not admission.bus_needed and not admission.hostel_needed %}
-                    <div class="p-4 bg-gray-50 rounded-xl border border-gray-200 text-center">
-                        <div class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center mx-auto mb-3">
-                            <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                        </div>
-                        <p class="text-gray-600 font-medium">No campus facilities required</p>
-                    </div>
-                    {% endif %}
-                </div>
-            </div>
-
-            <!-- References -->
-            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-                <div class="px-4 py-3 bg-gray-50 border-b border-gray-100 flex items-center gap-2">
-                    <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    <h3 class="font-bold text-gray-800">Referral Details</h3>
-                </div>
-                <div class="p-5 text-sm space-y-6">
-                    {% for ref in admission.references.all %}
-                    <div class="{% if not forloop.last %}border-b border-gray-100 pb-4{% endif %}">
-                        <div>
-                            <p class="text-xs text-gray-500 font-bold uppercase">Referred By</p>
-                            <p class="font-bold text-gray-900 text-base">{{ ref.name }}</p>
-                        </div>
-                        <div class="grid grid-cols-2 gap-4 mt-2">
-                            <div>
-                                <p class="text-xs text-gray-500 font-bold">Mobile</p>
-                                <p class="font-medium">{{ ref.mobile }}</p>
-                            </div>
-                            <div>
-                                <p class="text-xs text-gray-500 font-bold">Relation</p>
-                                <p class="font-medium">{{ ref.relationship }}</p>
-                            </div>
-                        </div>
-                        {% if ref.department or ref.designation %}
-                        <div class="p-3 bg-accent/5 rounded-xl border border-accent/10 mt-3">
-                            <p class="text-xs text-dark/70 font-bold uppercase">Contact Context</p>
-                            <p class="text-dark">
-                                {{ ref.department|default:"" }}
-                                {% if ref.department and ref.designation %} ({% endif %}
-                                {{ ref.designation|default:"" }}
-                                {% if ref.department and ref.designation %}){% endif %}
-                            </p>
-                        </div>
-                        {% endif %}
-                    </div>
-                    {% empty %}
-                    <p class="text-gray-400 italic">No references provided.</p>
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-
-        <!-- Fee & Payments (Combined Admission & Followup) -->
-        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-            <div class="px-4 py-3 bg-gray-50 border-b border-gray-100 flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                    <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
-                        </path>
-                    </svg>
-                    <h3 class="font-bold text-gray-800">Financial Overview</h3>
-                </div>
-                <div class="flex gap-2">
-                    <span
-                        class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-[10px] font-bold uppercase">Admission
-                        Fees</span>
-                </div>
-            </div>
-            <div class="p-6">
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                    <div class="p-3 border rounded-xl bg-gray-50/50">
-                        <p class="text-[10px] uppercase font-bold text-gray-400">College</p>
-                        <p class="font-bold">₹{{ admission.college_fee|default:"0" }}</p>
-                    </div>
-                    <div class="p-3 border rounded-xl bg-gray-50/50">
-                        <p class="text-[10px] uppercase font-bold text-gray-400">Hostel</p>
-                        <p class="font-bold">₹{{ admission.hostel_fee|default:"0" }}</p>
-                    </div>
-                    <div class="p-3 border rounded-xl bg-gray-50/50">
-                        <p class="text-[10px] uppercase font-bold text-gray-400">Bus</p>
-                        <p class="font-bold">₹{{ admission.bus_fee|default:"0" }}</p>
-                    </div>
-                    <div class="p-3 border rounded-xl bg-gray-50/50">
-                        <p class="text-[10px] uppercase font-bold text-gray-400">Other</p>
-                        <p class="font-bold">₹{{ admission.other_fee|default:"0" }}</p>
-                    </div>
-                    <div class="p-3 border rounded-xl bg-green-50/50 border-green-100">
-                        <p class="text-[10px] uppercase font-bold text-green-600">Paid Fee</p>
-                        <p class="font-bold text-green-700">₹{{ admission.paid_fee|default:"0" }}</p>
-                    </div>
-                    <div class="p-3 border rounded-xl bg-blue-50/50 border-blue-100">
-                        <p class="text-[10px] uppercase font-bold text-blue-600">Concession</p>
-                        <p class="font-bold text-blue-700">₹{{ admission.concession_amount|default:"0" }}</p>
-                    </div>
-                    <div class="p-3 border rounded-xl bg-red-50/50 border-red-100 col-span-2 md:col-span-2">
-                        <p class="text-[10px] uppercase font-bold text-red-600">Unpaid Balance</p>
-                        <p class="font-bold text-red-700">₹{{ admission.unpaid_fee|default:"0" }}</p>
-                    </div>
-                </div>
-
-                <div class="p-4 bg-primary text-white rounded-2xl flex flex-col md:flex-row justify-between gap-4">
-                    <div>
-                        <p class="text-xs uppercase font-bold opacity-70">Major Transaction (Admission)</p>
-                        <p class="font-mono text-lg font-bold">{{ admission.transaction_id|default:"MANUAL RECORD" }}
-                        </p>
-                    </div>
-                    <div class="md:text-right">
-                        <p class="text-xs uppercase font-bold opacity-70">Payment Date</p>
-                        <p class="font-bold">{{ admission.transaction_date|default:admission.created_at|date:"D d M, Y" }}</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Documents Vault -->
-        <div class="bg-gray-800 text-white rounded-3xl p-8">
-            <h3 class="text-xl font-bold mb-6 flex items-center gap-3">
-                <svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
-                    </path>
-                </svg>
-                Verified Document Repository
-            </h3>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-                {% if admission.tc %}
-                <a href="{{ admission.tc.url }}" target="_blank"
-                    class="group p-4 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-all flex items-center gap-4">
-                    <div class="w-10 h-10 rounded-xl bg-red-500/20 flex items-center justify-center text-red-500">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z">
-                            </path>
-                        </svg>
-                    </div>
-                    <div>
-                        <p class="text-xs font-bold text-white/50 uppercase">TC</p>
-                        <p class="text-sm font-semibold group-hover:text-accent transition-colors">Transfer Cert</p>
-                    </div>
-                </a>
-                {% endif %}
-
-                {% if admission.tenth_marksheet %}
-                <a href="{{ admission.tenth_marksheet.url }}" target="_blank"
-                    class="group p-4 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-all flex items-center gap-4">
-                    <div class="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-500">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                    </div>
-                    <div>
-                        <p class="text-xs font-bold text-white/50 uppercase">Mark Sheet</p>
-                        <p class="text-sm font-semibold group-hover:text-accent transition-colors">10th Std</p>
-                    </div>
-                </a>
-                {% endif %}
-
-                {% if admission.twelfth_marksheet %}
-                <a href="{{ admission.twelfth_marksheet.url }}" target="_blank"
-                    class="group p-4 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-all flex items-center gap-4">
-                    <div class="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-500">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                    </div>
-                    <div>
-                        <p class="text-xs font-bold text-white/50 uppercase">Mark Sheet</p>
-                        <p class="text-sm font-semibold group-hover:text-accent transition-colors">12th / Diploma</p>
-                    </div>
-                </a>
-                {% endif %}
-
-                {% if admission.community_cert %}
-                <a href="{{ admission.community_cert.url }}" target="_blank"
-                    class="group p-4 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-all flex items-center gap-4">
-                    <div class="w-10 h-10 rounded-xl bg-amber-500/20 flex items-center justify-center text-amber-500">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
-                            </path>
-                        </svg>
-                    </div>
-                    <div>
-                        <p class="text-xs font-bold text-white/50 uppercase">Community</p>
-                        <p class="text-sm font-semibold group-hover:text-accent transition-colors">Certificate</p>
-                    </div>
-                </a>
-                {% endif %}
-
-                {% if admission.aadhaar %}
-                <a href="{{ admission.aadhaar.url }}" target="_blank"
-                    class="group p-4 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-all flex items-center gap-4">
-                    <div class="w-10 h-10 rounded-xl bg-green-500/20 flex items-center justify-center text-green-500">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z">
-                            </path>
-                        </svg>
-                    </div>
-                    <div>
-                        <p class="text-xs font-bold text-white/50 uppercase">Aadhaar</p>
-                        <p class="text-sm font-semibold group-hover:text-accent transition-colors">Identification</p>
-                    </div>
-                </a>
-                {% endif %}
-
-                {% if admission.skill_proof %}
-                <a href="{{ admission.skill_proof.url }}" target="_blank"
-                    class="group p-4 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-all flex items-center gap-4">
-                    <div class="w-10 h-10 rounded-xl bg-accent/20 flex items-center justify-center text-accent">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                        </svg>
-                    </div>
-                    <div>
-                        <p class="text-xs font-bold text-white/50 uppercase">Vocational</p>
-                        <p class="text-sm font-semibold group-hover:text-accent transition-colors">Skill Proof</p>
-                    </div>
-                </a>
-                {% endif %}
-
-                {% if admission.payment_screenshot %}
-                <a href="{{ admission.payment_screenshot.url }}" target="_blank"
-                    class="group p-4 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-all flex items-center gap-4">
-                    <div class="w-10 h-10 rounded-xl bg-indigo-500/20 flex items-center justify-center text-indigo-500">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z">
-                            </path>
-                        </svg>
-                    </div>
-                    <div>
-                        <p class="text-xs font-bold text-white/50 uppercase">Payment</p>
-                        <p class="text-sm font-semibold group-hover:text-accent transition-colors">Reciept/Proof</p>
-                    </div>
-                </a>
-                {% endif %}
-            </div>
-        </div>
-
-        {% else %}
-        <div class="p-12 bg-white rounded-3xl border border-dashed border-gray-200 text-center space-y-4">
-            <div class="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto">
-                <svg class="w-10 h-10 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M9.172 9.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
-            </div>
-            <div>
-                <h3 class="text-xl font-bold text-gray-800">Student Profile Not Found</h3>
-                <p class="text-gray-500 max-w-sm mx-auto">The requested student admission record could not be loaded.
-                    Please ensure the ID is correct.</p>
-            </div>
-            <a href="{% url 'student_applications_list' %}"
-                class="inline-block px-6 py-2 bg-gray-100 text-gray-700 font-bold rounded-xl hover:bg-gray-200 transition-colors">Back
-                to Applications</a>
-        </div>
-        {% endif %}
     </div>
-</div>
 {% endblock %}

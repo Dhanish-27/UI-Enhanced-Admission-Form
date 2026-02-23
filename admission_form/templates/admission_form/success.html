@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Application Submitted – ESEC Admission Portal</title>
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+              rel="stylesheet">
+        <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Poppins', sans-serif; background: #f9fafb; color: #1f2937; min-height: 100vh; display: flex; flex-direction: column; }
+    .site-header { background: #fff; box-shadow: 0 1px 6px rgba(0,0,0,.08); padding: 12px 24px; display: flex; align-items: center; gap: 10px; }
+    .site-header img { height: 40px; width: 40px; object-fit: contain; }
+    .site-header h1 { font-size: 1.05rem; font-weight: 700; color: #111827; }
+    .site-header p { font-size: .72rem; color: #6b7280; }
+    main { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 20px; }
+    .card { background: #fff; border-radius: 20px; box-shadow: 0 4px 30px rgba(0,0,0,.09); max-width: 520px; width: 100%; overflow: hidden; }
+    .card-top { background: linear-gradient(135deg, #ea580c, #f59e0b); padding: 36px 32px; text-align: center; }
+    .icon { font-size: 3.5rem; display: block; margin-bottom: 10px; }
+    .card-top h2 { font-size: 1.5rem; font-weight: 700; color: #fff; }
+    .card-top p { font-size: .88rem; color: rgba(255,255,255,.85); margin-top: 6px; }
+    .card-body { padding: 32px; text-align: center; }
+    .uid-box { display: inline-block; background: #fff7ed; border: 2px solid #fed7aa; border-radius: 12px; padding: 12px 28px; font-size: 1.15rem; font-weight: 700; letter-spacing: 1.5px; font-family: 'Courier New', monospace; color: #ea580c; margin: 18px 0; }
+    .card-body p { font-size: .85rem; color: #6b7280; line-height: 1.6; margin-bottom: 6px; }
+    .actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 24px; }
+    .btn { border-radius: 999px; padding: 10px 24px; font-size: .85rem; font-weight: 600; font-family: 'Poppins', sans-serif; text-decoration: none; transition: opacity .2s, transform .15s; border: none; cursor: pointer; }
+    .btn:hover { opacity: .9; transform: translateY(-1px); }
+    .btn-primary { background: linear-gradient(135deg, #ea580c, #f59e0b); color: #fff; }
+    .btn-outline { background: #fff; color: #ea580c; border: 2px solid #fed7aa; }
+    footer { text-align: center; padding: 18px; font-size: .78rem; color: #9ca3af; border-top: 1px solid #e5e7eb; }
+        </style>
+    </head>
+    <body>
+        <header class="site-header">
+            <img src="https://portal.esec.ac.in/uploads/banner/logo.png"
+                 alt="ESEC Logo">
+            <div>
+                <h1>Admission Portal</h1>
+                <p>Erode Sengunthar Engineering College</p>
+            </div>
+        </header>
+        <main>
+            <div class="card">
+                <div class="card-top">
+                    <span class="icon">🎉</span>
+                    <h2>Application Submitted!</h2>
+                    <p>Your admission application has been received successfully.</p>
+                </div>
+                <div class="card-body">
+                    <p>Please save your unique application ID:</p>
+                    <div class="uid-box">{{ admission.unique_id }}</div>
+                    <p>
+                        <strong>{{ admission.student_name }}</strong>
+                    </p>
+                    <p>Submitted on {{ admission.created_at|date:"d M Y, h:i A" }}</p>
+                    <div class="actions">
+                        <a href="{% url 'admission_form:form' %}" class="btn btn-primary">New Application</a>
+                        <a href="{% url 'admission_form:form_edit' admission.pk %}"
+                           class="btn btn-outline">Edit This Form</a>
+                        <a href="{% url 'admission_form:home' %}" class="btn btn-outline">Dashboard</a>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <footer>
+            © 2024 Erode Sengunthar Engineering College. All rights reserved.
+        </footer>
+    </body>
+</html>

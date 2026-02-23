@@ -232,7 +232,7 @@
                             class="px-5 py-2 text-sm font-semibold rounded-lg"
                             style="background:#FF9F1C;
                                    color:#fff">Apply Filters</button>
-                    <a href="{% url 'admissions_list' %}"
+                    <a href="{% url 'admission_form:admissions_list' %}"
                        class="px-4 py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition"
                        style="text-decoration:none">Clear All</a>
                 </div>
@@ -267,7 +267,15 @@
                                         data-input-type="{{ f.input_type }}"
                                         data-step="{{ f.step }}"
                                         data-class-name="{{ f.class_name }}">
-                                        {% if f.input_type  ==  'boolean' %}
+                                        {% if f.readonly %}
+                                            <input type="text"
+                                                   class="cell-input w-full px-2 py-1.5 text-sm border border-transparent rounded-md bg-gray-100 text-gray-500 cursor-not-allowed outline-none"
+                                                   value="{{ admission|get_field_value:f.name }}"
+                                                   readonly
+                                                   disabled
+                                                   data-pk="{{ admission.pk }}"
+                                                   data-field="{{ f.name }}">
+                                        {% elif f.input_type == 'boolean' %}
                                             <select class="cell-input w-full px-2 py-1.5 text-sm border border-transparent rounded-md bg-transparent hover:border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition cursor-pointer"
                                                     data-pk="{{ admission.pk }}"
                                                     data-field="{{ f.name }}">
@@ -280,13 +288,13 @@
                                                     No
                                                 </option>
                                             </select>
-                                        {% elif f.input_type  ==  'select' %}
+                                        {% elif f.input_type == 'select' %}
                                             <select class="cell-input w-full px-2 py-1.5 text-sm border border-transparent rounded-md bg-transparent hover:border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition cursor-pointer"
                                                     data-pk="{{ admission.pk }}"
                                                     data-field="{{ f.name }}">
                                                 <option value="">---</option>
                                                 {% for opt in f.options %}
-                                                    {% if f.name  ==  'department_preferences' %}
+                                                    {% if f.name == 'department_preferences' %}
                                                         {# Special handling for JSON field comparison #}
                                                         <option value="{{ opt.value }}"
                                                                 {% if opt.value == admission.department_preferences|jsonify %}selected{% endif %}>
@@ -300,31 +308,23 @@
                                                     {% endif %}
                                                 {% endfor %}
                                             </select>
-                                        {% elif f.input_type  ==  'date' %}
+                                        {% elif f.input_type == 'date' %}
                                             <input type="date"
                                                    class="cell-input w-full px-2 py-1.5 text-sm border border-transparent rounded-md bg-transparent hover:border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition"
                                                    value="{{ admission|get_field_value:f.name|date:'Y-m-d' }}"
                                                    data-pk="{{ admission.pk }}"
                                                    data-field="{{ f.name }}">
-                                        {% elif f.input_type  ==  'datetime-local' %}
+                                        {% elif f.input_type == 'datetime-local' %}
                                             <input type="datetime-local"
                                                    class="cell-input w-full px-2 py-1.5 text-sm border border-transparent rounded-md bg-transparent hover:border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition"
                                                    value="{{ admission|get_field_value:f.name|date:'Y-m-d\TH:i' }}"
                                                    data-pk="{{ admission.pk }}"
                                                    data-field="{{ f.name }}">
-                                        {% elif f.input_type  ==  'number' %}
+                                        {% elif f.input_type == 'number' %}
                                             <input type="number"
                                                    class="cell-input w-full px-2 py-1.5 text-sm border border-transparent rounded-md bg-transparent hover:border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition"
                                                    value="{{ admission|get_field_value:f.name }}"
                                                    step="{{ f.step }}"
-                                                   data-pk="{{ admission.pk }}"
-                                                   data-field="{{ f.name }}">
-                                        {% elif f.readonly %}
-                                            <input type="text"
-                                                   class="cell-input w-full px-2 py-1.5 text-sm border border-transparent rounded-md bg-gray-100 text-gray-500 cursor-not-allowed outline-none"
-                                                   value="{{ admission|get_field_value:f.name }}"
-                                                   readonly
-                                                   disabled
                                                    data-pk="{{ admission.pk }}"
                                                    data-field="{{ f.name }}">
                                         {% else %}
@@ -425,7 +425,7 @@
         }
         const csrfEl = document.querySelector('[name=csrfmiddlewaretoken]');
         const CSRF = getCookie('csrftoken') || (csrfEl ? csrfEl.value : '');
-        const UPDATE_URL = '{% url "admissions_update" %}';
+        const UPDATE_URL = '{% url "admission_form:admissions_update" %}';
 
         // Track original values to only send real changes
         const originals = new Map();

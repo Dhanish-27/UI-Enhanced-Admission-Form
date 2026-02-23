@@ -1,18 +1,18 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Admission Form{% endblock %}</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
-
-    <script>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>
+            {% block title %}Admission Form{% endblock %}
+        </title>
+        <!-- Tailwind CSS -->
+        <script src="https://cdn.tailwindcss.com"></script>
+        <!-- Fonts -->
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+              rel="stylesheet">
+        <script>
         tailwind.config = {
             theme: {
                 extend: {
@@ -28,8 +28,8 @@
                 }
             }
         }
-    </script>
-    <style type="text/tailwindcss">
+        </script>
+        <style type="text/tailwindcss">
         @layer utilities {
             .step-active {
                 @apply bg-primary text-white border-primary;
@@ -41,87 +41,78 @@
                 @apply bg-green-500 text-white border-green-500;
             }
         }
-    </style>
-</head>
-
-<body class="bg-gray-50 min-h-screen flex flex-col font-sans text-gray-800">
-
-    <!-- Header -->
-    <header class="bg-white shadow-sm sticky top-0 z-50">
-        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <!-- Logo area -->
-            <div class="flex items-center gap-3">
-                <img src="https://portal.esec.ac.in/uploads/banner/logo.png" alt="Logo"
-                    class="h-10 w-10 object-contain">
-                <div>
-                    <h1 class="text-xl font-bold text-gray-900 tracking-tight leading-none">Admission Portal</h1>
-                    <p class="text-xs text-gray-500 font-medium">Erode Sengunthar Engineering College</p>
+        </style>
+    </head>
+    <body class="bg-gray-50 min-h-screen flex flex-col font-sans text-gray-800">
+        <!-- Header -->
+        <header class="bg-white shadow-sm sticky top-0 z-50">
+            <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+                <!-- Logo area -->
+                <div class="flex items-center gap-3">
+                    <img src="https://portal.esec.ac.in/uploads/banner/logo.png"
+                         alt="Logo"
+                         class="h-10 w-10 object-contain">
+                    <div>
+                        <h1 class="text-xl font-bold text-gray-900 tracking-tight leading-none">Admission Portal</h1>
+                        <p class="text-xs text-gray-500 font-medium">Erode Sengunthar Engineering College</p>
+                    </div>
+                </div>
+                <!-- Navigation -->
+                <nav class="hidden md:flex gap-8 text-sm font-medium text-gray-600 items-center">
+                    <a href="{% url 'admission_form:home' %}"
+                       class="hover:text-primary transition-colors">Home</a>
+                    <a href="#" class="hover:text-primary transition-colors">Contact</a>
+                    <a href="{% url 'admission_form:followup_list' %}"
+                       class="text-gray-500 hover:text-primary transition-colors p-1"
+                       title="Notifications">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             class="h-6 w-6"
+                             fill="none"
+                             viewBox="0 0 24 24"
+                             stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                        </svg>
+                    </a>
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'logout_user' %}"
+                           class="text-red-500 hover:text-red-600 transition-colors flex items-center gap-1 font-semibold"
+                           title="Logout">
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                 class="h-5 w-5"
+                                 fill="none"
+                                 viewBox="0 0 24 24"
+                                 stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                            </svg>
+                            Logout
+                        </a>
+                    {% endif %}
+                    <div class="flex items-center gap-2 text-gray-900 bg-gray-50 px-3 py-1.5 rounded-full border border-gray-100">
+                        <div class="w-2 h-2 rounded-full bg-green-500"></div>
+                        <span class="font-semibold">{{ user.username|default:"Guest" }}</span>
+                    </div>
+                </nav>
+            </div>
+        </header>
+        <!-- Main Content -->
+        <main class="flex-grow container mx-auto px-6 py-8">
+            <div class="grid grid-cols-1 gap-8">
+                <!-- Left Column: Stepper -->
+                {% block content %}{% endblock %}
+            </div>
+        </main>
+        <!-- Footer -->
+        <footer class="bg-white border-t border-gray-100 mt-auto">
+            <div class="container mx-auto px-6 py-8">
+                <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                    <p class="text-sm text-gray-500">© 2024 Erode Sengunthar Engineering College. All rights reserved.</p>
+                    <div class="flex gap-6 text-sm text-gray-500">
+                        <a href="#" class="hover:text-primary">Privacy Policy</a>
+                        <a href="#" class="hover:text-primary">Terms of Service</a>
+                        <a href="#" class="hover:text-primary">Support</a>
+                    </div>
                 </div>
             </div>
-
-            <!-- Navigation -->
-            <nav class="hidden md:flex gap-8 text-sm font-medium text-gray-600 items-center">
-                <a href="{% url 'home' %}" class="hover:text-primary transition-colors">Home</a>
-                <a href="#" class="hover:text-primary transition-colors">Contact</a>
-                <a href="{% url 'followup_list' %}" class="text-gray-500 hover:text-primary transition-colors p-1"
-                    title="Notifications">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                    </svg>
-                </a>
-                {% if user.is_authenticated %}
-                <a href="{% url 'logout_user' %}"
-                    class="text-red-500 hover:text-red-600 transition-colors flex items-center gap-1 font-semibold"
-                    title="Logout">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                    </svg>
-                    Logout
-                </a>
-                {% endif %}
-                <div
-                    class="flex items-center gap-2 text-gray-900 bg-gray-50 px-3 py-1.5 rounded-full border border-gray-100">
-                    <div class="w-2 h-2 rounded-full bg-green-500"></div>
-                    <span class="font-semibold">{{ user.username|default:"Guest" }}</span>
-                </div>
-            </nav>
-        </div>
-    </header>
-
-    <!-- Main Content -->
-    <main class="flex-grow container mx-auto px-6 py-8">
-        <div class="grid grid-cols-1 gap-8">
-
-            <!-- Left Column: Stepper -->
-
-            {% block content %}
-
-
-            {% endblock %}
-
-
-
-        </div>
-    </main>
-
-    <!-- Footer -->
-    <footer class="bg-white border-t border-gray-100 mt-auto">
-        <div class="container mx-auto px-6 py-8">
-            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-                <p class="text-sm text-gray-500">© 2024 Erode Sengunthar Engineering College. All rights reserved.</p>
-                <div class="flex gap-6 text-sm text-gray-500">
-                    <a href="#" class="hover:text-primary">Privacy Policy</a>
-                    <a href="#" class="hover:text-primary">Terms of Service</a>
-                    <a href="#" class="hover:text-primary">Support</a>
-                </div>
-            </div>
-        </div>
-    </footer>
-
-</body>
-
+        </footer>
+    </body>
 </html>

@@ -1,0 +1,1433 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Admission Application Form – ESEC</title>
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+              rel="stylesheet">
+        <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Poppins', sans-serif; background: #f9fafb; color: #1f2937; min-height: 100vh; display: flex; flex-direction: column; }
+
+    /* ─── HEADER ─────────────────────────────────────────────── */
+    .site-header { background: #fff; box-shadow: 0 1px 6px rgba(0,0,0,.08); position: sticky; top: 0; z-index: 200; }
+    .site-header-inner { max-width: 1280px; margin: 0 auto; padding: 12px 24px; display: flex; align-items: center; justify-content: space-between; }
+    .logo-row { display: flex; align-items: center; gap: 10px; }
+    .logo-row img { height: 40px; width: 40px; object-fit: contain; }
+    .logo-row h1 { font-size: 1.05rem; font-weight: 700; color: #111827; }
+    .logo-row p { font-size: 0.72rem; color: #6b7280; font-weight: 500; }
+    .header-nav { display: flex; align-items: center; gap: 20px; font-size: .85rem; font-weight: 500; color: #6b7280; }
+    .header-nav a { text-decoration: none; color: inherit; transition: color .2s; }
+    .header-nav a:hover { color: #f59e0b; }
+    .user-badge { display: flex; align-items: center; gap: 6px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 999px; padding: 4px 12px; font-size: .82rem; font-weight: 600; color: #111827; }
+    .user-badge .dot { width: 8px; height: 8px; background: #22c55e; border-radius: 50%; }
+
+    /* ─── LAYOUT ─────────────────────────────────────────────── */
+    .main-layout { flex: 1; max-width: 1280px; margin: 0 auto; width: 100%; padding: 28px 24px 100px; display: grid; grid-template-columns: 260px 1fr; gap: 28px; align-items: start; }
+
+    /* ─── LEFT STEPPER ───────────────────────────────────────── */
+    .stepper-panel { position: sticky; top: 74px; background: #fff; border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,.07); overflow: hidden; }
+    .stepper-header { background: linear-gradient(135deg, #ea580c, #f59e0b); padding: 18px 20px; color: #fff; }
+    .stepper-header h2 { font-size: .95rem; font-weight: 700; }
+    .stepper-header p { font-size: .75rem; opacity: .85; margin-top: 2px; }
+    .stepper-list { padding: 10px 0; }
+    .step-item { display: flex; align-items: center; gap: 12px; padding: 9px 20px; cursor: pointer; text-decoration: none; transition: background .15s; color: inherit; }
+    .step-item:hover { background: #fff7ed; }
+    .step-item.active { background: #fff7ed; }
+    .step-num { width: 28px; height: 28px; border-radius: 50%; border: 2px solid #e5e7eb; background: #fff; display: flex; align-items: center; justify-content: center; font-size: .75rem; font-weight: 700; color: #9ca3af; flex-shrink: 0; transition: all .2s; }
+    .step-item.active .step-num { background: #f59e0b; border-color: #f59e0b; color: #fff; }
+    .step-item.done .step-num { background: #22c55e; border-color: #22c55e; color: #fff; }
+    .step-label { font-size: .82rem; color: #6b7280; font-weight: 500; transition: color .2s; }
+    .step-item.active .step-label { color: #ea580c; font-weight: 600; }
+    .step-connector { width: 2px; height: 14px; background: #e5e7eb; margin: 0 0 0 33px; }
+
+    /* ─── FORM CONTENT ───────────────────────────────────────── */
+    .form-area { display: flex; flex-direction: column; gap: 24px; }
+
+    /* Messages */
+    .messages { display: flex; flex-direction: column; gap: 8px; }
+    .msg { padding: 11px 16px; border-radius: 10px; font-size: .84rem; font-weight: 500; border-left: 4px solid; }
+    .msg.error { background: #fef2f2; color: #dc2626; border-color: #dc2626; }
+    .msg.success { background: #f0fdf4; color: #16a34a; border-color: #16a34a; }
+
+    /* Section card */
+    .section-card { background: #fff; border-radius: 14px; box-shadow: 0 2px 10px rgba(0,0,0,.06); overflow: hidden; scroll-margin-top: 80px; }
+    .section-header { background: linear-gradient(90deg, #ea580c, #f59e0b); padding: 14px 22px; display: flex; align-items: center; gap: 12px; }
+    .sec-num { width: 30px; height: 30px; background: rgba(255,255,255,.25); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: .8rem; font-weight: 700; color: #fff; flex-shrink: 0; }
+    .section-header h2 { font-size: .95rem; font-weight: 600; color: #fff; }
+    .section-body { padding: 22px; }
+
+    /* Grid helpers */
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+    .span-2 { grid-column: span 2; }
+    @media(max-width:900px) { .main-layout { grid-template-columns: 1fr; } .stepper-panel { position: static; } }
+    @media(max-width:600px) { .form-grid, .form-grid.cols-3 { grid-template-columns: 1fr; } .span-2 { grid-column: span 1; } }
+
+    /* Sub-heading divider */
+    .sub-head { font-size: .74rem; font-weight: 700; color: #9ca3af; text-transform: uppercase; letter-spacing: .6px; border-bottom: 1.5px solid #f3f4f6; padding-bottom: 6px; margin-top: 4px; grid-column: 1 / -1; }
+
+    /* Form elements */
+    .fg { display: flex; flex-direction: column; gap: 5px; }
+    .fg label { font-size: .8rem; font-weight: 600; color: #374151; }
+    .fg label .r { color: #ef4444; margin-left: 2px; }
+    .fg input, .fg select, .fg textarea {
+      border: 1.5px solid #e5e7eb; border-radius: 8px; padding: 8px 12px;
+      font-size: .85rem; font-family: 'Poppins', sans-serif; color: #1f2937;
+      transition: border-color .2s, box-shadow .2s; width: 100%; background: #fff;
+    }
+    .fg input:focus, .fg select:focus, .fg textarea:focus {
+      outline: none; border-color: #f59e0b; box-shadow: 0 0 0 3px rgba(245,158,11,.15);
+    }
+    .fg input[type="file"] { padding: 5px; cursor: pointer; }
+    .fg textarea { resize: vertical; min-height: 76px; }
+    .file-note { font-size: .72rem; color: #9ca3af; margin-top: 3px; }
+
+    /* Checkbox-style rows */
+    .check-row { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border: 1.5px solid #e5e7eb; border-radius: 8px; cursor: pointer; background: #fafafa; }
+    .check-row:hover { border-color: #f59e0b; background: #fff7ed; }
+    .check-row input[type="checkbox"] { accent-color: #f59e0b; width: 16px; height: 16px; }
+    .check-row span { font-size: .85rem; font-weight: 500; }
+
+    /* Department items */
+    .dept-item { display: flex; align-items: center; gap: 10px; padding: 9px 14px; border: 1.5px solid #e5e7eb; border-radius: 8px; margin-bottom: 7px; background: #fafafa; }
+    .dept-item:hover { border-color: #f59e0b; background: #fff7ed; }
+    .dept-item input[type="checkbox"] { accent-color: #f59e0b; width: 15px; height: 15px; }
+    .dept-item .dl { flex: 1; font-size: .82rem; color: #374151; }
+    .dept-item .move-btns button { border: 1px solid #e5e7eb; border-radius: 6px; background: #fff; width: 26px; height: 26px; cursor: pointer; font-size: .85rem; margin-left: 3px; }
+    .dept-item .move-btns button:hover { background: #fff7ed; border-color: #f59e0b; color: #ea580c; }
+
+    /* References table */
+    .ref-table { width: 100%; border-collapse: collapse; font-size: .82rem; }
+    .ref-table th { background: #f9fafb; padding: 9px 10px; text-align: left; font-weight: 600; color: #374151; border-bottom: 2px solid #e5e7eb; font-size: .78rem; }
+    .ref-table td { padding: 6px 8px; border-bottom: 1px solid #f3f4f6; }
+    .ref-table input { border: 1.5px solid #e5e7eb; border-radius: 6px; padding: 6px 9px; font-size: .82rem; width: 100%; font-family: 'Poppins', sans-serif; }
+    .ref-table input:focus { outline: none; border-color: #f59e0b; }
+    .add-ref-btn { margin-top: 10px; background: #fff7ed; color: #ea580c; border: 1.5px solid #fed7aa; border-radius: 8px; padding: 7px 16px; font-size: .82rem; font-weight: 600; cursor: pointer; font-family: 'Poppins', sans-serif; }
+    .add-ref-btn:hover { background: #ffedd5; }
+    .del-ref-btn { background: #fef2f2; color: #dc2626; border: none; border-radius: 6px; padding: 5px 9px; cursor: pointer; font-size: .78rem; font-family: 'Poppins', sans-serif; }
+
+    /* Toggleable sections */
+    .facility-sub { display: none; margin-top: 14px; border-top: 1.5px solid #f3f4f6; padding-top: 14px; }
+    .marks-12th { display: none; }
+    .marks-diploma { display: none; }
+    .fg-row { display: none; max-width: 300px; }
+
+    /* ─── STICKY SUBMIT ───────────────────────────────────────── */
+    .submit-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-top: 1.5px solid #e5e7eb; padding: 13px 24px; display: flex; justify-content: center; z-index: 300; box-shadow: 0 -4px 20px rgba(0,0,0,.07); }
+    .submit-btn { background: linear-gradient(135deg, #ea580c, #f59e0b); color: #fff; border: none; border-radius: 999px; padding: 12px 52px; font-size: .95rem; font-weight: 700; cursor: pointer; font-family: 'Poppins', sans-serif; transition: opacity .2s, transform .15s; letter-spacing: .3px; }
+    .submit-btn:hover { opacity: .92; transform: translateY(-1px); }
+    .req-note { font-size: .76rem; color: #9ca3af; margin-bottom: 4px; }
+    .req-note .r { color: #ef4444; }
+        </style>
+    </head>
+    <body>
+        <!-- ─── HEADER ─────────────────────────────────────────────────── -->
+        <header class="site-header">
+            <div class="site-header-inner">
+                <div class="logo-row">
+                    <img src="https://portal.esec.ac.in/uploads/banner/logo.png"
+                         alt="ESEC Logo">
+                    <div>
+                        <h1>Admission Portal</h1>
+                        <p>Erode Sengunthar Engineering College</p>
+                    </div>
+                </div>
+                <nav class="header-nav">
+                    <a href="{% url 'admission_form:home' %}">Home</a>
+                    <a href="#">Contact</a>
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'logout_user' %}" style="color:#ef4444;">Logout</a>
+                    {% endif %}
+                    <div class="user-badge">
+                        <div class="dot"></div>
+                        <span>{{ user.username|default:"Guest" }}</span>
+                    </div>
+                </nav>
+            </div>
+        </header>
+        <!-- ─── MAIN LAYOUT ───────────────────────────────────────────── -->
+        <div class="main-layout">
+            <!-- LEFT: STEPPER -->
+            <aside class="stepper-panel">
+                <div class="stepper-header">
+                    <h2>Application Sections</h2>
+                    <p>Scroll through all sections below</p>
+                </div>
+                <nav class="stepper-list">
+                    <a href="#sec1" class="step-item active">
+                        <div class="step-num">1</div>
+                        <span class="step-label">Personal Details</span>
+                    </a>
+                    <div class="step-connector"></div>
+                    <a href="#sec2" class="step-item">
+                        <div class="step-num">2</div>
+                        <span class="step-label">Department &amp; Course</span>
+                    </a>
+                    <div class="step-connector"></div>
+                    <a href="#sec3" class="step-item">
+                        <div class="step-num">3</div>
+                        <span class="step-label">Marks Obtained</span>
+                    </a>
+                    <div class="step-connector"></div>
+                    <a href="#sec4" class="step-item">
+                        <div class="step-num">4</div>
+                        <span class="step-label">Academic Information</span>
+                    </a>
+                    <div class="step-connector"></div>
+                    <a href="#sec5" class="step-item">
+                        <div class="step-num">5</div>
+                        <span class="step-label">Vocational Details</span>
+                    </a>
+                    <div class="step-connector"></div>
+                    <a href="#sec6" class="step-item">
+                        <div class="step-num">6</div>
+                        <span class="step-label">Facility Details</span>
+                    </a>
+                    <div class="step-connector"></div>
+                    <a href="#sec7" class="step-item">
+                        <div class="step-num">7</div>
+                        <span class="step-label">Fee Details</span>
+                    </a>
+                    <div class="step-connector"></div>
+                    <a href="#sec8" class="step-item">
+                        <div class="step-num">8</div>
+                        <span class="step-label">Scholarship Details</span>
+                    </a>
+                    <div class="step-connector"></div>
+                    <a href="#sec9" class="step-item">
+                        <div class="step-num">9</div>
+                        <span class="step-label">Reference Details</span>
+                    </a>
+                    <div class="step-connector"></div>
+                    <a href="#sec10" class="step-item">
+                        <div class="step-num">10</div>
+                        <span class="step-label">Bank Details</span>
+                    </a>
+                    <div class="step-connector"></div>
+                    <a href="#sec11" class="step-item">
+                        <div class="step-num">11</div>
+                        <span class="step-label">Certificate Uploads</span>
+                    </a>
+                </nav>
+            </aside>
+            <!-- RIGHT: FORM -->
+            <div class="form-area">
+                {% if messages %}
+                    <div class="messages">
+                        {% for message in messages %}<div class="msg {{ message.tags }}">{{ message }}</div>{% endfor %}
+                    </div>
+                {% endif %}
+                <p class="req-note">
+                    Fields marked <span class="r">*</span> are .
+                </p>
+                <form method="post" enctype="multipart/form-data" id="admissionForm">
+                    {% csrf_token %}
+                    {% if admission %}<input type="hidden" name="pk" value="{{ admission.pk }}">{% endif %}
+                    <!-- ══ SECTION 1: PERSONAL DETAILS ══════════════════════ -->
+                    <div class="section-card" id="sec1">
+                        <div class="section-header">
+                            <div class="sec-num">1</div>
+                            <h2>Personal Details</h2>
+                        </div>
+                        <div class="section-body">
+                            <div class="form-grid">
+                                <div class="fg">
+                                    <label>
+                                        Student Name <span class="r">*</span>
+                                    </label>
+                                    <input type="text"
+                                           name="student_name"
+                                           value="{{ admission.student_name|default:'' }}"
+                                           placeholder="Full name">
+                                </div>
+                                <div class="fg">
+                                    <label>Email</label>
+                                    <input type="email"
+                                           name="email"
+                                           value="{{ admission.email|default:'' }}"
+                                           placeholder="email@example.com">
+                                </div>
+                                <div class="fg">
+                                    <label>
+                                        Student Mobile <span class="r">*</span>
+                                    </label>
+                                    <input type="tel"
+                                           name="student_mobile"
+                                           value="{{ admission.student_mobile|default:'' }}"
+                                           placeholder="10-digit mobile"
+                                           maxlength="10">
+                                </div>
+                                <div class="fg">
+                                    <label>
+                                        Date of Birth <span class="r">*</span>
+                                    </label>
+                                    <input type="date"
+                                           name="dob"
+                                           value="{{ admission.dob|date:'Y-m-d'|default:'' }}">
+                                </div>
+                                <div class="fg">
+                                    <label>
+                                        Gender <span class="r">*</span>
+                                    </label>
+                                    <select name="gender">
+                                        <option value="">Select Gender</option>
+                                        <option value="Male" {% if admission.gender == 'Male' %}selected{% endif %}>Male</option>
+                                        <option value="Female"
+                                                {% if admission.gender == 'Female' %}selected{% endif %}>
+                                            Female
+                                        </option>
+                                        <option value="Others"
+                                                {% if admission.gender == 'Others' %}selected{% endif %}>
+                                            Others
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="fg">
+                                    <label>Community</label>
+                                    <select name="community">
+                                        <option value="">Select Community</option>
+                                        <option value="OC" {% if admission.community == 'OC' %}selected{% endif %}>Open Competition (OC)</option>
+                                        <option value="BC" {% if admission.community == 'BC' %}selected{% endif %}>Backward Class (BC)</option>
+                                        <option value="MBC" {% if admission.community == 'MBC' %}selected{% endif %}>Most Backward Class (MBC)</option>
+                                        <option value="DNC" {% if admission.community == 'DNC' %}selected{% endif %}>Denotified Communities (DNC)</option>
+                                        <option value="BCM" {% if admission.community == 'BCM' %}selected{% endif %}>Backward Class Muslim (BCM)</option>
+                                        <option value="SC" {% if admission.community == 'SC' %}selected{% endif %}>Scheduled Caste (SC)</option>
+                                        <option value="SCA" {% if admission.community == 'SCA' %}selected{% endif %}>
+                                            Scheduled Caste Arunthathiyar (SCA)
+                                        </option>
+                                        <option value="ST" {% if admission.community == 'ST' %}selected{% endif %}>Scheduled Tribe (ST)</option>
+                                    </select>
+                                </div>
+                                <div class="fg">
+                                    <label>Caste</label>
+                                    <input type="text"
+                                           name="caste"
+                                           value="{{ admission.caste|default:'' }}"
+                                           placeholder="Enter caste">
+                                </div>
+                                <div class="fg">
+                                    <label>Aadhaar Number</label>
+                                    <input type="text"
+                                           name="aadhaar_number"
+                                           value="{{ admission.aadhaar_number|default:'' }}"
+                                           placeholder="12-digit Aadhaar"
+                                           maxlength="12">
+                                </div>
+                                <div class="sub-head">Parent / Guardian Details</div>
+                                <div class="fg">
+                                    <label>
+                                        Father's Name <span class="r">*</span>
+                                    </label>
+                                    <input type="text"
+                                           name="father_name"
+                                           value="{{ admission.father_name|default:'' }}"
+                                           placeholder="Father's full name">
+                                </div>
+                                <div class="fg">
+                                    <label>Father's Mobile</label>
+                                    <input type="tel"
+                                           name="father_mobile"
+                                           value="{{ admission.father_mobile|default:'' }}"
+                                           placeholder="10-digit mobile"
+                                           maxlength="10">
+                                </div>
+                                <div class="fg">
+                                    <label>
+                                        Mother's Name <span class="r">*</span>
+                                    </label>
+                                    <input type="text"
+                                           name="mother_name"
+                                           value="{{ admission.mother_name|default:'' }}"
+                                           placeholder="Mother's full name">
+                                </div>
+                                <div class="fg">
+                                    <label>Mother's Mobile</label>
+                                    <input type="tel"
+                                           name="mother_mobile"
+                                           value="{{ admission.mother_mobile|default:'' }}"
+                                           placeholder="10-digit mobile"
+                                           maxlength="10">
+                                </div>
+                                <div class="fg">
+                                    <label>Guardian's Name</label>
+                                    <input type="text"
+                                           name="guardian_name"
+                                           value="{{ admission.guardian_name|default:'' }}"
+                                           placeholder="Guardian's full name">
+                                </div>
+                                <div class="fg">
+                                    <label>Guardian's Mobile</label>
+                                    <input type="tel"
+                                           name="guardian_mobile"
+                                           value="{{ admission.guardian_mobile|default:'' }}"
+                                           placeholder="10-digit mobile"
+                                           maxlength="10">
+                                </div>
+                                <div class="sub-head">Address Details</div>
+                                <div class="fg span-2">
+                                    <label>
+                                        Address <span class="r">*</span>
+                                    </label>
+                                    <textarea name="address" placeholder="Full residential address">{{ admission.address|default:'' }}</textarea>
+                                </div>
+                                <div class="fg">
+                                    <label>Pincode</label>
+                                    <input type="text"
+                                           name="pincode"
+                                           value="{{ admission.pincode|default:'' }}"
+                                           placeholder="6-digit pincode"
+                                           maxlength="6">
+                                </div>
+                                <div class="fg">
+                                    <label>
+                                        Country <span class="r">*</span>
+                                    </label>
+                                    <select name="country" id="country">
+                                        <option value="">Select Country</option>
+                                        <option value="India"
+                                                {% if admission.country == 'India' or not admission %}selected{% endif %}>
+                                            India
+                                        </option>
+                                        <option value="Other"
+                                                {% if admission.country == 'Other' %}selected{% endif %}>Other</option>
+                                    </select>
+                                </div>
+                                <div class="fg">
+                                    <label>
+                                        State <span class="r">*</span>
+                                    </label>
+                                    <select name="state" id="state_dropdown">
+                                        <option value="">Select State</option>
+                                        <option value="Tamil Nadu"
+                                                {% if admission.state == 'Tamil Nadu' %}selected{% endif %}>
+                                            Tamil Nadu
+                                        </option>
+                                        <option value="Andhra Pradesh"
+                                                {% if admission.state == 'Andhra Pradesh' %}selected{% endif %}>
+                                            Andhra Pradesh
+                                        </option>
+                                        <option value="Karnataka"
+                                                {% if admission.state == 'Karnataka' %}selected{% endif %}>
+                                            Karnataka
+                                        </option>
+                                        <option value="Kerala"
+                                                {% if admission.state == 'Kerala' %}selected{% endif %}>Kerala</option>
+                                        <option value="Maharashtra"
+                                                {% if admission.state == 'Maharashtra' %}selected{% endif %}>
+                                            Maharashtra
+                                        </option>
+                                        <option value="Uttar Pradesh"
+                                                {% if admission.state == 'Uttar Pradesh' %}selected{% endif %}>
+                                            Uttar Pradesh
+                                        </option>
+                                        <option value="West Bengal"
+                                                {% if admission.state == 'West Bengal' %}selected{% endif %}>
+                                            West Bengal
+                                        </option>
+                                        <option value="Rajasthan"
+                                                {% if admission.state == 'Rajasthan' %}selected{% endif %}>
+                                            Rajasthan
+                                        </option>
+                                        <option value="Gujarat"
+                                                {% if admission.state == 'Gujarat' %}selected{% endif %}>
+                                            Gujarat
+                                        </option>
+                                        <option value="Punjab"
+                                                {% if admission.state == 'Punjab' %}selected{% endif %}>Punjab</option>
+                                        <option value="Telangana"
+                                                {% if admission.state == 'Telangana' %}selected{% endif %}>
+                                            Telangana
+                                        </option>
+                                        <option value="Bihar" {% if admission.state == 'Bihar' %}selected{% endif %}>Bihar</option>
+                                        <option value="Other" {% if admission.state == 'Other' %}selected{% endif %}>Other</option>
+                                    </select>
+                                    <input type="text"
+                                           name="state_others"
+                                           id="state_input"
+                                           placeholder="Enter state"
+                                           style="display:none;
+                                                  margin-top:6px"
+                                           value="{{ admission.state|default:'' }}">
+                                </div>
+                                <div class="fg">
+                                    <label>
+                                        District <span class="r">*</span>
+                                    </label>
+                                    <input type="text"
+                                           name="district"
+                                           value="{{ admission.district|default:'' }}"
+                                           placeholder="Enter district">
+                                </div>
+                                <div class="sub-head">Application Details</div>
+                                <div class="fg">
+                                    <label>Application Number</label>
+                                    <input type="text"
+                                           name="application_number"
+                                           value="{{ admission.application_number|default:'' }}"
+                                           placeholder="Application number">
+                                </div>
+                                <div class="fg">
+                                    <label>Application Date</label>
+                                    <input type="date"
+                                           name="application_date"
+                                           value="{{ admission.application_date|date:'Y-m-d'|default:'' }}">
+                                </div>
+                                <div class="fg">
+                                    <label>Admission Date</label>
+                                    <input type="date"
+                                           name="admission_date"
+                                           value="{{ admission.admission_date|date:'Y-m-d'|default:'' }}">
+                                </div>
+                                <div class="fg">
+                                    <label>Allotment / Register Number</label>
+                                    <input type="text"
+                                           name="allotment_number"
+                                           value="{{ admission.allotment_number|default:'' }}"
+                                           placeholder="Allotment / register number">
+                                </div>
+                                <div class="fg">
+                                    <label>Quota</label>
+                                    <select name="quota">
+                                        <option value="">Select Quota</option>
+                                        <option value="Management"
+                                                {% if admission.quota == 'Management' %}selected{% endif %}>
+                                            Management
+                                        </option>
+                                        <option value="Government"
+                                                {% if admission.quota == 'Government' %}selected{% endif %}>
+                                            Government
+                                        </option>
+                                        <option value="NRI" {% if admission.quota == 'NRI' %}selected{% endif %}>NRI</option>
+                                        <option value="Sports"
+                                                {% if admission.quota == 'Sports' %}selected{% endif %}>Sports</option>
+                                        <option value="Others"
+                                                {% if admission.quota == 'Others' %}selected{% endif %}>Others</option>
+                                    </select>
+                                </div>
+                                <div class="fg">
+                                    <label>Roll Number</label>
+                                    <input type="text"
+                                           name="roll_number"
+                                           value="{{ admission.roll_number|default:'' }}"
+                                           placeholder="Roll number">
+                                </div>
+                                <div class="fg">
+                                    <label>Portal Status</label>
+                                    <input type="text"
+                                           name="portal_status"
+                                           value="{{ admission.portal_status|default:'' }}"
+                                           placeholder="e.g. Verified, Pending">
+                                </div>
+                                <div class="fg">
+                                    <label>EMIS / UMIS Number</label>
+                                    <input type="text"
+                                           name="umis_number"
+                                           value="{{ admission.umis_number|default:'' }}"
+                                           placeholder="EMIS number">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- ══ SECTION 2: DEPARTMENT DETAILS ════════════════════ -->
+                    <div class="section-card" id="sec2">
+                        <div class="section-header">
+                            <div class="sec-num">2</div>
+                            <h2>Department &amp; Course Selection</h2>
+                        </div>
+                        <div class="section-body">
+                            <div class="fg" style="max-width:320px; margin-bottom:16px;">
+                                <label>
+                                    Level <span class="r">*</span>
+                                </label>
+                                <select id="levelSelect" name="level">
+                                    <option value="">Select Level</option>
+                                    <option value="ug" {% if admission.level == 'ug' %}selected{% endif %}>UG – Under Graduate</option>
+                                    <option value="pg" {% if admission.level == 'pg' %}selected{% endif %}>PG – Post Graduate</option>
+                                    <option value="le" {% if admission.level == 'le' %}selected{% endif %}>LE – Lateral Entry</option>
+                                </select>
+                            </div>
+                            <div id="departmentContainer"></div>
+                        </div>
+                    </div>
+                    <!-- ══ SECTION 3: MARKS OBTAINED ════════════════════════ -->
+                    <div class="section-card" id="sec3">
+                        <div class="section-header">
+                            <div class="sec-num">3</div>
+                            <h2>Marks Obtained</h2>
+                        </div>
+                        <div class="section-body">
+                            <!-- qualification auto-set from level -->
+                            <input type="hidden"
+                                   name="qualification"
+                                   id="qualHidden"
+                                   value="{{ admission.qualification|default:'' }}">
+                            <p id="marksHint"
+                               style="font-size:.8rem;
+                                      color:#9ca3af;
+                                      margin-bottom:12px">
+                                Select a level in Section 2 to see the relevant mark fields.
+                            </p>
+                            <div class="form-grid">
+                                <!-- 10th always shown -->
+                                <div class="fg">
+                                    <label>10th Total Marks</label>
+                                    <input type="text"
+                                           name="tenth_total"
+                                           value="{{ admission.tenth_total|default:'' }}"
+                                           placeholder="e.g. 500">
+                                </div>
+                                <div class="fg">
+                                    <label>10th Percentage</label>
+                                    <input type="number"
+                                           name="tenth_percentage"
+                                           value="{{ admission.tenth_percentage|default:'' }}"
+                                           placeholder="e.g. 85.5"
+                                           step="0.01"
+                                           min="0"
+                                           max="100">
+                                </div>
+                                <!-- 12th fields – shown for UG/PG -->
+                                <div class="fg marks-12th">
+                                    <label>12th Total Marks</label>
+                                    <input type="text"
+                                           name="twelfth_total"
+                                           value="{{ admission.twelfth_total|default:'' }}"
+                                           placeholder="e.g. 1200">
+                                </div>
+                                <div class="fg marks-12th">
+                                    <label>12th Percentage</label>
+                                    <input type="number"
+                                           name="twelfth_percentage"
+                                           value="{{ admission.twelfth_percentage|default:'' }}"
+                                           placeholder="e.g. 75.5"
+                                           step="0.01"
+                                           min="0"
+                                           max="100">
+                                </div>
+                                <div class="fg marks-12th">
+                                    <label>12th Stream / Group</label>
+                                    <input type="text"
+                                           name="twelfth_major"
+                                           value="{{ admission.twelfth_major|default:'' }}"
+                                           placeholder="e.g. Maths, Physics, Chemistry">
+                                </div>
+                                <div class="fg marks-12th">
+                                    <label>12th Register No.</label>
+                                    <input type="text"
+                                           name="twelth_reg_no"
+                                           value="{{ admission.twelth_reg_no|default:'' }}"
+                                           placeholder="Board register number">
+                                </div>
+                                <div class="fg marks-12th">
+                                    <label>Maths Marks</label>
+                                    <input type="number"
+                                           name="maths_marks"
+                                           value="{{ admission.maths_marks|default:'' }}"
+                                           placeholder="Out of 200"
+                                           step="0.01"
+                                           min="0"
+                                           max="200">
+                                </div>
+                                <div class="fg marks-12th">
+                                    <label>Physics Marks</label>
+                                    <input type="number"
+                                           name="physics_marks"
+                                           value="{{ admission.physics_marks|default:'' }}"
+                                           placeholder="Out of 200"
+                                           step="0.01"
+                                           min="0"
+                                           max="200">
+                                </div>
+                                <div class="fg marks-12th">
+                                    <label>Chemistry Marks</label>
+                                    <input type="number"
+                                           name="chemistry_marks"
+                                           value="{{ admission.chemistry_marks|default:'' }}"
+                                           placeholder="Out of 200"
+                                           step="0.01"
+                                           min="0"
+                                           max="200">
+                                </div>
+                                <!-- Diploma fields – shown for LE -->
+                                <div class="fg marks-diploma">
+                                    <label>Diploma Total Marks</label>
+                                    <input type="text"
+                                           name="diploma_total"
+                                           value="{{ admission.diploma_total|default:'' }}"
+                                           placeholder="e.g. 1000">
+                                </div>
+                                <div class="fg marks-diploma">
+                                    <label>Diploma Percentage</label>
+                                    <input type="number"
+                                           name="diploma_percentage"
+                                           value="{{ admission.diploma_percentage|default:'' }}"
+                                           placeholder="e.g. 78.5"
+                                           step="0.01"
+                                           min="0"
+                                           max="100">
+                                </div>
+                                <div class="fg marks-diploma">
+                                    <label>Diploma Major / Branch</label>
+                                    <input type="text"
+                                           name="diploma_major"
+                                           value="{{ admission.diploma_major|default:'' }}"
+                                           placeholder="e.g. Mechanical Engineering">
+                                </div>
+                                <div class="fg marks-diploma">
+                                    <label>Diploma College Name</label>
+                                    <input type="text"
+                                           name="diploma_college"
+                                           value="{{ admission.diploma_college|default:'' }}"
+                                           placeholder="Name of diploma college">
+                                </div>
+                                <div class="fg marks-diploma">
+                                    <label>Diploma Year of Passing</label>
+                                    <input type="number"
+                                           name="diploma_year_passing"
+                                           value="{{ admission.diploma_year_passing|default:'' }}"
+                                           placeholder="e.g. 2022"
+                                           min="2000"
+                                           max="2030">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- ══ SECTION 4: ACADEMIC INFO ═════════════════════════ -->
+                    <div class="section-card" id="sec4">
+                        <div class="section-header">
+                            <div class="sec-num">4</div>
+                            <h2>Academic Information</h2>
+                        </div>
+                        <div class="section-body">
+                            <p id="academicHint" style="font-size:.8rem;color:#9ca3af;">Select a level in Section 2 first.</p>
+                            <!-- UG / PG: School info -->
+                            <div id="academicSchool" style="display:none;">
+                                <div class="form-grid">
+                                    <div class="fg span-2">
+                                        <label>Last School Name</label>
+                                        <input type="text"
+                                               name="last_school"
+                                               value="{{ admission.last_school|default:'' }}"
+                                               placeholder="Name of school attended">
+                                    </div>
+                                    <div class="fg">
+                                        <label>Board</label>
+                                        <select name="board">
+                                            <option value="">Select Board</option>
+                                            <option value="State Board"
+                                                    {% if admission.board == 'State Board' %}selected{% endif %}>
+                                                State Board
+                                            </option>
+                                            <option value="CBSE" {% if admission.board == 'CBSE' %}selected{% endif %}>CBSE</option>
+                                            <option value="ICSE" {% if admission.board == 'ICSE' %}selected{% endif %}>ICSE</option>
+                                            <option value="Matriculation"
+                                                    {% if admission.board == 'Matriculation' %}selected{% endif %}>
+                                                Matriculation
+                                            </option>
+                                            <option value="Anglo Indian"
+                                                    {% if admission.board == 'Anglo Indian' %}selected{% endif %}>
+                                                Anglo Indian
+                                            </option>
+                                            <option value="Other" {% if admission.board == 'Other' %}selected{% endif %}>Other</option>
+                                        </select>
+                                    </div>
+                                    <div class="fg">
+                                        <label>Year of Passing</label>
+                                        <input type="number"
+                                               name="year_passing"
+                                               value="{{ admission.year_passing|default:'' }}"
+                                               placeholder="e.g. 2024"
+                                               min="2000"
+                                               max="2030">
+                                    </div>
+                                    <div class="fg">
+                                        <label>Medium of Instruction</label>
+                                        <select name="medium">
+                                            <option value="">Select Medium</option>
+                                            <option value="Tamil" {% if admission.medium == 'Tamil' %}selected{% endif %}>Tamil</option>
+                                            <option value="English"
+                                                    {% if admission.medium == 'English' %}selected{% endif %}>
+                                                English
+                                            </option>
+                                            <option value="Other" {% if admission.medium == 'Other' %}selected{% endif %}>Other</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- LE: Previous College info -->
+                            <div id="academicCollege" style="display:none;">
+                                <div class="form-grid">
+                                    <div class="fg span-2">
+                                        <label>Diploma / Previous College Name</label>
+                                        <input type="text"
+                                               name="last_school"
+                                               value="{{ admission.last_school|default:'' }}"
+                                               placeholder="Name of college attended">
+                                    </div>
+                                    <div class="fg span-2">
+                                        <label>College Address</label>
+                                        <input type="text"
+                                               name="college_address1"
+                                               value="{{ admission.college_address1|default:'' }}"
+                                               placeholder="College address">
+                                    </div>
+                                    <div class="fg">
+                                        <label>College District</label>
+                                        <input type="text"
+                                               name="college_district"
+                                               value="{{ admission.college_district|default:'' }}"
+                                               placeholder="District">
+                                    </div>
+                                    <div class="fg">
+                                        <label>College State</label>
+                                        <input type="text"
+                                               name="college_state"
+                                               value="{{ admission.college_state|default:'' }}"
+                                               placeholder="State">
+                                    </div>
+                                    <div class="fg">
+                                        <label>Department / Branch Studied</label>
+                                        <input type="text"
+                                               name="diploma_major"
+                                               value="{{ admission.diploma_major|default:'' }}"
+                                               placeholder="e.g. Mechanical Engineering">
+                                    </div>
+                                    <div class="fg">
+                                        <label>Year of Passing</label>
+                                        <input type="number"
+                                               name="year_passing"
+                                               value="{{ admission.year_passing|default:'' }}"
+                                               placeholder="e.g. 2022"
+                                               min="2000"
+                                               max="2030">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- ══ SECTION 5: VOCATIONAL DETAILS ════════════════════ -->
+                    <div class="section-card" id="sec5">
+                        <div class="section-header">
+                            <div class="sec-num">5</div>
+                            <h2>
+                                Vocational Details <span style="font-size:.78rem;opacity:.8;">(Optional)</span>
+                            </h2>
+                        </div>
+                        <div class="section-body">
+                            <div class="form-grid">
+                                <div class="fg">
+                                    <label>Vocational Stream</label>
+                                    <input type="text"
+                                           name="vocational_stream"
+                                           value="{{ admission.vocational_stream|default:'' }}"
+                                           placeholder="e.g. Electronics, Agriculture">
+                                </div>
+                                <div class="fg">
+                                    <label>Skill Proof Document</label>
+                                    <input type="file" name="skill_proof" accept=".pdf,.jpg,.jpeg,.png">
+                                    {% if admission.skill_proof %}<p class="file-note">✓ {{ admission.skill_proof.name }}</p>{% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- ══ SECTION 6: FACILITY DETAILS ══════════════════════ -->
+                    <div class="section-card" id="sec6">
+                        <div class="section-header">
+                            <div class="sec-num">6</div>
+                            <h2>Facility Details</h2>
+                        </div>
+                        <div class="section-body">
+                            <div class="fg" style="max-width:320px;">
+                                <label>Facility Required</label>
+                                <select name="facility_type" id="facilitySelect">
+                                    <option value="">None</option>
+                                    <option value="transport"
+                                            {% if admission.bus_needed == 'yes' %}selected{% endif %}>
+                                        Transport / Bus
+                                    </option>
+                                    <option value="hostel"
+                                            {% if admission.hostel_needed == 'yes' %}selected{% endif %}>
+                                        Hostel
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="facility-sub" id="transportSub">
+                                <div class="form-grid">
+                                    <div class="fg">
+                                        <label>Boarding Point</label>
+                                        <input type="text"
+                                               name="boarding_point"
+                                               value="{{ admission.boarding_point|default:'' }}"
+                                               placeholder="Your boarding stop">
+                                    </div>
+                                    <div class="fg">
+                                        <label>Bus Route</label>
+                                        <input type="text"
+                                               name="bus_route"
+                                               value="{{ admission.bus_route|default:'' }}"
+                                               placeholder="Route number / name">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="facility-sub" id="hostelSub">
+                                <div class="form-grid">
+                                    <div class="fg">
+                                        <label>Hostel Name</label>
+                                        <input type="text"
+                                               name="hostel_name"
+                                               value="{{ admission.hostel_name|default:'' }}"
+                                               placeholder="Hostel name">
+                                    </div>
+                                    <div class="fg">
+                                        <label>Hostel Type</label>
+                                        <select name="hostel_type">
+                                            <option value="">Select</option>
+                                            <option value="Boys"
+                                                    {% if admission.hostel_type == 'Boys' %}selected{% endif %}>
+                                                Boys
+                                            </option>
+                                            <option value="Girls"
+                                                    {% if admission.hostel_type == 'Girls' %}selected{% endif %}>
+                                                Girls
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="fg">
+                                        <label>Room Type</label>
+                                        <select name="room_type">
+                                            <option value="">Select</option>
+                                            <option value="Single"
+                                                    {% if admission.room_type == 'Single' %}selected{% endif %}>
+                                                Single
+                                            </option>
+                                            <option value="Double"
+                                                    {% if admission.room_type == 'Double' %}selected{% endif %}>
+                                                Double
+                                            </option>
+                                            <option value="Triple"
+                                                    {% if admission.room_type == 'Triple' %}selected{% endif %}>
+                                                Triple
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="fg">
+                                        <label>Mess Type</label>
+                                        <select name="mess_type">
+                                            <option value="">Select</option>
+                                            <option value="Veg" {% if admission.mess_type == 'Veg' %}selected{% endif %}>Veg</option>
+                                            <option value="Non-Veg"
+                                                    {% if admission.mess_type == 'Non-Veg' %}selected{% endif %}>
+                                                Non-Veg
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- ══ SECTION 7: FEE DETAILS ════════════════════════════ -->
+                    <div class="section-card" id="sec7">
+                        <div class="section-header">
+                            <div class="sec-num">7</div>
+                            <h2>Fee Details</h2>
+                        </div>
+                        <div class="section-body">
+                            <div class="form-grid cols-3">
+                                <div class="fg">
+                                    <label>College Fee (₹)</label>
+                                    <input type="number"
+                                           name="college_fee"
+                                           value="{{ admission.college_fee|default:'' }}"
+                                           placeholder="0.00"
+                                           step="0.01"
+                                           min="0">
+                                </div>
+                                <div class="fg">
+                                    <label>Hostel Fee (₹)</label>
+                                    <input type="number"
+                                           name="hostel_fee"
+                                           value="{{ admission.hostel_fee|default:'' }}"
+                                           placeholder="0.00"
+                                           step="0.01"
+                                           min="0">
+                                </div>
+                                <div class="fg">
+                                    <label>Bus Fee (₹)</label>
+                                    <input type="number"
+                                           name="bus_fee"
+                                           value="{{ admission.bus_fee|default:'' }}"
+                                           placeholder="0.00"
+                                           step="0.01"
+                                           min="0">
+                                </div>
+                                <div class="fg">
+                                    <label>Other Fee (₹)</label>
+                                    <input type="number"
+                                           name="other_fee"
+                                           value="{{ admission.other_fee|default:'' }}"
+                                           placeholder="0.00"
+                                           step="0.01"
+                                           min="0">
+                                </div>
+                                <div class="fg">
+                                    <label>Paid Fee (₹)</label>
+                                    <input type="number"
+                                           name="paid_fee"
+                                           value="{{ admission.paid_fee|default:'' }}"
+                                           placeholder="0.00"
+                                           step="0.01"
+                                           min="0">
+                                </div>
+                                <div class="fg">
+                                    <label>Concession (₹)</label>
+                                    <input type="number"
+                                           name="concession_amount"
+                                           value="{{ admission.concession_amount|default:'' }}"
+                                           placeholder="0.00"
+                                           step="0.01"
+                                           min="0">
+                                </div>
+                                <div class="fg">
+                                    <label>Unpaid Fee (₹)</label>
+                                    <input type="number"
+                                           name="unpaid_fee"
+                                           value="{{ admission.unpaid_fee|default:'' }}"
+                                           placeholder="0.00"
+                                           step="0.01"
+                                           min="0">
+                                </div>
+                                <div class="fg">
+                                    <label>Transaction ID</label>
+                                    <input type="text"
+                                           name="transaction_id"
+                                           value="{{ admission.transaction_id|default:'' }}"
+                                           placeholder="Receipt / transaction number">
+                                </div>
+                                <div class="fg">
+                                    <label>Transaction Date &amp; Time</label>
+                                    <input type="datetime-local"
+                                           name="transaction_date"
+                                           value="{% if admission.transaction_date %}{{ admission.transaction_date|date:'Y-m-d' }}T{{ admission.transaction_date|date:'H:i' }}{% endif %}">
+                                </div>
+                                <div class="fg span-2">
+                                    <label>Payment Screenshots</label>
+                                    <input type="file"
+                                           name="payment_screenshots"
+                                           accept=".pdf,.jpg,.jpeg,.png"
+                                           multiple>
+                                    <p class="file-note">Multiple files allowed. PDF, JPG, PNG (max 5MB each)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- ══ SECTION 8: SCHOLARSHIP DETAILS ═══════════════════ -->
+                    <div class="section-card" id="sec8">
+                        <div class="section-header">
+                            <div class="sec-num">8</div>
+                            <h2>Scholarship Details</h2>
+                        </div>
+                        <div class="section-body">
+                            <div style="display:flex;flex-direction:column;gap:10px;max-width:480px;">
+                                <label class="check-row">
+                                    <input type="checkbox" name="pmss" {% if admission.pmss %}checked{% endif %}>
+                                    <span>PMSS – Prime Minister's Scholarship Scheme</span>
+                                </label>
+                                <label class="check-row">
+                                    <input type="checkbox"
+                                           name="seven_five"
+                                           {% if admission.seven_five %}checked{% endif %}>
+                                    <span>75% – Scholarship</span>
+                                </label>
+                                <label class="check-row">
+                                    <input type="checkbox"
+                                           name="is_fg"
+                                           id="isFgCheck"
+                                           {% if admission.is_fg %}checked{% endif %}>
+                                    <span>First Generation (FG) Scholarship</span>
+                                </label>
+                                <div class="fg fg-row"
+                                     id="fgRow"
+                                     style="{% if admission.is_fg %}display:flex;
+                                            {% endif %}">
+                                    <label>FG Number</label>
+                                    <input type="text"
+                                           name="fg_number"
+                                           value="{{ admission.fg_number|default:'' }}"
+                                           placeholder="Enter FG number">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- ══ SECTION 9: REFERENCE DETAILS ═════════════════════ -->
+                    <div class="section-card" id="sec9">
+                        <div class="section-header">
+                            <div class="sec-num">9</div>
+                            <h2>Reference Details</h2>
+                        </div>
+                        <div class="section-body">
+                            <p style="font-size:.8rem;color:#9ca3af;margin-bottom:12px;">
+                                Add at least one reference. <span style="color:#ef4444;">*</span>
+                            </p>
+                            <div style="overflow-x:auto;">
+                                <table class="ref-table" id="refTable">
+                                    <thead>
+                                        <tr>
+                                            <th>
+                                                Name <span style="color:#ef4444">*</span>
+                                            </th>
+                                            <th>Mobile</th>
+                                            <th>Relationship</th>
+                                            <th>Department</th>
+                                            <th>Designation</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="refBody">
+                                    </tbody>
+                                </table>
+                            </div>
+                            <button type="button" class="add-ref-btn" onclick="addRefRow()">+ Add Reference</button>
+                        </div>
+                    </div>
+                    <!-- ══ SECTION 10: BANK DETAILS ══════════════════════════ -->
+                    <div class="section-card" id="sec10">
+                        <div class="section-header">
+                            <div class="sec-num">10</div>
+                            <h2>
+                                Bank Details <span style="font-size:.78rem;opacity:.8;">(Optional)</span>
+                            </h2>
+                        </div>
+                        <div class="section-body">
+                            <div class="form-grid">
+                                <div class="fg">
+                                    <label>Account Holder Name</label>
+                                    <input type="text"
+                                           name="account_holder_name"
+                                           value="{{ admission.account_holder_name|default:'' }}"
+                                           placeholder="As on passbook">
+                                </div>
+                                <div class="fg">
+                                    <label>Account Number</label>
+                                    <input type="text"
+                                           name="account_number"
+                                           value="{{ admission.account_number|default:'' }}"
+                                           placeholder="Bank account number">
+                                </div>
+                                <div class="fg">
+                                    <label>Bank Name</label>
+                                    <input type="text"
+                                           name="bank_name"
+                                           value="{{ admission.bank_name|default:'' }}"
+                                           placeholder="e.g. State Bank of India">
+                                </div>
+                                <div class="fg">
+                                    <label>IFSC Code</label>
+                                    <input type="text"
+                                           name="ifsc_code"
+                                           value="{{ admission.ifsc_code|default:'' }}"
+                                           placeholder="e.g. SBIN0001234"
+                                           maxlength="11">
+                                </div>
+                                <div class="fg">
+                                    <label>Branch Name / Address</label>
+                                    <input type="text"
+                                           name="bank_branch"
+                                           value="{{ admission.bank_branch|default:'' }}"
+                                           placeholder="Branch name">
+                                </div>
+                                <div class="fg">
+                                    <label>Aadhaar Seeding Status</label>
+                                    <select name="seeding_status">
+                                        <option value="">Select</option>
+                                        <option value="Seeded"
+                                                {% if admission.seeding_status == 'Seeded' %}selected{% endif %}>
+                                            Seeded
+                                        </option>
+                                        <option value="Not Seeded"
+                                                {% if admission.seeding_status == 'Not Seeded' %}selected{% endif %}>
+                                            Not Seeded
+                                        </option>
+                                        <option value="Pending"
+                                                {% if admission.seeding_status == 'Pending' %}selected{% endif %}>
+                                            Pending
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- ══ SECTION 11: CERTIFICATE UPLOADS ══════════════════ -->
+                    <div class="section-card" id="sec11">
+                        <div class="section-header">
+                            <div class="sec-num">11</div>
+                            <h2>Certificate Uploads</h2>
+                        </div>
+                        <div class="section-body">
+                            <p style="font-size:.78rem;color:#9ca3af;margin-bottom:16px;">Allowed: PDF, JPG, JPEG, PNG — max 5MB each.</p>
+                            <div class="form-grid">
+                                <div class="fg">
+                                    <label>Transfer Certificate (TC)</label>
+                                    <input type="file" name="tc" accept=".pdf,.jpg,.jpeg,.png">
+                                    {% if admission.tc %}<p class="file-note">✓ {{ admission.tc.name }}</p>{% endif %}
+                                </div>
+                                <div class="fg">
+                                    <label>Community Certificate</label>
+                                    <input type="file" name="community_cert" accept=".pdf,.jpg,.jpeg,.png">
+                                    {% if admission.community_cert %}<p class="file-note">✓ {{ admission.community_cert.name }}</p>{% endif %}
+                                </div>
+                                <div class="fg">
+                                    <label>Aadhaar Card</label>
+                                    <input type="file" name="aadhaar" accept=".pdf,.jpg,.jpeg,.png">
+                                    {% if admission.aadhaar %}<p class="file-note">✓ {{ admission.aadhaar.name }}</p>{% endif %}
+                                </div>
+                                <div class="fg">
+                                    <label>10th Marksheet</label>
+                                    <input type="file" name="tenth_marksheet" accept=".pdf,.jpg,.jpeg,.png">
+                                    {% if admission.tenth_marksheet %}<p class="file-note">✓ {{ admission.tenth_marksheet.name }}</p>{% endif %}
+                                </div>
+                                <div class="fg">
+                                    <label>12th / Diploma Marksheet</label>
+                                    <input type="file" name="twelfth_marksheet" accept=".pdf,.jpg,.jpeg,.png">
+                                    {% if admission.twelfth_marksheet %}<p class="file-note">✓ {{ admission.twelfth_marksheet.name }}</p>{% endif %}
+                                </div>
+                                <div class="fg">
+                                    <label>Passport Photo</label>
+                                    <input type="file" name="photo" accept=".jpg,.jpeg,.png">
+                                    {% if admission.photo %}<p class="file-note">✓ {{ admission.photo.name }}</p>{% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <!-- end form -->
+            </div>
+            <!-- end form-area -->
+        </div>
+        <!-- end main-layout -->
+        <!-- Sticky submit -->
+        <div class="submit-bar">
+            <button type="submit" form="admissionForm" class="submit-btn">Submit Application</button>
+        </div>
+        <!-- ─── FOOTER ─────────────────────────────────────────────────── -->
+        <footer style="background:#fff;border-top:1px solid #e5e7eb;margin-top:auto;">
+            <div style="max-width:1280px;
+                        margin:0 auto;
+                        padding:22px 24px;
+                        display:flex;
+                        justify-content:space-between;
+                        align-items:center;
+                        flex-wrap:wrap;
+                        gap:12px">
+                <p style="font-size:.8rem;color:#9ca3af;">© 2024 Erode Sengunthar Engineering College. All rights reserved.</p>
+                <div style="display:flex;gap:20px;font-size:.8rem;color:#9ca3af;">
+                    <a href="#" style="color:inherit;text-decoration:none;">Privacy Policy</a>
+                    <a href="#" style="color:inherit;text-decoration:none;">Terms</a>
+                    <a href="#" style="color:inherit;text-decoration:none;">Support</a>
+                </div>
+            </div>
+        </footer>
+        <script>
+// ── STEPPER HIGHLIGHT ON SCROLL ─────────────────────────────────
+const sections = ['sec1','sec2','sec3','sec4','sec5','sec6','sec7','sec8','sec9','sec10','sec11'];
+const stepLinks = document.querySelectorAll('.step-item');
+
+function updateStepper() {
+  let current = 0;
+  sections.forEach((id, i) => {
+    const el = document.getElementById(id);
+    if (el && el.getBoundingClientRect().top < window.innerHeight * 0.45) current = i;
+  });
+  stepLinks.forEach((link, i) => {
+    link.classList.toggle('active', i === current);
+    link.querySelector('.step-num').style.background = i < current ? '#22c55e' : i === current ? '#f59e0b' : '';
+    link.querySelector('.step-num').style.borderColor = i < current ? '#22c55e' : i === current ? '#f59e0b' : '';
+    link.querySelector('.step-num').style.color = i <= current ? '#fff' : '';
+  });
+}
+window.addEventListener('scroll', updateStepper, {passive: true});
+updateStepper();
+
+// ── REFERENCES ──────────────────────────────────────────────────
+const existingRefs = {{ existing_refs_json|default:'[]'|safe }};
+
+function addRefRow(ref) {
+  const r = ref || {};
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td><input type="text" name="reference_name[]" value="${r.name||''}" placeholder="Full name"></td>
+    <td><input type="tel" name="reference_mobile[]" value="${r.mobile||''}" placeholder="10-digit" maxlength="10"></td>
+    <td><input type="text" name="relationship[]" value="${r.relationship||''}" placeholder="e.g. Teacher"></td>
+    <td><input type="text" name="reference_department[]" value="${r.department||''}" placeholder="Dept."></td>
+    <td><input type="text" name="reference_designation[]" value="${r.designation||''}" placeholder="Designation"></td>
+    <td><button type="button" class="del-ref-btn" onclick="this.closest('tr').remove()">✕</button></td>
+  `;
+  document.getElementById('refBody').appendChild(tr);
+}
+window.addEventListener('DOMContentLoaded', () => {
+  existingRefs.length > 0 ? existingRefs.forEach(r => addRefRow(r)) : addRefRow();
+});
+
+// ── DEPARTMENT SECTION ──────────────────────────────────────────
+const UG_DEPTS = [
+  'B.TECH (AI & DS) - Artificial Intelligence and Data Science',
+  'B.TECH (IT) - Information Technology',
+  'B.TECH (CH) - Chemical Engineering',
+  'B.TECH (AE) - Agricultural Engineering',
+  'B.TECH (BT) - Bio Technology',
+  'B.E (ME) - Mechanical Engineering (Tamil Medium)',
+  'B.E (ME) - Mechanical Engineering (English Medium)',
+  'B.E (BME) - Biomedical Engineering',
+  'B.E (CSE(IOT)) - Computer Science and Engineering (Internet Of Things)',
+  'B.E (CSE) - Computer Science and Engineering',
+  'B.E (CSD) - Computer Science and Design',
+  'B.E (CSE(AI & ML)) - Computer Science and Engineering (AI & ML)',
+  'B.E (CSE(CS)) - Computer Science and Engineering (Cyber Security)',
+  'B.E (ECE) - Electronics and Communication Engineering',
+  'B.E (CE) - Civil Engineering',
+  'B.E (EEE) - Electrical and Electronics Engineering',
+  'B.E (RAE) - Robotics & Automation',
+  'B.E (EIE) - Electronics and Instrumentation Engineering',
+  'M.Tech (CSE) 5 Years Integrated Course'
+];
+const LE_DEPTS = UG_DEPTS.filter(d => !d.includes('5 Years'));
+const PG_DEPTS = ['MBA','MCA','M.E. Computer Science','M.E. Applied Electronics','M.E. Manufacturing Engineering','M.E. Environmental Engineering','M.E. Power Electronics and Drives','M.E. Industrial Safety Engineering','M.E. Structural Engineering','M.TECH (CH) - Chemical Engineering'];
+
+const existingPrefs = {};
+{% if admission and admission.department_preferences %}
+Object.assign(existingPrefs, {{ admission.department_preferences|safe }});
+{% endif %}
+const existingPgDept = '{{ admission.pg_dept|default:""}}';
+
+function updateDepartment() {
+  const level = document.getElementById('levelSelect').value;
+  const container = document.getElementById('departmentContainer');
+  container.innerHTML = '';
+  if (!level) return;
+
+  if (level === 'ug' || level === 'le') {
+    const depts = level === 'ug' ? UG_DEPTS : LE_DEPTS;
+    const hint = document.createElement('p');
+    hint.style.cssText = 'font-size:.8rem;color:#9ca3af;margin-bottom:10px;';
+    hint.textContent = level === 'le' ? 'Select preferred departments for Lateral Entry (reorder ↑↓):' : 'Select preferred departments for UG Admission (reorder ↑↓):';
+    container.appendChild(hint);
+
+    const list = document.createElement('div');
+    list.id = 'deptList';
+    const sorted = Object.entries(existingPrefs).sort((a,b)=>a[1]-b[1]).map(e=>e[0]);
+    const ordered = [...sorted.filter(d=>depts.includes(d)), ...depts.filter(d=>!sorted.includes(d))];
+    ordered.forEach(dept => {
+      const item = document.createElement('div');
+      item.className = 'dept-item';
+      item.innerHTML = `
+        <input type="checkbox" value="${dept}" ${dept in existingPrefs?'checked':''}>
+        <span class="dl">${dept}</span>
+        <div class="move-btns">
+          <button type="button" onclick="mvItem(this.closest('.dept-item'),-1)">↑</button>
+          <button type="button" onclick="mvItem(this.closest('.dept-item'),1)">↓</button>
+        </div>`;
+      list.appendChild(item);
+    });
+    container.appendChild(list);
+  } else if (level === 'pg') {
+    const lbl = document.createElement('label');
+    lbl.textContent = 'Select PG Department:';
+    lbl.style.cssText = 'font-size:.8rem;font-weight:600;color:#374151;display:block;margin-bottom:6px;';
+    const sel = document.createElement('select');
+    sel.name = 'pg_dept';
+    sel.style.cssText = 'border:1.5px solid #e5e7eb;border-radius:8px;padding:8px 12px;font-size:.85rem;font-family:Poppins,sans-serif;min-width:280px;';
+    sel.innerHTML = '<option value="">Select PG Department</option>';
+    PG_DEPTS.forEach(d => {
+      const o = document.createElement('option');
+      o.value = d; o.textContent = d;
+      if (existingPgDept === d) o.selected = true;
+      sel.appendChild(o);
+    });
+    container.appendChild(lbl);
+    container.appendChild(sel);
+  }
+  // Always run marks/academic toggle after department updates
+  toggleMarksAndAcademic();
+}
+function mvItem(item, dir) {
+  if (dir===-1 && item.previousElementSibling) item.parentNode.insertBefore(item, item.previousElementSibling);
+  if (dir===1 && item.nextElementSibling) item.parentNode.insertBefore(item.nextElementSibling, item);
+}
+document.getElementById('levelSelect').addEventListener('change', updateDepartment);
+updateDepartment();
+
+// ── MARKS + ACADEMIC TOGGLE BASED ON LEVEL ──────────────────────
+function toggleMarksAndAcademic() {
+  const level = document.getElementById('levelSelect').value;
+
+  // Marks section
+  const hint = document.getElementById('marksHint');
+  if (level === 'ug' || level === 'pg') {
+    document.querySelectorAll('.marks-12th').forEach(el => el.style.display = 'flex');
+    document.querySelectorAll('.marks-diploma').forEach(el => el.style.display = 'none');
+    document.getElementById('qualHidden').value = '12th';
+    if (hint) hint.style.display = 'none';
+  } else if (level === 'le') {
+    document.querySelectorAll('.marks-diploma').forEach(el => el.style.display = 'flex');
+    document.querySelectorAll('.marks-12th').forEach(el => el.style.display = 'none');
+    document.getElementById('qualHidden').value = 'Diploma';
+    if (hint) hint.style.display = 'none';
+  } else {
+    document.querySelectorAll('.marks-12th').forEach(el => el.style.display = 'none');
+    document.querySelectorAll('.marks-diploma').forEach(el => el.style.display = 'none');
+    if (hint) hint.style.display = 'block';
+  }
+
+  // Academic info section
+  const schoolDiv = document.getElementById('academicSchool');
+  const collegeDiv = document.getElementById('academicCollege');
+  const acHint = document.getElementById('academicHint');
+  if (level === 'le') {
+    if (schoolDiv) schoolDiv.style.display = 'none';
+    if (collegeDiv) collegeDiv.style.display = 'block';
+    if (acHint) acHint.style.display = 'none';
+  } else if (level === 'ug' || level === 'pg') {
+    if (schoolDiv) schoolDiv.style.display = 'block';
+    if (collegeDiv) collegeDiv.style.display = 'none';
+    if (acHint) acHint.style.display = 'none';
+  } else {
+    if (schoolDiv) schoolDiv.style.display = 'none';
+    if (collegeDiv) collegeDiv.style.display = 'none';
+    if (acHint) acHint.style.display = 'block';
+  }
+}
+
+// Initial call (updateDepartment already calls toggleMarksAndAcademic)
+toggleMarksAndAcademic();
+
+// ── FACILITY TOGGLE ─────────────────────────────────────────────
+function toggleFacility() {
+  const v = document.getElementById('facilitySelect').value;
+  document.getElementById('transportSub').style.display = v==='transport'?'block':'none';
+  document.getElementById('hostelSub').style.display = v==='hostel'?'block':'none';
+}
+document.getElementById('facilitySelect').addEventListener('change', toggleFacility);
+toggleFacility();
+
+// ── FG NUMBER ───────────────────────────────────────────────────
+document.getElementById('isFgCheck').addEventListener('change', function() {
+  document.getElementById('fgRow').style.display = this.checked?'flex':'none';
+});
+
+// ── SUBMIT: inject dept pref hidden inputs ──────────────────────
+document.getElementById('admissionForm').addEventListener('submit', function() {
+  const level = document.getElementById('levelSelect').value;
+  if (level === 'ug' || level === 'le') {
+    document.querySelectorAll('#deptList .dept-item input:checked').forEach((cb, i) => {
+      const h = document.createElement('input');
+      h.type = 'hidden';
+      h.name = `${level}_pref_${cb.value.replace(/\s+/g,'_').toLowerCase()}`;
+      h.value = i+1;
+      this.appendChild(h);
+    });
+  }
+});
+        </script>
+    </body>
+</html>
