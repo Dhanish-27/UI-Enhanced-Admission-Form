@@ -281,16 +281,16 @@ def format_excel_value(value):
     if value is None:
         return ""
     if isinstance(value, bool):
-        return "Yes" if value else "No"
+        return "YES" if value else "NO"
     if isinstance(value, (datetime.date, datetime.datetime)):
         return value.strftime('%Y-%m-%d')
     if isinstance(value, dict):
-        return ", ".join([f"{k}: {v}" for k, v in value.items()])
-    return str(value)
+        return ", ".join([f"{k}: {v}" for k, v in value.items()]).upper()
+    return str(value).upper()
 
 from openpyxl import Workbook
 def export_applications(request):
-    queryset = Admission.objects.all()
+    queryset = Admission.objects.all().prefetch_related('references', 'fee_payments')
 
     wb = Workbook()
     ws = wb.active
@@ -300,7 +300,9 @@ def export_applications(request):
     fields = Admission._meta.concrete_fields
 
     # 🔹 Header row (human-readable)
-    ws.append([field.verbose_name.title() for field in fields])
+    headers = [field.verbose_name.title().upper() for field in fields]
+    headers.extend(["REFERENCES", "PAYMENT HISTORY"])
+    ws.append(headers)
 
     # 🔹 Data rows
     for obj in queryset:
@@ -308,6 +310,26 @@ def export_applications(request):
         for field in fields:
             value = getattr(obj, field.name)
             row.append(format_excel_value(value))
+            
+        # References
+        refs_str = " | ".join([f"{r.name} ({r.relationship} - {r.mobile})" for r in obj.references.all()]).upper()
+        row.append(refs_str)
+
+        # Payment History
+        payment_history = []
+
+        if obj.paid_fee:
+            date_str = obj.transaction_date.strftime('%Y-%m-%d') if obj.transaction_date else "—"
+            txn_id = str(obj.transaction_id or "—").upper()
+            payment_history.append(f"RS. {obj.paid_fee} ({date_str} - {txn_id})")
+
+        for fp in obj.fee_payments.all():
+            date_str = fp.payment_date.strftime('%Y-%m-%d') if fp.payment_date else "—"
+            txn_id = "CASH" if fp.payment_mode and fp.payment_mode.lower() == 'cash' else str(fp.transaction_id or "—").upper()
+            payment_history.append(f"RS. {fp.amount} ({date_str} - {txn_id})")
+
+        row.append(" | ".join(payment_history))
+
         ws.append(row)
 
     # 🔹 Auto column width

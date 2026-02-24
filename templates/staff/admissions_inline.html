@@ -251,6 +251,12 @@
                                     style="min-width:130px">{{ f.verbose }}</th>
                             {% endfor %}
                             <th class="px-3 py-3 text-left text-xs font-bold uppercase tracking-wider whitespace-nowrap"
+                                style="min-width:120px">Amount Paid</th>
+                            <th class="px-3 py-3 text-left text-xs font-bold uppercase tracking-wider whitespace-nowrap"
+                                style="min-width:140px">Trans. Date</th>
+                            <th class="px-3 py-3 text-left text-xs font-bold uppercase tracking-wider whitespace-nowrap"
+                                style="min-width:140px">Trans. ID</th>
+                            <th class="px-3 py-3 text-left text-xs font-bold uppercase tracking-wider whitespace-nowrap"
                                 style="min-width:200px">References</th>
                         </tr>
                     </thead>
@@ -338,12 +344,58 @@
                                         <span class="save-indicator absolute -top-1 right-1 text-[10px] font-bold px-1.5 py-0.5 rounded-full opacity-0 pointer-events-none transition-opacity duration-300"></span>
                                     </td>
                                 {% endfor %}
+                                <!-- Payment Columns -->
+                                <!-- 1. Amount Paid -->
+                                <td class="px-3 py-2 text-xs text-gray-600 align-top">
+                                    {% if admission.paid_fee %}
+                                        <div class="mb-2 last:mb-0 h-[20px] font-medium whitespace-nowrap">₹ {{ admission.paid_fee }}</div>
+                                    {% endif %}
+                                    {% for payment in admission.fee_payments.all %}
+                                        <div class="mb-2 last:mb-0 h-[20px] font-medium whitespace-nowrap">₹ {{ payment.amount }}</div>
+                                    {% endfor %}
+                                    {% if not admission.paid_fee and not admission.fee_payments.all %}
+                                        <span class="text-gray-300 italic h-[20px] block">—</span>
+                                    {% endif %}
+                                </td>
+                                <!-- 2. Transaction Date -->
+                                <td class="px-3 py-2 text-xs text-gray-600 align-top">
+                                    {% if admission.paid_fee %}
+                                        <div class="mb-2 last:mb-0 h-[20px] whitespace-nowrap">{{ admission.transaction_date|date:"Y-m-d"|default:"—" }}</div>
+                                    {% endif %}
+                                    {% for payment in admission.fee_payments.all %}
+                                        <div class="mb-2 last:mb-0 h-[20px] whitespace-nowrap">{{ payment.payment_date|date:"Y-m-d"|default:"—" }}</div>
+                                    {% endfor %}
+                                    {% if not admission.paid_fee and not admission.fee_payments.all %}
+                                        <span class="text-gray-300 italic h-[20px] block">—</span>
+                                    {% endif %}
+                                </td>
+                                <!-- 3. Transaction ID -->
+                                <td class="px-3 py-2 text-xs text-gray-600 align-top">
+                                    {% if admission.paid_fee %}
+                                        <div class="mb-2 last:mb-0 h-[20px] whitespace-nowrap">{{ admission.transaction_id|default:"—" }}</div>
+                                    {% endif %}
+                                    {% for payment in admission.fee_payments.all %}
+                                        <div class="mb-2 last:mb-0 h-[20px] whitespace-nowrap">
+                                            {% if payment.payment_mode == 'cash' %}
+                                                Cash
+                                            {% else %}
+                                                {{ payment.transaction_id|default:"—" }}
+                                            {% endif %}
+                                        </div>
+                                    {% endfor %}
+                                    {% if not admission.paid_fee and not admission.fee_payments.all %}
+                                        <span class="text-gray-300 italic h-[20px] block">—</span>
+                                    {% endif %}
+                                </td>
                                 <!-- Read-only References Column -->
                                 <td class="px-3 py-2 text-xs text-gray-600 align-top">
                                     {% for ref in admission.references.all %}
-                                        <div class="mb-2 last:mb-0">
-                                            <div class="font-medium">{{ ref.name }}</div>
-                                            <div class="text-gray-400 text-[10px]">{{ ref.relationship }} &bull; {{ ref.mobile }}</div>
+                                        <div class="mb-4 last:mb-0">
+                                            <div class="font-medium truncate max-w-[180px]" title="{{ ref.name }}">{{ ref.name }}</div>
+                                            <div class="text-gray-400 text-[10px] truncate max-w-[180px]"
+                                                 title="{{ ref.relationship }} &bull; {{ ref.mobile }}">
+                                                {{ ref.relationship }} &bull; {{ ref.mobile }}
+                                            </div>
                                         </div>
                                     {% empty %}
                                         <span class="text-gray-300 italic">No references</span>

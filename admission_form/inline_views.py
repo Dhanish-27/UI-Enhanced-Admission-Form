@@ -189,7 +189,7 @@ def _get_editable_fields():
 @login_required
 def admissions_list(request):
     """Render inline-editable admissions table with filters & pagination."""
-    queryset = Admission.objects.all().prefetch_related('references')
+    queryset = Admission.objects.all().prefetch_related('references', 'fee_payments')
 
     # ── Filters (mirrors staff/functions.py) ─────────────────────────────
     search_query = request.GET.get('search', '')
