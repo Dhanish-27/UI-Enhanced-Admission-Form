@@ -193,6 +193,12 @@ def admission_form_view(request, pk=None):
         seeding_status = data.get('seeding_status', '').strip()
 
         # ── 11. CERTIFICATE UPLOADS (file validation) ────────────────────────
+        tc_number = data.get('tc_number', '').strip()
+        community_cert_number = data.get('community_cert_number', '').strip()
+        aadhaar_number_cert = data.get('aadhaar_number_cert', '').strip()
+        tenth_marksheet_number = data.get('tenth_marksheet_number', '').strip()
+        twelfth_marksheet_number = data.get('twelfth_marksheet_number', '').strip()
+        
         file_fields = ['tc', 'community_cert', 'aadhaar', 'tenth_marksheet', 'twelfth_marksheet', 'photo']
         uploaded_files = {}
         for field in file_fields:
@@ -352,6 +358,10 @@ def admission_form_view(request, pk=None):
                 'ifsc_code': ifsc_code or None,
                 'bank_branch': bank_branch or None,
                 'seeding_status': seeding_status or None,
+                'tc_number': tc_number or None,
+                'community_cert_number': community_cert_number or None,
+                'tenth_marksheet_number': tenth_marksheet_number or None,
+                'twelfth_marksheet_number': twelfth_marksheet_number or None,
             }
 
             with transaction.atomic():

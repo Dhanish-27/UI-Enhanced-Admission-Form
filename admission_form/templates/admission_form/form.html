@@ -1185,32 +1185,74 @@
                         <div class="section-body">
                             <p style="font-size:.78rem;color:#9ca3af;margin-bottom:16px;">Allowed: PDF, JPG, JPEG, PNG — max 5MB each.</p>
                             <div class="form-grid">
+                                <!-- TC -->
                                 <div class="fg">
                                     <label>Transfer Certificate (TC)</label>
                                     <input type="file" name="tc" accept=".pdf,.jpg,.jpeg,.png">
                                     {% if admission.tc %}<p class="file-note">✓ {{ admission.tc.name }}</p>{% endif %}
                                 </div>
                                 <div class="fg">
+                                    <label>TC Number</label>
+                                    <input type="text"
+                                           name="tc_number"
+                                           value="{{ admission.tc_number|default:'' }}"
+                                           placeholder="TC Number">
+                                </div>
+                                <!-- Community -->
+                                <div class="fg">
                                     <label>Community Certificate</label>
                                     <input type="file" name="community_cert" accept=".pdf,.jpg,.jpeg,.png">
                                     {% if admission.community_cert %}<p class="file-note">✓ {{ admission.community_cert.name }}</p>{% endif %}
                                 </div>
                                 <div class="fg">
-                                    <label>Aadhaar Card</label>
+                                    <label>Community Certificate Number</label>
+                                    <input type="text"
+                                           name="community_cert_number"
+                                           value="{{ admission.community_cert_number|default:'' }}"
+                                           placeholder="Community Certificate Number">
+                                </div>
+                                <!-- Aadhaar -->
+                                <div class="fg">
+                                    <label>Aadhaar Card Upload</label>
                                     <input type="file" name="aadhaar" accept=".pdf,.jpg,.jpeg,.png">
                                     {% if admission.aadhaar %}<p class="file-note">✓ {{ admission.aadhaar.name }}</p>{% endif %}
                                 </div>
+                                <div class="fg">
+                                    <label>Aadhaar Number</label>
+                                    <input type="text"
+                                           name="aadhaar_number"
+                                           value="{{ admission.aadhaar_number|default:'' }}"
+                                           placeholder="12-digit Aadhaar"
+                                           maxlength="12">
+                                </div>
+                                <!-- 10th -->
                                 <div class="fg">
                                     <label>10th Marksheet</label>
                                     <input type="file" name="tenth_marksheet" accept=".pdf,.jpg,.jpeg,.png">
                                     {% if admission.tenth_marksheet %}<p class="file-note">✓ {{ admission.tenth_marksheet.name }}</p>{% endif %}
                                 </div>
                                 <div class="fg">
+                                    <label>10th Marksheet Number</label>
+                                    <input type="text"
+                                           name="tenth_marksheet_number"
+                                           value="{{ admission.tenth_marksheet_number|default:'' }}"
+                                           placeholder="10th Marksheet Number">
+                                </div>
+                                <!-- 12th / Diploma -->
+                                <div class="fg">
                                     <label>12th / Diploma Marksheet</label>
                                     <input type="file" name="twelfth_marksheet" accept=".pdf,.jpg,.jpeg,.png">
                                     {% if admission.twelfth_marksheet %}<p class="file-note">✓ {{ admission.twelfth_marksheet.name }}</p>{% endif %}
                                 </div>
                                 <div class="fg">
+                                    <label>12th / Diploma Marksheet Number</label>
+                                    <input type="text"
+                                           name="twelfth_marksheet_number"
+                                           value="{{ admission.twelfth_marksheet_number|default:'' }}"
+                                           placeholder="12th / Diploma Marksheet Number">
+                                </div>
+                                <!-- Photo -->
+                                <div class="fg span-2">
                                     <label>Passport Photo</label>
                                     <input type="file" name="photo" accept=".jpg,.jpeg,.png">
                                     {% if admission.photo %}<p class="file-note">✓ {{ admission.photo.name }}</p>{% endif %}
@@ -1531,6 +1573,16 @@ function calculateUnpaidFee() {
 feeInputs.forEach(input => {
     input.addEventListener('input', calculateUnpaidFee);
 });
+
+// ── SYNC AADHAAR NUMBERS ──────────────────────────────────────────
+document.addEventListener('input', function(e) {
+    if(e.target.name === 'aadhaar_number') {
+        document.querySelectorAll('input[name="aadhaar_number"]').forEach(el => {
+            if(el !== e.target) el.value = e.target.value;
+        });
+    }
+});
+
 
         </script>
     </body>

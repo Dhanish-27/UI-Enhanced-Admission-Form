@@ -296,8 +296,8 @@ def export_applications(request):
     ws = wb.active
     ws.title = "Admissions"
 
-    # 🔹 Fetch all concrete DB fields
-    fields = Admission._meta.concrete_fields
+    # 🔹 Fetch all concrete DB fields (excluding file/image fields)
+    fields = [f for f in Admission._meta.concrete_fields if f.__class__.__name__ not in ('FileField', 'ImageField')]
 
     # 🔹 Header row (human-readable)
     headers = [field.verbose_name.title().upper() for field in fields]

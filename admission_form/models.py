@@ -195,10 +195,14 @@ class Admission(models.Model):
     # CERTIFICATES / PHOTO
     # =========================
     tc = models.FileField(upload_to=af_certificate_upload_path, blank=True, null=True)
+    tc_number = models.CharField(max_length=100, blank=True, null=True)
     community_cert = models.FileField(upload_to=af_certificate_upload_path, blank=True, null=True)
+    community_cert_number = models.CharField(max_length=100, blank=True, null=True)
     aadhaar = models.FileField(upload_to=af_certificate_upload_path, blank=True, null=True)
     tenth_marksheet = models.FileField(upload_to=af_certificate_upload_path, blank=True, null=True)
+    tenth_marksheet_number = models.CharField(max_length=100, blank=True, null=True)
     twelfth_marksheet = models.FileField(upload_to=af_certificate_upload_path, blank=True, null=True)
+    twelfth_marksheet_number = models.CharField(max_length=100, blank=True, null=True)
     photo = models.FileField(upload_to=af_photo_upload_path, blank=True, null=True)
 
     # =========================
