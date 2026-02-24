@@ -46,10 +46,6 @@ def admission_form_view(request, pk=None):
                 email = validate_email(email)
             except ValidationError as e:
                 errors.append(f"Email: {e.message}")
-        else:
-            sname = data.get('student_name', 'student')
-            smobile = data.get('student_mobile', '0000000000')
-            email = f"{sname}+{smobile}@samplemail.com"
 
         # Mobile validation
         for field in ['student_mobile', 'father_mobile', 'mother_mobile', 'guardian_mobile']:
@@ -62,8 +58,9 @@ def admission_form_view(request, pk=None):
 
         # ── 2. DEPARTMENT DETAILS ────────────────────────────────────────────
         level = data.get('level', '').strip()
-        if not level:
-            errors.append("Department: please select a level (UG / LE / PG).")
+        admission_status = data.get('admission_status', 'enquired').strip()
+        course = data.get('course', '').strip()
+        branch = data.get('branch', '').strip()
 
         department_preferences = {}
         if level in ['ug', 'le']:
@@ -74,12 +71,8 @@ def admission_form_view(request, pk=None):
                         department_preferences[dept_name] = int(value)
                     except ValueError:
                         errors.append("Department: invalid preference value.")
-            if not department_preferences:
-                errors.append("Department: please select at least one department preference.")
 
         pg_dept = request.POST.get('pg_dept') if level == 'pg' else None
-        if level == 'pg' and not pg_dept:
-            errors.append("Department: please select a PG department.")
 
         # ── 3. MARKS OBTAINED ────────────────────────────────────────────────
         tenth_total = data.get('tenth_total', '').strip()
@@ -211,15 +204,51 @@ def admission_form_view(request, pk=None):
                 except ValidationError as e:
                     errors.append(f"Certificates: {field.replace('_', ' ').title()} — {e.message}")
 
+        # Calculate unpaid_fee based on total fees - deductions
+        calc_unpaid = None
+        try:
+            cf = float(data.get('college_fee') or 0)
+            hf = float(data.get('hostel_fee') or 0)
+            bf = float(data.get('bus_fee') or 0)
+            of = float(data.get('other_fee') or 0)
+            pf = float(data.get('paid_fee') or 0)
+            ca = float(data.get('concession_amount') or 0)
+            if any(data.get(f) for f in ['college_fee', 'hostel_fee', 'bus_fee', 'other_fee', 'paid_fee', 'concession_amount']):
+                calc_unpaid = (cf + hf + bf + of) - (pf + ca)
+        except ValueError:
+            pass
+
         # ── ABORT IF ERRORS ──────────────────────────────────────────────────
         if errors:
             for err in errors:
                 messages.error(request, err)
-            existing_refs = list(admission.references.all()) if admission else []
+            
+            # Repopulate admission object with posted data for template rendering
+            if not admission:
+                admission = Admission()
+            for field in admission._meta.fields:
+                f_name = field.name
+                if f_name in data:
+                    val = data[f_name]
+                    if val == '':
+                        val = None
+                    try:
+                        setattr(admission, f_name, val)
+                    except Exception:
+                        pass
+                        
+            admission.pmss = request.POST.get('pmss') == 'on'
+            admission.seven_five = request.POST.get('seven_five') == 'on'
+            admission.is_fg = request.POST.get('is_fg') == 'on'
+            admission.department_preferences = department_preferences
+            admission.admission_status = admission_status
+            admission.course = course
+            admission.branch = branch
+            
+            existing_refs = list(admission.references.all()) if admission.pk else []
             return render(request, 'admission_form/form.html', {
                 'admission': admission,
                 'pk': pk,
-                'post_data': request.POST,
                 'existing_refs': existing_refs,
             })
 
@@ -257,6 +286,9 @@ def admission_form_view(request, pk=None):
                 'country': data.get('country'),
                 'state': data.get('state') or data.get('state_others') or None,
                 'district': data.get('district') or data.get('district_others') or None,
+                'admission_status': admission_status,
+                'course': course if admission_status == 'admitted' else None,
+                'branch': branch if admission_status == 'admitted' else None,
                 # Department
                 'level': level,
                 'department_preferences': department_preferences,
@@ -305,7 +337,7 @@ def admission_form_view(request, pk=None):
                 'other_fee': data.get('other_fee') or None,
                 'paid_fee': data.get('paid_fee') or None,
                 'concession_amount': data.get('concession_amount') or None,
-                'unpaid_fee': data.get('unpaid_fee') or None,
+                'unpaid_fee': calc_unpaid,
                 'transaction_id': data.get('transaction_id') or None,
                 'transaction_date': transaction_date,
                 # Scholarship
@@ -368,11 +400,31 @@ def admission_form_view(request, pk=None):
         except Exception as e:
             logger.error(f"Error saving admission form: {str(e)}")
             messages.error(request, f'An error occurred while saving the form: {str(e)}')
-            existing_refs = list(admission.references.all()) if admission else []
+            if not admission:
+                admission = Admission()
+            for field in admission._meta.fields:
+                f_name = field.name
+                if f_name in data:
+                    val = data[f_name]
+                    if val == '':
+                        val = None
+                    try:
+                        setattr(admission, f_name, val)
+                    except Exception:
+                        pass
+                        
+            admission.pmss = request.POST.get('pmss') == 'on'
+            admission.seven_five = request.POST.get('seven_five') == 'on'
+            admission.is_fg = request.POST.get('is_fg') == 'on'
+            admission.department_preferences = department_preferences
+            admission.admission_status = admission_status
+            admission.course = course
+            admission.branch = branch
+
+            existing_refs = list(admission.references.all()) if admission.pk else []
             return render(request, 'admission_form/form.html', {
                 'admission': admission,
                 'pk': pk,
-                'post_data': request.POST,
                 'existing_refs': existing_refs,
             })
 

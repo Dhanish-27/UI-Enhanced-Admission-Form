@@ -118,8 +118,7 @@
     .submit-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-top: 1.5px solid #e5e7eb; padding: 13px 24px; display: flex; justify-content: center; z-index: 300; box-shadow: 0 -4px 20px rgba(0,0,0,.07); }
     .submit-btn { background: linear-gradient(135deg, #ea580c, #f59e0b); color: #fff; border: none; border-radius: 999px; padding: 12px 52px; font-size: .95rem; font-weight: 700; cursor: pointer; font-family: 'Poppins', sans-serif; transition: opacity .2s, transform .15s; letter-spacing: .3px; }
     .submit-btn:hover { opacity: .92; transform: translateY(-1px); }
-    .req-note { font-size: .76rem; color: #9ca3af; margin-bottom: 4px; }
-    .req-note .r { color: #ef4444; }
+    .submit-btn:hover { opacity: .92; transform: translateY(-1px); }
         </style>
     </head>
     <body>
@@ -219,9 +218,6 @@
                         {% for message in messages %}<div class="msg {{ message.tags }}">{{ message }}</div>{% endfor %}
                     </div>
                 {% endif %}
-                <p class="req-note">
-                    Fields marked <span class="r">*</span> are .
-                </p>
                 <form method="post" enctype="multipart/form-data" id="admissionForm">
                     {% csrf_token %}
                     {% if admission %}<input type="hidden" name="pk" value="{{ admission.pk }}">{% endif %}
@@ -234,9 +230,28 @@
                         <div class="section-body">
                             <div class="form-grid">
                                 <div class="fg">
-                                    <label>
-                                        Student Name <span class="r">*</span>
-                                    </label>
+                                    <label>Admission Status</label>
+                                    <select name="admission_status" id="admissionStatusSelect">
+                                        <option value="enquired"
+                                                {% if admission.admission_status == 'enquired' or not admission.admission_status %}selected{% endif %}>
+                                            Enquired
+                                        </option>
+                                        <option value="admitted"
+                                                {% if admission.admission_status == 'admitted' %}selected{% endif %}>
+                                            Admitted
+                                        </option>
+                                        <option value="discontinued"
+                                                {% if admission.admission_status == 'discontinued' %}selected{% endif %}>
+                                            Discontinued
+                                        </option>
+                                        <option value="left"
+                                                {% if admission.admission_status == 'left' %}selected{% endif %}>
+                                            Left
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="fg">
+                                    <label>Student Name</label>
                                     <input type="text"
                                            name="student_name"
                                            value="{{ admission.student_name|default:'' }}"
@@ -250,9 +265,7 @@
                                            placeholder="email@example.com">
                                 </div>
                                 <div class="fg">
-                                    <label>
-                                        Student Mobile <span class="r">*</span>
-                                    </label>
+                                    <label>Student Mobile</label>
                                     <input type="tel"
                                            name="student_mobile"
                                            value="{{ admission.student_mobile|default:'' }}"
@@ -260,17 +273,13 @@
                                            maxlength="10">
                                 </div>
                                 <div class="fg">
-                                    <label>
-                                        Date of Birth <span class="r">*</span>
-                                    </label>
+                                    <label>Date of Birth</label>
                                     <input type="date"
                                            name="dob"
                                            value="{{ admission.dob|date:'Y-m-d'|default:'' }}">
                                 </div>
                                 <div class="fg">
-                                    <label>
-                                        Gender <span class="r">*</span>
-                                    </label>
+                                    <label>Gender</label>
                                     <select name="gender">
                                         <option value="">Select Gender</option>
                                         <option value="Male" {% if admission.gender == 'Male' %}selected{% endif %}>Male</option>
@@ -317,9 +326,7 @@
                                 </div>
                                 <div class="sub-head">Parent / Guardian Details</div>
                                 <div class="fg">
-                                    <label>
-                                        Father's Name <span class="r">*</span>
-                                    </label>
+                                    <label>Father's Name</label>
                                     <input type="text"
                                            name="father_name"
                                            value="{{ admission.father_name|default:'' }}"
@@ -334,9 +341,7 @@
                                            maxlength="10">
                                 </div>
                                 <div class="fg">
-                                    <label>
-                                        Mother's Name <span class="r">*</span>
-                                    </label>
+                                    <label>Mother's Name</label>
                                     <input type="text"
                                            name="mother_name"
                                            value="{{ admission.mother_name|default:'' }}"
@@ -367,9 +372,7 @@
                                 </div>
                                 <div class="sub-head">Address Details</div>
                                 <div class="fg span-2">
-                                    <label>
-                                        Address <span class="r">*</span>
-                                    </label>
+                                    <label>Address</label>
                                     <textarea name="address" placeholder="Full residential address">{{ admission.address|default:'' }}</textarea>
                                 </div>
                                 <div class="fg">
@@ -381,9 +384,7 @@
                                            maxlength="6">
                                 </div>
                                 <div class="fg">
-                                    <label>
-                                        Country <span class="r">*</span>
-                                    </label>
+                                    <label>Country</label>
                                     <select name="country" id="country">
                                         <option value="">Select Country</option>
                                         <option value="India"
@@ -395,9 +396,7 @@
                                     </select>
                                 </div>
                                 <div class="fg">
-                                    <label>
-                                        State <span class="r">*</span>
-                                    </label>
+                                    <label>State</label>
                                     <select name="state" id="state_dropdown">
                                         <option value="">Select State</option>
                                         <option value="Tamil Nadu"
@@ -452,9 +451,7 @@
                                            value="{{ admission.state|default:'' }}">
                                 </div>
                                 <div class="fg">
-                                    <label>
-                                        District <span class="r">*</span>
-                                    </label>
+                                    <label>District</label>
                                     <input type="text"
                                            name="district"
                                            value="{{ admission.district|default:'' }}"
@@ -538,9 +535,7 @@
                         </div>
                         <div class="section-body">
                             <div class="fg" style="max-width:320px; margin-bottom:16px;">
-                                <label>
-                                    Level <span class="r">*</span>
-                                </label>
+                                <label>Level</label>
                                 <select id="levelSelect" name="level">
                                     <option value="">Select Level</option>
                                     <option value="ug" {% if admission.level == 'ug' %}selected{% endif %}>UG – Under Graduate</option>
@@ -548,7 +543,29 @@
                                     <option value="le" {% if admission.level == 'le' %}selected{% endif %}>LE – Lateral Entry</option>
                                 </select>
                             </div>
-                            <div id="departmentContainer"></div>
+                            <!-- COURSE AND BRANCH CONTROLS -->
+                            <div id="courseBranchContainer"
+                                 style="display:none;
+                                        gap: 1rem;
+                                        margin-bottom: 16px;
+                                        flex-wrap: wrap">
+                                <div class="fg" style="flex: 1; min-width: 200px;">
+                                    <label>Course</label>
+                                    <select name="course" id="courseSelect">
+                                        <option value="" disabled selected>Select Course</option>
+                                        <option value="BTECH" {% if admission.course == 'BTECH' %}selected{% endif %}>B.Tech</option>
+                                        <option value="BE" {% if admission.course == 'BE' %}selected{% endif %}>B.E</option>
+                                        <option value="PG" {% if admission.course == 'PG' %}selected{% endif %}>PG Course</option>
+                                    </select>
+                                </div>
+                                <div class="fg" style="flex: 1; min-width: 200px;">
+                                    <label>Branch</label>
+                                    <select name="branch" id="branchSelect">
+                                        <option value="" disabled selected>Select Branch</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div id="departmentContainer" style="width:100%; max-width:600px;"></div>
                         </div>
                     </div>
                     <!-- ══ SECTION 3: MARKS OBTAINED ════════════════════════ -->
@@ -990,11 +1007,14 @@
                                            min="0">
                                 </div>
                                 <div class="fg">
-                                    <label>Unpaid Fee (₹)</label>
+                                    <label>Unpaid Fee</label>
                                     <input type="number"
                                            name="unpaid_fee"
-                                           value="{{ admission.unpaid_fee|default:'' }}"
-                                           placeholder="0.00"
+                                           value="{{ admission.unpaid_fee|default:'0' }}"
+                                           placeholder="Auto-calculated"
+                                           readonly
+                                           style="background-color: #f3f4f6;
+                                                  cursor: not-allowed"
                                            step="0.01"
                                            min="0">
                                 </div>
@@ -1074,9 +1094,7 @@
                                 <table class="ref-table" id="refTable">
                                     <thead>
                                         <tr>
-                                            <th>
-                                                Name <span style="color:#ef4444">*</span>
-                                            </th>
+                                            <th>Name</th>
                                             <th>Mobile</th>
                                             <th>Relationship</th>
                                             <th>Department</th>
@@ -1418,7 +1436,8 @@ document.getElementById('isFgCheck').addEventListener('change', function() {
 // ── SUBMIT: inject dept pref hidden inputs ──────────────────────
 document.getElementById('admissionForm').addEventListener('submit', function() {
   const level = document.getElementById('levelSelect').value;
-  if (level === 'ug' || level === 'le') {
+  const status = document.getElementById('admissionStatusSelect') ? document.getElementById('admissionStatusSelect').value : 'enquired';
+  if ((level === 'ug' || level === 'le') && status !== 'admitted') {
     document.querySelectorAll('#deptList .dept-item input:checked').forEach((cb, i) => {
       const h = document.createElement('input');
       h.type = 'hidden';
@@ -1428,6 +1447,91 @@ document.getElementById('admissionForm').addEventListener('submit', function() {
     });
   }
 });
+
+// ── COURSE AND BRANCH LOGIC ─────────────────────────────────────
+const EXISTING_BRANCH = '{{ admission.branch|default:"" }}';
+const cbCourse = document.getElementById("courseSelect");
+const cbBranch = document.getElementById("branchSelect");
+
+function populateCbBranches() {
+  if (!cbCourse || !cbBranch) return;
+  const course = cbCourse.value;
+  cbBranch.innerHTML = '<option value="" disabled selected>Select Branch</option>';
+  
+  let branches = [];
+  if (course === "PG") {
+      branches = PG_DEPTS;
+  } else if (course === "BTECH") {
+      branches = UG_DEPTS.filter(d => d.startsWith("B.TECH"));
+  } else if (course === "BE") {
+      branches = UG_DEPTS.filter(d => d.startsWith("B.E"));
+  }
+  
+  branches.forEach(b => {
+      const opt = document.createElement("option");
+      opt.value = b;
+      opt.textContent = b;
+      if (EXISTING_BRANCH === b) opt.selected = true;
+      cbBranch.appendChild(opt);
+  });
+}
+if (cbCourse) {
+    cbCourse.addEventListener("change", populateCbBranches);
+}
+if (cbCourse && cbCourse.value) {
+    populateCbBranches();
+}
+
+function handleAdmissionStatusChange() {
+   const statusElement = document.getElementById('admissionStatusSelect');
+   if(!statusElement) return;
+   const status = statusElement.value;
+   const deptContainer = document.getElementById('departmentContainer');
+   const cbContainer = document.getElementById('courseBranchContainer');
+   
+   if (status === 'admitted') {
+       if (cbContainer) cbContainer.style.display = 'flex';
+       if (deptContainer) deptContainer.style.display = 'none';
+   } else {
+       if (cbContainer) cbContainer.style.display = 'none';
+       if (deptContainer) deptContainer.style.display = 'block';
+   }
+}
+
+const statusSelect = document.getElementById('admissionStatusSelect');
+if (statusSelect) {
+    statusSelect.addEventListener('change', handleAdmissionStatusChange);
+    handleAdmissionStatusChange();
+}
+
+// ── FEE CALCULATION ─────────────────────────────────────────────
+const feeInputs = document.querySelectorAll('input[name="college_fee"], input[name="hostel_fee"], input[name="bus_fee"], input[name="other_fee"], input[name="paid_fee"], input[name="concession_amount"]');
+
+function calculateUnpaidFee() {
+    const cf = parseFloat(document.querySelector('input[name="college_fee"]').value) || 0;
+    const hf = parseFloat(document.querySelector('input[name="hostel_fee"]').value) || 0;
+    const bf = parseFloat(document.querySelector('input[name="bus_fee"]').value) || 0;
+    const of = parseFloat(document.querySelector('input[name="other_fee"]').value) || 0;
+    const pf = parseFloat(document.querySelector('input[name="paid_fee"]').value) || 0;
+    const ca = parseFloat(document.querySelector('input[name="concession_amount"]').value) || 0;
+    
+    let hasValue = false;
+    feeInputs.forEach(input => {
+        if (input.value !== '') hasValue = true;
+    });
+
+    const unpaidInput = document.querySelector('input[name="unpaid_fee"]');
+    if (unpaidInput) {
+        if (hasValue) {
+            unpaidInput.value = (cf + hf + bf + of) - (pf + ca);
+        }
+    }
+}
+
+feeInputs.forEach(input => {
+    input.addEventListener('input', calculateUnpaidFee);
+});
+
         </script>
     </body>
 </html>
