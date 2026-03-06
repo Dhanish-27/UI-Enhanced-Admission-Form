@@ -1,6 +1,7 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>{{ admission.student_name }} - Admission Report</title>
@@ -9,6 +10,7 @@
             size: A4;
             margin: 0.8cm;
         }
+
         body {
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             font-size: 11px;
@@ -17,6 +19,7 @@
             margin: 0;
             padding: 0;
         }
+
         .header-container {
             display: table;
             width: 100%;
@@ -24,16 +27,19 @@
             border-bottom: 2px solid #0d6efd;
             padding-bottom: 10px;
         }
+
         .photo-cell {
             display: table-cell;
             width: 100px;
             vertical-align: top;
         }
+
         .title-cell {
             display: table-cell;
             vertical-align: middle;
             text-align: center;
         }
+
         .info-cell {
             display: table-cell;
             width: 150px;
@@ -41,6 +47,7 @@
             text-align: right;
             font-size: 10px;
         }
+
         .student-photo {
             width: 90px;
             height: 110px;
@@ -48,6 +55,7 @@
             border: 1px solid #ddd;
             border-radius: 4px;
         }
+
         h1 {
             color: #0d6efd;
             font-size: 20px;
@@ -55,11 +63,13 @@
             text-transform: uppercase;
             letter-spacing: 1px;
         }
+
         .sub-title {
             color: #666;
             font-size: 12px;
             font-weight: bold;
         }
+
         .section-title {
             background-color: #f1f4f9;
             color: #0d6efd;
@@ -70,36 +80,45 @@
             border-left: 4px solid #0d6efd;
             margin: 10px 0 5px 0;
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 8px;
         }
-        th, td {
+
+        th,
+        td {
             padding: 4px 8px;
             border: 1px solid #eee;
             text-align: left;
         }
+
         .label {
             font-weight: bold;
             color: #555;
             background-color: #fafafa;
             width: 20%;
         }
+
         .value {
             width: 30%;
         }
+
         .highlight {
             font-weight: bold;
             color: #000;
         }
+
         .fee-table th {
             background-color: #f8f9fa;
             font-size: 10px;
         }
+
         .fee-table td {
             font-weight: bold;
         }
+
         .footer {
             margin-top: 15px;
             font-size: 9px;
@@ -108,21 +127,25 @@
             border-top: 1px solid #eee;
             padding-top: 5px;
         }
+
         .grid-2 {
             display: table;
             width: 100%;
         }
+
         .grid-col {
             display: table-cell;
             width: 50%;
             padding-right: 5px;
         }
+
         .grid-col:last-child {
             padding-right: 0;
             padding-left: 5px;
         }
     </style>
 </head>
+
 <body>
 
     <div class="header-container">
@@ -135,14 +158,15 @@
             <h1>Admission Report</h1>
             <div class="sub-title">{{ admission.student_name }}</div>
             <div style="font-size: 10px; margin-top: 5px;">
-                Application ID: <strong>{{ admission.Application_number|default:"N/A" }}</strong> | 
+                Application ID: <strong>{{ admission.Application_number|default:"N/A" }}</strong> |
                 Reg No: <strong>{{ admission.register_number|default:"N/A" }}</strong>
             </div>
         </div>
         <div class="info-cell">
             <div>Date: {{ "now"|date:"d M Y" }}</div>
             <div>Unique ID: {{ admission.unique_id|default:"N/A" }}</div>
-            <div style="margin-top: 10px; font-weight: bold; color: #0d6efd;">{{ admission.get_level_display|upper }} ADMISSION</div>
+            <div style="margin-top: 10px; font-weight: bold; color: #0d6efd;">{{ admission.get_level_display|upper }}
+                ADMISSION</div>
         </div>
     </div>
 
@@ -163,8 +187,14 @@
         <tr>
             <td class="label">Caste</td>
             <td class="value">{{ admission.caste|default:"N/A" }}</td>
+            <td class="label">Religion</td>
+            <td class="value">{{ admission.religion|default:"N/A" }}</td>
+        </tr>
+        <tr>
             <td class="label">Region</td>
             <td class="value">{{ admission.region|default:"N/A" }}</td>
+            <td class="label">Aadhaar Number</td>
+            <td class="value">{{ admission.aadhaar_number|default:"N/A" }}</td>
         </tr>
         <tr>
             <td class="label">Aadhaar Number</td>
@@ -200,7 +230,8 @@
         {% endif %}
         <tr>
             <td class="label">Address</td>
-            <td colspan="3">{{ admission.address }}, {{ admission.district }}, {{ admission.state }} - {{ admission.country|default:"India" }}</td>
+            <td colspan="3">{{ admission.address }}, {{ admission.district }}, {{ admission.state }} - {{
+                admission.country|default:"India" }}</td>
         </tr>
     </table>
 
@@ -241,7 +272,8 @@
             <table>
                 <tr>
                     <td class="label" style="width: 40%;">Cutoff Marks</td>
-                    <td class="highlight" style="color: #0d6efd; font-size: 14px;">{{ admission.cutoff_marks|default:"N/A" }}</td>
+                    <td class="highlight" style="color: #0d6efd; font-size: 14px;">{{
+                        admission.cutoff_marks|default:"N/A" }}</td>
                 </tr>
                 {% if admission.qualification == "12th" %}
                 <tr>
@@ -298,15 +330,15 @@
             <td class="label">{% if admission.level == 'pg' %}Department{% else %}Preferences{% endif %}</td>
             <td class="value">
                 {% if admission.level == 'pg' %}
-                    {{ admission.pg_dept|default:"N/A" }}
+                {{ admission.pg_dept|default:"N/A" }}
                 {% else %}
-                    {% if admission.department_preferences %}
-                        {% for dept, pref in admission.department_preferences.items %}
-                            {{ pref }}: {{ dept }}{% if not forloop.last %}, {% endif %}
-                        {% endfor %}
-                    {% else %}
-                        N/A
-                    {% endif %}
+                {% if admission.department_preferences %}
+                {% for dept, pref in admission.department_preferences.items %}
+                {{ pref }}: {{ dept }}{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+                {% else %}
+                N/A
+                {% endif %}
                 {% endif %}
             </td>
         </tr>
@@ -318,19 +350,19 @@
             <td class="label" style="width: 40%;">Facility Type</td>
             <td class="value">
                 {% if admission.facility_type == 'none' or not admission.bus_needed and not admission.hostel_needed %}
-                    Not Needed
+                Not Needed
                 {% elif admission.facility_type == 'transport' or admission.bus_needed == 'yes' %}
-                    Transport
+                Transport
                 {% elif admission.facility_type == 'hostel' or admission.hostel_needed == 'yes' %}
-                    Hostel
+                Hostel
                 {% else %}
-                    Not Specified
+                Not Specified
                 {% endif %}
             </td>
             <td class="label">Application Date</td>
             <td class="value">{{ admission.application_date|date:"d M Y"|default:"N/A" }}</td>
         </tr>
-        
+
         <!-- Transport Details -->
         {% if admission.facility_type == 'transport' or admission.bus_needed == 'yes' %}
         <tr>
@@ -340,7 +372,7 @@
             <td class="value">Route {{ admission.bus_route|default:"N/A" }}</td>
         </tr>
         {% endif %}
-        
+
         <!-- Hostel Details -->
         {% if admission.facility_type == 'hostel' or admission.hostel_needed == 'yes' %}
         <tr>
@@ -357,26 +389,28 @@
         </tr>
         {% endif %}
     </table>
-        
-        {% if admission.reference_name %}
-        <div class="grid-col" {% if not admission.hostel_needed == 'yes' and not admission.bus_needed == 'yes' %}style="width: 100%;"{% endif %}>
-            <div class="section-title">6. Referral Information</div>
-            <table>
-                <tr>
-                    <td class="label" style="width: 40%;">Referred By</td>
-                    <td class="highlight">{{ admission.reference_name }}</td>
-                </tr>
-                <tr>
-                    <td class="label">Relation / Context</td>
-                    <td>{{ admission.relationship|default:"-" }} {% if admission.reference_department %}({{ admission.reference_department }}){% endif %}</td>
-                </tr>
-                <tr>
-                    <td class="label">Contact Number</td>
-                    <td>{{ admission.reference_mobile|default:admission.contact_number|default:"N/A" }}</td>
-                </tr>
-            </table>
-        </div>
-        {% endif %}
+
+    {% if admission.reference_name %}
+    <div class="grid-col" {% if not admission.hostel_needed=='yes' and not admission.bus_needed=='yes'
+        %}style="width: 100%;" {% endif %}>
+        <div class="section-title">6. Referral Information</div>
+        <table>
+            <tr>
+                <td class="label" style="width: 40%;">Referred By</td>
+                <td class="highlight">{{ admission.reference_name }}</td>
+            </tr>
+            <tr>
+                <td class="label">Relation / Context</td>
+                <td>{{ admission.relationship|default:"-" }} {% if admission.reference_department %}({{
+                    admission.reference_department }}){% endif %}</td>
+            </tr>
+            <tr>
+                <td class="label">Contact Number</td>
+                <td>{{ admission.reference_mobile|default:admission.contact_number|default:"N/A" }}</td>
+            </tr>
+        </table>
+    </div>
+    {% endif %}
     </div>
 
     <div class="section-title">7. Financial Summary</div>
@@ -396,7 +430,7 @@
             <td>₹{{ admission.other_fee|default:"0" }}</td>
         </tr>
     </table>
-    
+
     {% if admission.hostel_needed == 'yes' or admission.facility_type == 'hostel' %}
     <table class="fee-table" style="margin-top: 8px;">
         <tr>
@@ -415,7 +449,7 @@
         </tr>
     </table>
     {% endif %}
-    
+
     {% if admission.bus_needed == 'yes' or admission.facility_type == 'transport' %}
     <table class="fee-table" style="margin-top: 8px;">
         <tr>
@@ -428,22 +462,22 @@
         </tr>
     </table>
     {% endif %}
-    
+
     <div style="background-color: #f8f9fa; padding: 8px; border: 1px solid #eee; margin-top: 5px;">
         <table style="margin: 0; border: none;">
             <tr>
                 <td style="border: none; padding: 0; width: 60%;">
-                    <span class="label" style="background: none;">Transaction ID:</span> 
+                    <span class="label" style="background: none;">Transaction ID:</span>
                     <strong>{{ admission.transaction_id|default:"MANUAL RECORD" }}</strong>
                 </td>
                 <td style="border: none; padding: 0; text-align: right;">
-                    <span class="label" style="background: none;">Date:</span> 
+                    <span class="label" style="background: none;">Date:</span>
                     <strong>{{ admission.transaction_date|default:admission.created_at|date:"d M Y" }}</strong>
                 </td>
             </tr>
         </table>
     </div>
-    
+
     <div class="section-title" style="margin-top: 15px;">8. Bank Details</div>
     <table>
         <tr>
@@ -465,16 +499,16 @@
             <td class="value">{{ admission.seeding_status|default:"N/A" }}</td>
         </tr>
     </table>
-    
+
     <div style="background-color: #f8f9fa; padding: 8px; border: 1px solid #eee; margin-top: 5px;">
         <table style="margin: 0; border: none;">
             <tr>
                 <td style="border: none; padding: 0; width: 60%;">
-                    <span class="label" style="background: none;">Transaction ID:</span> 
+                    <span class="label" style="background: none;">Transaction ID:</span>
                     <strong>{{ admission.transaction_id|default:"MANUAL RECORD" }}</strong>
                 </td>
                 <td style="border: none; padding: 0; text-align: right;">
-                    <span class="label" style="background: none;">Date:</span> 
+                    <span class="label" style="background: none;">Date:</span>
                     <strong>{{ admission.transaction_date|default:admission.created_at|date:"d M Y" }}</strong>
                 </td>
             </tr>
@@ -503,15 +537,22 @@
         </tr>
         <tr>
             <td class="label">Scholarship - FG</td>
-            <td class="value">{% if admission.is_fg %}Yes ({{ admission.fg_number|default:"N/A" }}){% else %}No{% endif %}</td>
-            <td class="label">Scholarship - PMSS</td>
-            <td class="value">{% if admission.pmss %}Yes{% else %}No{% endif %}</td>
+            <td class="value">{% if admission.is_fg %}Yes ({{ admission.fg_number|default:"N/A" }}){% else %}No{% endif
+                %}</td>
+            <td class="label">Income Certificate</td>
+            <td class="value">{{ admission.income_cert_number|default:"N/A" }}</td>
         </tr>
         <tr>
+            <td class="label">Scholarship - PMSS</td>
+            <td class="value">{% if admission.pmss %}Yes{% else %}No{% endif %}</td>
             <td class="label">Scholarship - 7.5%</td>
             <td class="value">{% if admission.seven_five %}Yes{% else %}No{% endif %}</td>
+        </tr>
+        <tr>
             <td class="label">Payment Status</td>
             <td class="value">{% if admission.had_paid %}Paid{% else %}Pending{% endif %}</td>
+            <td class="label"></td>
+            <td class="value"></td>
         </tr>
     </table>
 
@@ -520,4 +561,5 @@
     </div>
 
 </body>
+
 </html>

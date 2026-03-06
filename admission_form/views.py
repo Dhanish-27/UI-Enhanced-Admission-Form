@@ -7,19 +7,19 @@ from django.core.exceptions import ValidationError
 from django.utils.dateparse import parse_datetime
 from django.db import transaction
 
-from .models import Admission, PaymentScreenshot, Reference
+from .models import Admission, PaymentScreenshot, Reference, DiplomaMarksheet, UGMarksheet
 from .utils import (
     validate_file, validate_mobile_number, validate_email, generate_student_id
 )
 
 logger = logging.getLogger(__name__)
 
-# TWELFTH_FIELDS = [
-#     "twelfth_total", "twelfth_percentage",
-#     "maths_marks", "physics_marks",
-#     "chemistry_marks", "twelfth_major"
-# ]
-# DIPLOMA_FIELDS = ["diploma_total", "diploma_percentage", "diploma_major"]
+TWELFTH_FIELDS = [
+    "twelfth_total", "twelfth_percentage",
+    "maths_marks", "physics_marks",
+    "chemistry_marks", "twelfth_major"
+]
+DIPLOMA_FIELDS = ["diploma_total", "diploma_percentage", "diploma_major"]
 
 
 # Set up logging
@@ -197,9 +197,30 @@ def admission_form_view(request, pk=None):
         community_cert_number = data.get('community_cert_number', '').strip()
         aadhaar_number_cert = data.get('aadhaar_number_cert', '').strip()
         tenth_marksheet_number = data.get('tenth_marksheet_number', '').strip()
+        eleventh_marksheet_number = data.get('eleventh_marksheet_number', '').strip()
         twelfth_marksheet_number = data.get('twelfth_marksheet_number', '').strip()
+        income_cert_number = data.get('income_cert_number', '').strip()
+
+        num_dip_marksheets_str = data.get('num_dip_marksheets', '').strip()
+        num_dip_marksheets = int(num_dip_marksheets_str) if num_dip_marksheets_str.isdigit() else 0
+
+        num_ug_marksheets_str = data.get('num_ug_marksheets', '').strip()
+        num_ug_marksheets = int(num_ug_marksheets_str) if num_ug_marksheets_str.isdigit() else 0
+
+        diploma_marksheet_files = request.FILES.getlist('diploma_marksheet_files')
+        ug_marksheet_files = request.FILES.getlist('ug_marksheet_files')
         
-        file_fields = ['tc', 'community_cert', 'aadhaar', 'tenth_marksheet', 'twelfth_marksheet', 'photo']
+        for f in diploma_marksheet_files + ug_marksheet_files:
+            try:
+                validate_file(f)
+            except ValidationError as e:
+                errors.append(f"Multiple Marksheets error — {e.message}")
+        
+        file_fields = [
+            'tc', 'community_cert', 'aadhaar', 'tenth_marksheet', 'twelfth_marksheet', 'photo',
+            'eleventh_marksheet', 'twelfth_migration', 'income_cert', 'fg_cert', 'fg_bonafide',
+            'dip_provisional', 'ug_provisional', 'ug_migration', 'allotment_order'
+        ]
         uploaded_files = {}
         for field in file_fields:
             uploaded = request.FILES.get(field)
@@ -361,7 +382,12 @@ def admission_form_view(request, pk=None):
                 'tc_number': tc_number or None,
                 'community_cert_number': community_cert_number or None,
                 'tenth_marksheet_number': tenth_marksheet_number or None,
+                'eleventh_marksheet_number': eleventh_marksheet_number or None,
                 'twelfth_marksheet_number': twelfth_marksheet_number or None,
+                'income_cert_number': income_cert_number or None,
+                'religion': data.get('religion') or None,
+                'num_dip_marksheets': num_dip_marksheets,
+                'num_ug_marksheets': num_ug_marksheets,
             }
 
             with transaction.atomic():
@@ -386,6 +412,16 @@ def admission_form_view(request, pk=None):
                 if payment_screenshots:
                     for screenshot in payment_screenshots:
                         PaymentScreenshot.objects.create(admission=admission, image=screenshot)
+
+                if diploma_marksheet_files:
+                    admission.diploma_marksheet_files.all().delete()
+                    for df in diploma_marksheet_files:
+                        DiplomaMarksheet.objects.create(admission=admission, file=df)
+
+                if ug_marksheet_files:
+                    admission.ug_marksheet_files.all().delete()
+                    for uf in ug_marksheet_files:
+                        UGMarksheet.objects.create(admission=admission, file=uf)
 
                 # Save references (replace existing)
                 new_references = []

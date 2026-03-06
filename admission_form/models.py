@@ -89,6 +89,7 @@ class Admission(models.Model):
     gender = models.CharField(max_length=10, blank=True, null=True)
     community = models.CharField(max_length=50, blank=True, null=True, db_index=True)
     caste = models.CharField(max_length=100, blank=True, null=True)
+    religion = models.CharField(max_length=100, blank=True, null=True)
     region = models.CharField(max_length=100, blank=True, null=True)
     aadhaar_number = models.CharField(max_length=12, blank=True, null=True)
 
@@ -201,8 +202,23 @@ class Admission(models.Model):
     aadhaar = models.FileField(upload_to=af_certificate_upload_path, blank=True, null=True)
     tenth_marksheet = models.FileField(upload_to=af_certificate_upload_path, blank=True, null=True)
     tenth_marksheet_number = models.CharField(max_length=100, blank=True, null=True)
+    eleventh_marksheet = models.FileField(upload_to=af_certificate_upload_path, blank=True, null=True)
+    eleventh_marksheet_number = models.CharField(max_length=100, blank=True, null=True)
     twelfth_marksheet = models.FileField(upload_to=af_certificate_upload_path, blank=True, null=True)
     twelfth_marksheet_number = models.CharField(max_length=100, blank=True, null=True)
+    twelfth_migration = models.FileField(upload_to=af_certificate_upload_path, blank=True, null=True)
+    income_cert = models.FileField(upload_to=af_certificate_upload_path, blank=True, null=True)
+    income_cert_number = models.CharField(max_length=100, blank=True, null=True)
+    fg_cert = models.FileField(upload_to=af_certificate_upload_path, blank=True, null=True)
+    fg_bonafide = models.FileField(upload_to=af_certificate_upload_path, blank=True, null=True)
+    dip_provisional = models.FileField(upload_to=af_certificate_upload_path, blank=True, null=True)
+    ug_provisional = models.FileField(upload_to=af_certificate_upload_path, blank=True, null=True)
+    ug_migration = models.FileField(upload_to=af_certificate_upload_path, blank=True, null=True)
+    allotment_order = models.FileField(upload_to=af_certificate_upload_path, blank=True, null=True)
+
+    num_dip_marksheets = models.IntegerField(default=0, blank=True, null=True)
+    num_ug_marksheets = models.IntegerField(default=0, blank=True, null=True)
+
     photo = models.FileField(upload_to=af_photo_upload_path, blank=True, null=True)
 
     # =========================
@@ -327,3 +343,17 @@ class Reference(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.relationship})"
+
+class DiplomaMarksheet(models.Model):
+    admission = models.ForeignKey(Admission, on_delete=models.CASCADE, related_name="diploma_marksheet_files")
+    file = models.FileField(upload_to=af_certificate_upload_path)
+
+    class Meta:
+        app_label = 'admission_form'
+
+class UGMarksheet(models.Model):
+    admission = models.ForeignKey(Admission, on_delete=models.CASCADE, related_name="ug_marksheet_files")
+    file = models.FileField(upload_to=af_certificate_upload_path)
+
+    class Meta:
+        app_label = 'admission_form'
