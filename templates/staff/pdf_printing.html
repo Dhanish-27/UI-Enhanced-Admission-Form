@@ -401,8 +401,7 @@
             </tr>
             <tr>
                 <td class="label">Relation / Context</td>
-                <td>{{ admission.relationship|default:"-" }} {% if admission.reference_department %}({{
-                    admission.reference_department }}){% endif %}</td>
+                <td>{{ admission.relationship|default:"-" }} {% if admission.reference_department %}({{ admission.reference_department }}){% endif %}</td>
             </tr>
             <tr>
                 <td class="label">Contact Number</td>
