@@ -18,41 +18,69 @@
                     <input type="hidden"
                            name="search"
                            value="{{ request.GET.search|default:'' }}">
-                    <!-- Level Filter -->
-                    <div>
-                        <label for="level" class="block text-sm font-semibold text-gray-700 mb-1.5">Level</label>
-                        <select name="level"
-                                id="level"
-                                class="w-full rounded-xl border-gray-200 text-sm focus:border-primary focus:ring-primary transition-all">
-                            <option value="">All Levels</option>
-                            <option value="ug" {% if request.GET.level == "ug" %}selected{% endif %}>UG</option>
-                            <option value="pg" {% if request.GET.level == "pg" %}selected{% endif %}>PG</option>
-                            <option value="le" {% if request.GET.level == "le" %}selected{% endif %}>LE</option>
-                        </select>
+                    <!-- Admission Status & Quota -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="admission_status"
+                                   class="block text-sm font-semibold text-gray-700 mb-1.5">Status</label>
+                            <select name="admission_status"
+                                    id="admission_status"
+                                    class="w-full rounded-xl border-gray-200 text-sm focus:border-primary focus:ring-primary transition-all">
+                                <option value="">All</option>
+                                <option value="enquired"
+                                        {% if admission_status_filter == "enquired" %}selected{% endif %}>
+                                    Enquired
+                                </option>
+                                <option value="admitted"
+                                        {% if admission_status_filter == "admitted" %}selected{% endif %}>
+                                    Admitted
+                                </option>
+                                <option value="discontinued" {% if admission_status_filter == "discontinued" %}selected{% endif %}>Discontinued</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="quota" class="block text-sm font-semibold text-gray-700 mb-1.5">Quota</label>
+                            <select name="quota"
+                                    id="quota"
+                                    class="w-full rounded-xl border-gray-200 text-sm focus:border-primary focus:ring-primary transition-all">
+                                <option value="">All</option>
+                                <option value="Government"
+                                        {% if quota_filter == "Government" %}selected{% endif %}>Govt</option>
+                                <option value="Management"
+                                        {% if quota_filter == "Management" %}selected{% endif %}>Mgmt</option>
+                            </select>
+                        </div>
                     </div>
-                    <!-- Board Filter -->
-                    <div>
-                        <label for="board" class="block text-sm font-semibold text-gray-700 mb-1.5">Board</label>
-                        <select name="board"
-                                id="board"
-                                class="w-full rounded-xl border-gray-200 text-sm focus:border-primary focus:ring-primary transition-all">
-                            <option value="">All Boards</option>
-                            <option value="State Board"
-                                    {% if request.GET.board == "State Board" %}selected{% endif %}>
-                                State
-                                Board
-                            </option>
-                            <option value="CBSE" {% if request.GET.board == "CBSE" %}selected{% endif %}>CBSE</option>
-                            <option value="ICSE" {% if request.GET.board == "ICSE" %}selected{% endif %}>ICSE</option>
-                            <option value="Matriculation"
-                                    {% if request.GET.board == "Matriculation" %}selected{% endif %}>
-                                Matriculation
-                            </option>
-                            <option value="Diploma"
-                                    {% if request.GET.board == "Diploma" %}selected{% endif %}>Diploma</option>
-                            <option value="Others"
-                                    {% if request.GET.board == "Others" %}selected{% endif %}>Others</option>
-                        </select>
+                    <!-- Level & Board -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="level" class="block text-sm font-semibold text-gray-700 mb-1.5">Level</label>
+                            <select name="level"
+                                    id="level"
+                                    class="w-full rounded-xl border-gray-200 text-sm focus:border-primary focus:ring-primary transition-all">
+                                <option value="">All</option>
+                                <option value="ug" {% if request.GET.level == "ug" %}selected{% endif %}>UG</option>
+                                <option value="pg" {% if request.GET.level == "pg" %}selected{% endif %}>PG</option>
+                                <option value="le" {% if request.GET.level == "le" %}selected{% endif %}>LE</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="board" class="block text-sm font-semibold text-gray-700 mb-1.5">Board</label>
+                            <select name="board"
+                                    id="board"
+                                    class="w-full rounded-xl border-gray-200 text-sm focus:border-primary focus:ring-primary transition-all">
+                                <option value="">All</option>
+                                <option value="State Board"
+                                        {% if request.GET.board == "State Board" %}selected{% endif %}>State</option>
+                                <option value="CBSE" {% if request.GET.board == "CBSE" %}selected{% endif %}>CBSE</option>
+                                <option value="ICSE" {% if request.GET.board == "ICSE" %}selected{% endif %}>ICSE</option>
+                                <option value="Matriculation" {% if request.GET.board == "Matriculation" %}selected{% endif %}>Matric</option>
+                                <option value="Diploma"
+                                        {% if request.GET.board == "Diploma" %}selected{% endif %}>Diploma</option>
+                                <option value="Others"
+                                        {% if request.GET.board == "Others" %}selected{% endif %}>Others</option>
+                            </select>
+                        </div>
                     </div>
                     <!-- Department Filter -->
                     <div>
@@ -62,113 +90,69 @@
                                 class="w-full rounded-xl border-gray-200 text-sm focus:border-primary focus:ring-primary transition-all">
                             <option value="">All Departments</option>
                             <optgroup label="UG Departments">
-                                <option value="B.TECH (AI & DS) - Artificial Intelligence and Data Science"
-                                        {% if dept_filter == "B.TECH (AI & DS) - Artificial Intelligence and Data Science" %}selected{% endif %}>
-                                    B.TECH AI & DS
-                                </option>
-                                <option value="B.TECH (IT) - Information Technology"
-                                        {% if dept_filter == "B.TECH (IT) - Information Technology" %}selected{% endif %}>
+                                <option value="B.TECH (AI & DS) - Artificial Intelligence and Data Science" {% if dept_filter == "B.TECH (AI & DS) - Artificial Intelligence and Data Science" %}selected{% endif %}>B.TECH AI & DS</option>
+                                <option value="B.TECH (IT) - Information Technology" {% if dept_filter == "B.TECH (IT) - Information Technology" %}selected{% endif %}>
                                     B.TECH IT
                                 </option>
-                                <option value="B.TECH (CH) - Chemical Engineering"
-                                        {% if dept_filter == "B.TECH (CH) - Chemical Engineering" %}selected{% endif %}>
+                                <option value="B.TECH (CH) - Chemical Engineering" {% if dept_filter == "B.TECH (CH) - Chemical Engineering" %}selected{% endif %}>
                                     B.TECH Chemical
                                 </option>
-                                <option value="B.TECH (AE) - Agricultural Engineering"
-                                        {% if dept_filter == "B.TECH (AE) - Agricultural Engineering" %}selected{% endif %}>
+                                <option value="B.TECH (AE) - Agricultural Engineering" {% if dept_filter == "B.TECH (AE) - Agricultural Engineering" %}selected{% endif %}>
                                     B.TECH
                                     Agricultural
                                 </option>
-                                <option value="B.TECH (BT) - Bio Technology"
-                                        {% if dept_filter == "B.TECH (BT) - Bio Technology" %}selected{% endif %}>
+                                <option value="B.TECH (BT) - Bio Technology" {% if dept_filter == "B.TECH (BT) - Bio Technology" %}selected{% endif %}>
                                     B.TECH Bio Tech
                                 </option>
-                                <option value="B.E (ME) - Mechanical Engineering (Tamil Medium)"
-                                        {% if dept_filter == "B.E (ME) - Mechanical Engineering (Tamil Medium)" %}selected{% endif %}>
+                                <option value="B.E (ME) - Mechanical Engineering (Tamil Medium)" {% if dept_filter == "B.E (ME) - Mechanical Engineering (Tamil Medium)" %}selected{% endif %}>
                                     B.E Mech (Tamil)
                                 </option>
-                                <option value="B.E (ME) - Mechanical Engineering (English Medium)"
-                                        {% if dept_filter == "B.E (ME) - Mechanical Engineering (English Medium)" %}selected{% endif %}>
+                                <option value="B.E (ME) - Mechanical Engineering (English Medium)" {% if dept_filter == "B.E (ME) - Mechanical Engineering (English Medium)" %}selected{% endif %}>
                                     B.E Mech (English)
                                 </option>
-                                <option value="B.E (BME) - Biomedical Engineering"
-                                        {% if dept_filter == "B.E (BME) - Biomedical Engineering" %}selected{% endif %}>
+                                <option value="B.E (BME) - Biomedical Engineering" {% if dept_filter == "B.E (BME) - Biomedical Engineering" %}selected{% endif %}>
                                     B.E Biomedical
                                 </option>
-                                <option value="B.E (CSE(IOT)) - Computer Science and Engineering (Internet Of Things)"
-                                        {% if dept_filter == "B.E (CSE(IOT)) - Computer Science and Engineering (Internet Of Things)" %}selected{% endif %}>
-                                    B.E CSE (IoT)
-                                </option>
-                                <option value="B.E (CSE) - Computer Science and Engineering"
-                                        {% if dept_filter == "B.E (CSE) - Computer Science and Engineering" %}selected{% endif %}>
+                                <option value="B.E (CSE(IOT)) - Computer Science and Engineering (Internet Of Things)" {% if dept_filter == "B.E (CSE(IOT)) - Computer Science and Engineering (Internet Of Things)" %}selected{% endif %}>B.E CSE (IoT)</option>
+                                <option value="B.E (CSE) - Computer Science and Engineering" {% if dept_filter == "B.E (CSE) - Computer Science and Engineering" %}selected{% endif %}>
                                     B.E CSE
                                 </option>
-                                <option value="B.E (CSD) - Computer Science and Design"
-                                        {% if dept_filter == "B.E (CSD) - Computer Science and Design" %}selected{% endif %}>
+                                <option value="B.E (CSD) - Computer Science and Design" {% if dept_filter == "B.E (CSD) - Computer Science and Design" %}selected{% endif %}>
                                     B.E CSD
                                 </option>
-                                <option value="B.E (CSE(AI & ML)) - Computer Science and Engineering (AI & ML)"
-                                        {% if dept_filter == "B.E (CSE(AI & ML)) - Computer Science and Engineering (AI & ML)" %}selected{% endif %}>
-                                    B.E CSE (AI & ML)
-                                </option>
-                                <option value="B.E (CSE(CS)) - Computer Science and Engineering (Cyber Security)"
-                                        {% if dept_filter == "B.E (CSE(CS)) - Computer Science and Engineering (Cyber Security)" %}selected{% endif %}>
-                                    B.E CSE (Cyber Sec)
-                                </option>
-                                <option value="B.E (ECE) - Electronics and Communication Engineering"
-                                        {% if dept_filter == "B.E (ECE) - Electronics and Communication Engineering" %}selected{% endif %}>
-                                    B.E ECE
-                                </option>
-                                <option value="B.E (CE) - Civil Engineering"
-                                        {% if dept_filter == "B.E (CE) - Civil Engineering" %}selected{% endif %}>
+                                <option value="B.E (CSE(AI & ML)) - Computer Science and Engineering (AI & ML)" {% if dept_filter == "B.E (CSE(AI & ML)) - Computer Science and Engineering (AI & ML)" %}selected{% endif %}>B.E CSE (AI & ML)</option>
+                                <option value="B.E (CSE(CS)) - Computer Science and Engineering (Cyber Security)" {% if dept_filter == "B.E (CSE(CS)) - Computer Science and Engineering (Cyber Security)" %}selected{% endif %}>B.E CSE (Cyber Sec)</option>
+                                <option value="B.E (ECE) - Electronics and Communication Engineering" {% if dept_filter == "B.E (ECE) - Electronics and Communication Engineering" %}selected{% endif %}>B.E ECE</option>
+                                <option value="B.E (CE) - Civil Engineering" {% if dept_filter == "B.E (CE) - Civil Engineering" %}selected{% endif %}>
                                     B.E Civil
                                 </option>
-                                <option value="B.E (EEE) - Electrical and Electronics Engineering"
-                                        {% if dept_filter == "B.E (EEE) - Electrical and Electronics Engineering" %}selected{% endif %}>
+                                <option value="B.E (EEE) - Electrical and Electronics Engineering" {% if dept_filter == "B.E (EEE) - Electrical and Electronics Engineering" %}selected{% endif %}>
                                     B.E EEE
                                 </option>
-                                <option value="B.E (RAE) - Robotics & Automation"
-                                        {% if dept_filter == "B.E (RAE) - Robotics & Automation" %}selected{% endif %}>
+                                <option value="B.E (RAE) - Robotics & Automation" {% if dept_filter == "B.E (RAE) - Robotics & Automation" %}selected{% endif %}>
                                     B.E Robotics
                                 </option>
-                                <option value="B.E (EIE) - Electronics and Instrumentation Engineering"
-                                        {% if dept_filter == "B.E (EIE) - Electronics and Instrumentation Engineering" %}selected{% endif %}>
-                                    B.E EIE
-                                </option>
+                                <option value="B.E (EIE) - Electronics and Instrumentation Engineering" {% if dept_filter == "B.E (EIE) - Electronics and Instrumentation Engineering" %}selected{% endif %}>B.E EIE</option>
                             </optgroup>
                             <optgroup label="PG Departments">
                                 <option value="MBA" {% if dept_filter == "MBA" %}selected{% endif %}>MBA</option>
                                 <option value="MCA" {% if dept_filter == "MCA" %}selected{% endif %}>MCA</option>
-                                <option value="M.E. Computer Science"
-                                        {% if dept_filter == "M.E. Computer Science" %}selected{% endif %}>
-                                    M.E. Computer Science
-                                </option>
-                                <option value="M.E. Applied Electronics"
-                                        {% if dept_filter == "M.E. Applied Electronics" %}selected{% endif %}>
-                                    M.E. Applied Electronics
-                                </option>
-                                <option value="M.E. Manufacturing Engineering"
-                                        {% if dept_filter == "M.E. Manufacturing Engineering" %}selected{% endif %}>
+                                <option value="M.E. Computer Science" {% if dept_filter == "M.E. Computer Science" %}selected{% endif %}>M.E. Computer Science</option>
+                                <option value="M.E. Applied Electronics" {% if dept_filter == "M.E. Applied Electronics" %}selected{% endif %}>M.E. Applied Electronics</option>
+                                <option value="M.E. Manufacturing Engineering" {% if dept_filter == "M.E. Manufacturing Engineering" %}selected{% endif %}>
                                     M.E. Manufacturing Engineering
                                 </option>
-                                <option value="M.E. Environmental Engineering"
-                                        {% if dept_filter == "M.E. Environmental Engineering" %}selected{% endif %}>
+                                <option value="M.E. Environmental Engineering" {% if dept_filter == "M.E. Environmental Engineering" %}selected{% endif %}>
                                     M.E. Environmental Engineering
                                 </option>
-                                <option value="M.E. Power Electronics and Drives"
-                                        {% if dept_filter == "M.E. Power Electronics and Drives" %}selected{% endif %}>
+                                <option value="M.E. Power Electronics and Drives" {% if dept_filter == "M.E. Power Electronics and Drives" %}selected{% endif %}>
                                     M.E. Power Electronics and Drives
                                 </option>
-                                <option value="M.E. Industrial Safety Engineering"
-                                        {% if dept_filter == "M.E. Industrial Safety Engineering" %}selected{% endif %}>
+                                <option value="M.E. Industrial Safety Engineering" {% if dept_filter == "M.E. Industrial Safety Engineering" %}selected{% endif %}>
                                     M.E. Industrial Safety Engineering
                                 </option>
-                                <option value="M.E. Structural Engineering"
-                                        {% if dept_filter == "M.E. Structural Engineering" %}selected{% endif %}>
-                                    M.E. Structural Engineering
-                                </option>
-                                <option value="M.TECH (CH) - Chemical Engineering"
-                                        {% if dept_filter == "M.TECH (CH) - Chemical Engineering" %}selected{% endif %}>
+                                <option value="M.E. Structural Engineering" {% if dept_filter == "M.E. Structural Engineering" %}selected{% endif %}>M.E. Structural Engineering</option>
+                                <option value="M.TECH (CH) - Chemical Engineering" {% if dept_filter == "M.TECH (CH) - Chemical Engineering" %}selected{% endif %}>
                                     M.TECH (CH) - Chemical Engineering
                                 </option>
                             </optgroup>
@@ -198,15 +182,11 @@
                                 <option value="">All</option>
                                 <option value="OC" {% if request.GET.community == "OC" %}selected{% endif %}>OC</option>
                                 <option value="BC" {% if request.GET.community == "BC" %}selected{% endif %}>BC</option>
-                                <option value="MBC"
-                                        {% if request.GET.community == "MBC" %}selected{% endif %}>MBC</option>
-                                <option value="DNC"
-                                        {% if request.GET.community == "DNC" %}selected{% endif %}>DNC</option>
-                                <option value="BCM"
-                                        {% if request.GET.community == "BCM" %}selected{% endif %}>BCM</option>
+                                <option value="MBC" {% if request.GET.community == "MBC" %}selected{% endif %}>MBC</option>
+                                <option value="DNC" {% if request.GET.community == "DNC" %}selected{% endif %}>DNC</option>
+                                <option value="BCM" {% if request.GET.community == "BCM" %}selected{% endif %}>BCM</option>
                                 <option value="SC" {% if request.GET.community == "SC" %}selected{% endif %}>SC</option>
-                                <option value="SCA"
-                                        {% if request.GET.community == "SCA" %}selected{% endif %}>SCA</option>
+                                <option value="SCA" {% if request.GET.community == "SCA" %}selected{% endif %}>SCA</option>
                                 <option value="ST" {% if request.GET.community == "ST" %}selected{% endif %}>ST</option>
                             </select>
                         </div>
@@ -221,14 +201,8 @@
                                     {% if request.GET.accommodation_type == "hostel" %}selected{% endif %}>
                                 Hostel
                             </option>
-                            <option value="transport"
-                                    {% if request.GET.accommodation_type == "transport" %}selected{% endif %}>
-                                Transport
-                            </option>
-                            <option value="not_needed"
-                                    {% if request.GET.accommodation_type == "not_needed" %}selected{% endif %}>
-                                Not needed
-                            </option>
+                            <option value="transport" {% if request.GET.accommodation_type == "transport" %}selected{% endif %}>Transport</option>
+                            <option value="not_needed" {% if request.GET.accommodation_type == "not_needed" %}selected{% endif %}>Not needed</option>
                         </select>
                     </div>
                     <!-- Cutoff Range (Horizontal) -->
@@ -264,26 +238,133 @@
                                    value="{{ request.GET.date_to|default:'' }}">
                         </div>
                     </div>
+                    <!-- Advanced Filters -->
+                    <details class="group bg-gray-50 rounded-xl border border-gray-200" {% if fee_status or missing_doc or                         seven_five_filter or is_fg_filter or pmss_filter or gender_filter or medium_filter or                         bus_route_filter %}open{% endif %}>
+                        <summary class="flex items-center justify-between p-4 font-semibold text-sm cursor-pointer text-gray-700 select-none">
+                            <span>Advanced Filters</span>
+                            <i class="fas fa-chevron-down transition-transform group-open:rotate-180"></i>
+                        </summary>
+                        <div class="p-4 pt-0 space-y-4 border-t border-gray-200 mt-2">
+                            <!-- Fee Status -->
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1.5">Fee Status</label>
+                                <select name="fee_status"
+                                        class="w-full rounded-lg border-gray-200 text-xs focus:border-primary focus:ring-primary transition-all">
+                                    <option value="">All</option>
+                                    <option value="paid" {% if fee_status == "paid" %}selected{% endif %}>Fully Paid</option>
+                                    <option value="pending" {% if fee_status == "pending" %}selected{% endif %}>Pending</option>
+                                    <option value="has_unpaid"
+                                            {% if fee_status == "has_unpaid" %}selected{% endif %}>
+                                        Has
+                                        Unpaid Balance
+                                    </option>
+                                    <option value="has_concession"
+                                            {% if fee_status == "has_concession" %}selected{% endif %}>
+                                        Has Concession
+                                    </option>
+                                </select>
+                            </div>
+                            <!-- Missing Docs -->
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1.5">Missing Document</label>
+                                <select name="missing_doc"
+                                        class="w-full rounded-lg border-gray-200 text-xs focus:border-primary focus:ring-primary transition-all">
+                                    <option value="">None Checked</option>
+                                    <option value="tc" {% if missing_doc == "tc" %}selected{% endif %}>Missing TC</option>
+                                    <option value="community_cert" {% if missing_doc == "community_cert" %}selected{% endif %}>Missing Comm. Cert</option>
+                                    <option value="tenth_marksheet" {% if missing_doc == "tenth_marksheet" %}selected{% endif %}>Missing 10th</option>
+                                    <option value="twelfth_marksheet" {% if missing_doc == "twelfth_marksheet" %}selected{% endif %}>Missing 12th</option>
+                                    <option value="allotment_order" {% if missing_doc == "allotment_order" %}selected{% endif %}>Missing Allotment</option>
+                                    <option value="income_cert"
+                                            {% if missing_doc == "income_cert" %}selected{% endif %}>
+                                        Missing Income Cert
+                                    </option>
+                                    <option value="aadhaar" {% if missing_doc == "aadhaar" %}selected{% endif %}>
+                                        Missing
+                                        Aadhaar
+                                    </option>
+                                </select>
+                            </div>
+                            <!-- Scholarships -->
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-700 mb-1.5">7.5% Quota</label>
+                                    <select name="seven_five"
+                                            class="w-full rounded-lg border-gray-200 text-xs focus:border-primary focus:ring-primary transition-all">
+                                        <option value="">All</option>
+                                        <option value="yes" {% if seven_five_filter == "yes" %}selected{% endif %}>Yes</option>
+                                        <option value="no" {% if seven_five_filter == "no" %}selected{% endif %}>No</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-700 mb-1.5">First Grad</label>
+                                    <select name="is_fg"
+                                            class="w-full rounded-lg border-gray-200 text-xs focus:border-primary focus:ring-primary transition-all">
+                                        <option value="">All</option>
+                                        <option value="yes" {% if is_fg_filter == "yes" %}selected{% endif %}>Yes</option>
+                                        <option value="no" {% if is_fg_filter == "no" %}selected{% endif %}>No</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-700 mb-1.5">PMSS</label>
+                                    <select name="pmss"
+                                            class="w-full rounded-lg border-gray-200 text-xs focus:border-primary focus:ring-primary transition-all">
+                                        <option value="">All</option>
+                                        <option value="yes" {% if pmss_filter == "yes" %}selected{% endif %}>Yes</option>
+                                        <option value="no" {% if pmss_filter == "no" %}selected{% endif %}>No</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-700 mb-1.5">Gender</label>
+                                    <select name="gender"
+                                            class="w-full rounded-lg border-gray-200 text-xs focus:border-primary focus:ring-primary transition-all">
+                                        <option value="">All</option>
+                                        <option value="Male" {% if gender_filter == "Male" %}selected{% endif %}>Male</option>
+                                        <option value="Female" {% if gender_filter == "Female" %}selected{% endif %}>Female</option>
+                                        <option value="Transgender" {% if gender_filter == "Transgender" %}selected{% endif %}>Trans</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <!-- Others -->
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1.5">
+                                    Medium of
+                                    Instruction
+                                </label>
+                                <select name="medium"
+                                        class="w-full rounded-lg border-gray-200 text-xs focus:border-primary focus:ring-primary transition-all">
+                                    <option value="">All</option>
+                                    <option value="Tamil" {% if medium_filter == "Tamil" %}selected{% endif %}>Tamil</option>
+                                    <option value="English" {% if medium_filter == "English" %}selected{% endif %}>English</option>
+                                    <option value="Others" {% if medium_filter == "Others" %}selected{% endif %}>Others</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1.5">Bus Route</label>
+                                <input type="text"
+                                       name="bus_route"
+                                       value="{{ bus_route_filter }}"
+                                       placeholder="e.g. Route 1"
+                                       class="w-full rounded-lg border-gray-200 text-xs focus:border-primary focus:ring-primary transition-all">
+                            </div>
+                        </div>
+                    </details>
                     <!-- Sorting -->
                     <div>
                         <label for="sort" class="block text-sm font-semibold text-gray-700 mb-1.5">Sort By</label>
                         <select name="sort"
                                 id="sort"
                                 class="w-full rounded-xl border-gray-200 text-sm focus:border-primary focus:ring-primary transition-all">
-                            <option value="-created_at"
-                                    {% if request.GET.sort == "-created_at" or not request.GET.sort %}selected{% endif %}>
-                                Latest First
-                            </option>
+                            <option value="-created_at" {% if request.GET.sort == "-created_at" or not request.GET.sort %}selected{% endif %}>Latest First</option>
                             <option value="created_at"
-                                    {% if request.GET.sort == "created_at" %}selected{% endif %}>Oldest First</option>
+                                    {% if request.GET.sort == "created_at" %}selected{% endif %}>
+                                Oldest
+                                First
+                            </option>
                             <option value="-cutoff_marks"
-                                    {% if request.GET.sort == "-cutoff_marks" %}selected{% endif %}>
-                                Cutoff (H-L)
-                            </option>
+                                    {% if request.GET.sort == "-cutoff_marks" %}selected{% endif %}>Cutoff (H-L)</option>
                             <option value="cutoff_marks"
-                                    {% if request.GET.sort == "cutoff_marks" %}selected{% endif %}>
-                                Cutoff (L-H)
-                            </option>
+                                    {% if request.GET.sort == "cutoff_marks" %}selected{% endif %}>Cutoff (L-H)</option>
                         </select>
                     </div>
                     <!-- Action Buttons -->
@@ -390,12 +471,17 @@
                                     <td class="px-6 py-4 text-center">
                                         <span class="text-sm font-black text-dark">{{ admission.cutoff_marks|default:"N/A" }}</span>
                                     </td>
+
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <span class="text-[11px] font-bold text-gray-600 uppercase"
-                                              title="{{ admission.first_preference_dept }}">
-                                            {{ admission.branch|default:"N/A" }}
+                                        <span class="text-[11px] font-bold text-gray-600 uppercase">
+                                            {% if admission.admission_status == 'admitted' %}
+                                                {{ admission.branch }} - {{ admission.course }}
+                                            {% else %}
+                                                {{ admission.first_preference_dept|default:"N/A" }}
+                                            {% endif %}
                                         </span>
                                     </td>
+
                                     <td class="px-6 py-4 text-center">
                                         <span class="inline-flex px-2 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider {% if admission.had_paid %}bg-emerald-50 text-emerald-600{% else %}bg-amber-50 text-amber-600{% endif %} font-mono">
                                             {% if admission.had_paid %}
@@ -408,18 +494,9 @@
                                     <td class="px-6 py-4 text-center">
                                         <select onchange="updateAdmissionStatus(this, '{{ admission.pk }}')"
                                                 class="text-xs font-bold rounded-lg border-gray-200 focus:border-primary focus:ring-primary py-1 pl-2 pr-8 {% if admission.admission_status == 'admitted' %}bg-green-50 text-green-700 border-green-200 {% elif admission.admission_status == 'discontinued' %}bg-red-50 text-red-700 border-red-200 {% else %}bg-blue-50 text-blue-700 border-blue-200{% endif %}">
-                                            <option value="enquired"
-                                                    {% if admission.admission_status == 'enquired' %}selected{% endif %}>
-                                                Enquired
-                                            </option>
-                                            <option value="admitted"
-                                                    {% if admission.admission_status == 'admitted' %}selected{% endif %}>
-                                                Admitted
-                                            </option>
-                                            <option value="discontinued"
-                                                    {% if admission.admission_status == 'discontinued' %}selected{% endif %}>
-                                                Discontinued
-                                            </option>
+                                            <option value="enquired" {% if admission.admission_status == 'enquired' %}selected{% endif %}>Enquired</option>
+                                            <option value="admitted" {% if admission.admission_status == 'admitted' %}selected{% endif %}>Admitted</option>
+                                            <option value="discontinued" {% if admission.admission_status == 'discontinued' %}selected{% endif %}>Discontinued</option>
                                         </select>
                                     </td>
                                 </td>
@@ -506,16 +583,13 @@
                         <!-- Page Numbers -->
                         <div class="flex items-center gap-1">
                             {% for num in page_obj.paginator.page_range %}
-                                {% if page_obj.number  ==  num %}
+                                {% if page_obj.number == num %}
                                     <span class="w-10 h-10 bg-primary text-white rounded-xl text-sm font-bold flex items-center justify-center">{{ num }}</span>
                                 {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-                                    <a href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ num }}"
-                                       class="w-10 h-10 bg-gray-50 text-gray-700 rounded-xl text-sm font-bold hover:bg-gray-100 transition-all flex items-center justify-center">
-                                    {{ num }}</a>
-                                {% elif num  ==  page_obj.paginator.page_range.0 or num  ==  page_obj.paginator.page_range.last %}
-                                    <a href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ num }}"
-                                       class="w-10 h-10 bg-gray-50 text-gray-700 rounded-xl text-sm font-bold hover:bg-gray-100 transition-all flex items-center justify-center">{{ num }}</a>
-                                {% elif num  ==  page_obj.number|add:'-4' or num  ==  page_obj.number|add:'4' %}
+                                    <a href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ num }}" class="w-10 h-10 bg-gray-50 text-gray-700 rounded-xl text-sm font-bold hover:bg-gray-100 transition-all flex items-center justify-center">{{ num }}</a>
+                                {% elif num == page_obj.paginator.page_range.0 or num == page_obj.paginator.page_range.last %}
+                                    <a href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ num }}" class="w-10 h-10 bg-gray-50 text-gray-700 rounded-xl text-sm font-bold hover:bg-gray-100 transition-all flex items-center justify-center">{{ num }}</a>
+                                {% elif num == page_obj.number|add:'-4' or num == page_obj.number|add:'4' %}
                                     <span class="w-10 h-10 bg-gray-50 text-gray-400 rounded-xl text-sm font-bold flex items-center justify-center">...</span>
                                 {% endif %}
                             {% endfor %}
@@ -708,81 +782,81 @@
         }
     }
     const ugDepts = [
-  'B.TECH (AI & DS) - Artificial Intelligence and Data Science',
-  'B.TECH (IT) - Information Technology',
-  'B.TECH (CH) - Chemical Engineering',
-  'B.TECH (AE) - Agricultural Engineering',
-  'B.TECH (BT) - Bio Technology',
-  'B.E (ME) - Mechanical Engineering (Tamil Medium)',
-  'B.E (ME) - Mechanical Engineering (English Medium)',
-  'B.E (BME) - Biomedical Engineering',
-  'B.E (CSE(IOT)) - Computer Science and Engineering (Internet Of Things)',
-  'B.E (CSE) - Computer Science and Engineering',
-  'B.E (CSD) - Computer Science and Design',
-  'B.E (CSE(AI & ML)) - Computer Science and Engineering (AI & ML)',
-  'B.E (CSE(CS)) - Computer Science and Engineering (Cyber Security)',
-  'B.E (ECE) - Electronics and Communication Engineering',
-  'B.E (CE) - Civil Engineering',
-  'B.E (EEE) - Electrical and Electronics Engineering',
-  'B.E (RAE) - Robotics & Automation',
-  'B.E (EIE) - Electronics and Instrumentation Engineering'
-];
+        'B.TECH (AI & DS) - Artificial Intelligence and Data Science',
+        'B.TECH (IT) - Information Technology',
+        'B.TECH (CH) - Chemical Engineering',
+        'B.TECH (AE) - Agricultural Engineering',
+        'B.TECH (BT) - Bio Technology',
+        'B.E (ME) - Mechanical Engineering (Tamil Medium)',
+        'B.E (ME) - Mechanical Engineering (English Medium)',
+        'B.E (BME) - Biomedical Engineering',
+        'B.E (CSE(IOT)) - Computer Science and Engineering (Internet Of Things)',
+        'B.E (CSE) - Computer Science and Engineering',
+        'B.E (CSD) - Computer Science and Design',
+        'B.E (CSE(AI & ML)) - Computer Science and Engineering (AI & ML)',
+        'B.E (CSE(CS)) - Computer Science and Engineering (Cyber Security)',
+        'B.E (ECE) - Electronics and Communication Engineering',
+        'B.E (CE) - Civil Engineering',
+        'B.E (EEE) - Electrical and Electronics Engineering',
+        'B.E (RAE) - Robotics & Automation',
+        'B.E (EIE) - Electronics and Instrumentation Engineering'
+    ];
 
-const pgDepts = [
-  'MBA',
-  'MCA',
-  'M.E. Computer Science',
-  'M.E. Applied Electronics',
-  'M.E. Manufacturing Engineering',
-  'M.E. Environmental Engineering',
-  'M.E. Power Electronics and Drives',
-  'M.E. Industrial Safety Engineering',
-  'M.E. Structural Engineering',
-  'M.TECH (CH) - Chemical Engineering'
-];
+    const pgDepts = [
+        'MBA',
+        'MCA',
+        'M.E. Computer Science',
+        'M.E. Applied Electronics',
+        'M.E. Manufacturing Engineering',
+        'M.E. Environmental Engineering',
+        'M.E. Power Electronics and Drives',
+        'M.E. Industrial Safety Engineering',
+        'M.E. Structural Engineering',
+        'M.TECH (CH) - Chemical Engineering'
+    ];
 
-const courseSelect = document.getElementById("modalCourse");
-const branchSelect = document.getElementById("modalBranch");
+    const courseSelect = document.getElementById("modalCourse");
+    const branchSelect = document.getElementById("modalBranch");
 
-// Example admission level variable (replace with real value)
-let admissionLevel = "UG"; // "UG" | "LE" | "PG"
+    // Example admission level variable (replace with real value)
+    let admissionLevel = "UG"; // "UG" | "LE" | "PG"
 
-function populateBranches() {
-  const selectedCourse = courseSelect.value;
+    function populateBranches() {
+        const selectedCourse = courseSelect.value;
 
-  // Clear existing branches
-  branchSelect.innerHTML = '<option value="" disabled selected>Select Branch</option>';
+        // Clear existing branches
+        branchSelect.innerHTML = '<option value="" disabled selected>Select Branch</option>';
 
-  let filteredBranches = [];
+        let filteredBranches = [];
 
-  // PG → show PG departments only
-  if (admissionLevel === "PG") {
-    filteredBranches = pgDepts;
-  } 
-  else {
-    // UG / LE filtering by course
-    if (selectedCourse === "BTECH") {
-      filteredBranches = ugDepts.filter(dept => dept.startsWith("B.TECH"));
-    } 
-    else if (selectedCourse === "BE") {
-      filteredBranches = ugDepts.filter(dept => dept.startsWith("B.E"));
+        // PG → show PG departments only
+        if (admissionLevel === "PG") {
+            filteredBranches = pgDepts;
+        }
+        else {
+            // UG / LE filtering by course
+            if (selectedCourse === "BTECH") {
+                filteredBranches = ugDepts.filter(dept => dept.startsWith("B.TECH"));
+            }
+            else if (selectedCourse === "BE") {
+                filteredBranches = ugDepts.filter(dept => dept.startsWith("B.E"));
+            }
+        }
+
+        // Add options to dropdown
+        filteredBranches.forEach(branch => {
+            const option = document.createElement("option");
+            option.value = branch;
+            option.textContent = branch;
+            branchSelect.appendChild(option);
+        });
     }
-  }
 
-  // Add options to dropdown
-  filteredBranches.forEach(branch => {
-    const option = document.createElement("option");
-    option.value = branch;
-    option.textContent = branch;
-    branchSelect.appendChild(option);
-  });
-}
+    // Trigger when course changes
+    courseSelect.addEventListener("change", populateBranches);
 
-// Trigger when course changes
-courseSelect.addEventListener("change", populateBranches);
-
-// Initial load (optional)
-populateBranches();
+    // Initial load (optional)
+    populateBranches();
 
 
     function performStatusUpdate(newStatus, course, branch) {

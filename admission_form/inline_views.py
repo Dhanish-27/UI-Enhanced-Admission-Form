@@ -208,6 +208,81 @@ def admissions_list(request):
     if level_filter:
         queryset = queryset.filter(level=level_filter)
 
+    # Advanced Filters
+    quota_filter = request.GET.get('quota', '')
+    if quota_filter:
+        queryset = queryset.filter(quota=quota_filter)
+
+    portal_status_filter = request.GET.get('portal_status', '')
+    if portal_status_filter:
+        queryset = queryset.filter(portal_status=portal_status_filter)
+
+    # Scholarships
+    seven_five_filter = request.GET.get('seven_five', '')
+    if seven_five_filter == 'yes':
+        queryset = queryset.filter(seven_five=True)
+    elif seven_five_filter == 'no':
+        queryset = queryset.filter(seven_five=False)
+
+    is_fg_filter = request.GET.get('is_fg', '')
+    if is_fg_filter == 'yes':
+        queryset = queryset.filter(is_fg=True)
+    elif is_fg_filter == 'no':
+        queryset = queryset.filter(is_fg=False)
+
+    pmss_filter = request.GET.get('pmss', '')
+    if pmss_filter == 'yes':
+        queryset = queryset.filter(pmss=True)
+    elif pmss_filter == 'no':
+        queryset = queryset.filter(pmss=False)
+
+    # Fee Status
+    fee_status = request.GET.get('fee_status', '')
+    if fee_status == 'paid':
+        queryset = queryset.filter(had_paid=True)
+    elif fee_status == 'pending':
+        queryset = queryset.filter(had_paid=False)
+    elif fee_status == 'has_unpaid':
+        queryset = queryset.filter(unpaid_fee__gt=0)
+    elif fee_status == 'has_concession':
+        queryset = queryset.filter(concession_amount__gt=0)
+
+    # Demographics & Academics
+    gender_filter = request.GET.get('gender', '')
+    if gender_filter:
+        queryset = queryset.filter(gender=gender_filter)
+
+    religion_filter = request.GET.get('religion', '')
+    if religion_filter:
+        queryset = queryset.filter(religion=religion_filter)
+
+    medium_filter = request.GET.get('medium', '')
+    if medium_filter:
+        queryset = queryset.filter(medium=medium_filter)
+        
+    # Transport
+    bus_route_filter = request.GET.get('bus_route', '')
+    if bus_route_filter:
+        queryset = queryset.filter(bus_route__icontains=bus_route_filter)
+
+    # Missing Documents
+    missing_doc = request.GET.get('missing_doc', '')
+    if missing_doc:
+        if missing_doc == 'tc':
+            queryset = queryset.filter(Q(tc='') | Q(tc__isnull=True))
+        elif missing_doc == 'community_cert':
+            queryset = queryset.filter(Q(community_cert='') | Q(community_cert__isnull=True))
+        elif missing_doc == 'tenth_marksheet':
+            queryset = queryset.filter(Q(tenth_marksheet='') | Q(tenth_marksheet__isnull=True))
+        elif missing_doc == 'twelfth_marksheet':
+            queryset = queryset.filter(Q(twelfth_marksheet='') | Q(twelfth_marksheet__isnull=True))
+        elif missing_doc == 'allotment_order':
+            queryset = queryset.filter(Q(allotment_order='') | Q(allotment_order__isnull=True))
+        elif missing_doc == 'income_cert':
+            queryset = queryset.filter(Q(income_cert='') | Q(income_cert__isnull=True))
+        elif missing_doc == 'aadhaar':
+            queryset = queryset.filter(Q(aadhaar='') | Q(aadhaar__isnull=True))
+
     board_filter = request.GET.get('board', '')
     if board_filter:
         queryset = queryset.filter(board=board_filter)
@@ -360,6 +435,18 @@ def admissions_list(request):
         'dept_filter': dept_filter,
         'pref_filter': pref_filter,
         'sort_by': sort_by,
+        # new filters
+        'quota_filter': quota_filter,
+        'portal_status_filter': portal_status_filter,
+        'seven_five_filter': seven_five_filter,
+        'is_fg_filter': is_fg_filter,
+        'pmss_filter': pmss_filter,
+        'fee_status': fee_status,
+        'gender_filter': gender_filter,
+        'religion_filter': religion_filter,
+        'medium_filter': medium_filter,
+        'bus_route_filter': bus_route_filter,
+        'missing_doc': missing_doc,
     }
     return render(request, 'staff/admissions_inline.html', context)
 

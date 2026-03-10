@@ -2,467 +2,546 @@
 {% load inline_tags %}
 {% block title %}Admissions — Inline Editor{% endblock %}
 {% block content %}
-    <div class="lg:col-span-12 space-y-5">
-        {% csrf_token %}
-        <!-- ═══════ PAGE HEADER ═══════ -->
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-            <div>
-                <h1 class="text-2xl font-bold text-gray-900 tracking-tight">Admissions Editor</h1>
-                <p class="text-sm text-gray-500 mt-0.5">Click any cell to edit · Changes save automatically</p>
-            </div>
-            <div class="flex items-center gap-2 text-sm">
-                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 font-medium border border-emerald-200">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                    Live Editing
-                </span>
-                <span class="px-2.5 py-1 rounded-full bg-gray-100 text-gray-600 font-medium border border-gray-200">
-                    {{ page_obj.paginator.count }} record{{ page_obj.paginator.count|pluralize }}
-                </span>
-            </div>
+<div class="lg:col-span-12 space-y-5">
+    {% csrf_token %}
+    <!-- ═══════ PAGE HEADER ═══════ -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900 tracking-tight">Admissions Editor</h1>
+            <p class="text-sm text-gray-500 mt-0.5">Click any cell to edit · Changes save automatically</p>
         </div>
-        <!-- ═══════ FILTER BAR ═══════ -->
-        <form method="get"
-              id="filterForm"
-              class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-            <!-- Toggle button -->
-            <button type="button"
-                    onclick="toggleFilters()"
-                    class="w-full flex items-center justify-between px-5 py-3 bg-gray-50 hover:bg-gray-100 transition text-sm font-semibold text-gray-700"
-                    style="border-radius:0;
-                           background:rgb(249 250 251)">
-                <span class="flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-                    </svg>
-                    Filters &amp; Search
-                </span>
-                <svg id="filterChevron"
-                     class="w-5 h-5 transition-transform"
-                     fill="none"
-                     stroke="currentColor"
-                     viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                </svg>
-            </button>
-            <div id="filterPanel" class="hidden px-5 py-4 space-y-4">
-                <!-- Row 1: Search + Level + Board + Community -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-500 mb-1">Search</label>
-                        <input type="text"
-                               name="search"
-                               value="{{ search_query }}"
-                               placeholder="Name, email, application #"
-                               class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-500 mb-1">Status</label>
-                        <select name="status"
-                                class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none bg-white">
-                            <option value="">All Statuses</option>
-                            <option value="enquired"
-                                    {% if status_filter == 'enquired' %}selected{% endif %}>Enquired</option>
-                            <option value="admitted"
-                                    {% if status_filter == 'admitted' %}selected{% endif %}>Admitted</option>
-                            <option value="discontinued"
-                                    {% if status_filter == 'discontinued' %}selected{% endif %}>Discontinued</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-500 mb-1">Level</label>
-                        <select name="level"
-                                class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none bg-white">
-                            <option value="">All Levels</option>
-                            <option value="UG" {% if level_filter == 'UG' %}selected{% endif %}>UG</option>
-                            <option value="PG" {% if level_filter == 'PG' %}selected{% endif %}>PG</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-500 mb-1">Board</label>
-                        <select name="board"
-                                class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none bg-white">
-                            <option value="">All Boards</option>
-                            <option value="State Board"
-                                    {% if board_filter == 'State Board' %}selected{% endif %}>State Board</option>
-                            <option value="CBSE" {% if board_filter == 'CBSE' %}selected{% endif %}>CBSE</option>
-                            <option value="ICSE" {% if board_filter == 'ICSE' %}selected{% endif %}>ICSE</option>
-                            <option value="Others" {% if board_filter == 'Others' %}selected{% endif %}>Others</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-500 mb-1">Community</label>
-                        <select name="community"
-                                class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none bg-white">
-                            <option value="">All Communities</option>
-                            <option value="OC" {% if community_filter == 'OC' %}selected{% endif %}>OC</option>
-                            <option value="BC" {% if community_filter == 'BC' %}selected{% endif %}>BC</option>
-                            <option value="MBC" {% if community_filter == 'MBC' %}selected{% endif %}>MBC</option>
-                            <option value="SC" {% if community_filter == 'SC' %}selected{% endif %}>SC</option>
-                            <option value="ST" {% if community_filter == 'ST' %}selected{% endif %}>ST</option>
-                        </select>
-                    </div>
-                </div>
-                <!-- Row 2: Country / State / District / Accommodation -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-500 mb-1">Country</label>
-                        <select name="country_filter"
-                                id="countrySelect"
-                                onchange="document.getElementById('filterForm').submit()"
-                                class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none bg-white">
-                            <option value="">All Countries</option>
-                            <option value="India" {% if country_filter == 'India' %}selected{% endif %}>India</option>
-                            <option value="Others" {% if country_filter == 'Others' %}selected{% endif %}>Others</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-500 mb-1">State</label>
-                        <select name="state_filter"
-                                class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg outline-none bg-white {% if country_filter    !=    'India' %}opacity-50{% endif %}"
-                                {% if country_filter  != 'India' %}disabled{% endif %}>
-                            <option value="">All States</option>
-                            {% for s in states %}
-                                <option value="{{ s }}" {% if state_filter == s %}selected{% endif %}>{{ s }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-500 mb-1">District</label>
-                        <select name="district_filter"
-                                class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg outline-none bg-white {% if country_filter    !=    'India' %}opacity-50{% endif %}"
-                                {% if country_filter  != 'India' %}disabled{% endif %}>
-                            <option value="">All Districts</option>
-                            {% for d in districts %}
-                                <option value="{{ d }}" {% if district_filter == d %}selected{% endif %}>{{ d }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-500 mb-1">Accommodation</label>
-                        <select name="accommodation_type"
-                                class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none bg-white">
-                            <option value="">All</option>
-                            <option value="hostel"
-                                    {% if accommodation_type == 'hostel' %}selected{% endif %}>Hostel</option>
-                            <option value="transport"
-                                    {% if accommodation_type == 'transport' %}selected{% endif %}>Transport</option>
-                            <option value="not_needed"
-                                    {% if accommodation_type == 'not_needed' %}selected{% endif %}>
-                                Not
-                                Needed
-                            </option>
-                        </select>
-                    </div>
-                </div>
-                <!-- Row 3: Cutoff range + Date range + Dept pref -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3">
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-500 mb-1">Cutoff From</label>
-                        <input type="number"
-                               name="cutoff_from"
-                               value="{{ cutoff_from }}"
-                               step="0.01"
-                               placeholder="Min"
-                               class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-500 mb-1">Cutoff To</label>
-                        <input type="number"
-                               name="cutoff_to"
-                               value="{{ cutoff_to }}"
-                               step="0.01"
-                               placeholder="Max"
-                               class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-500 mb-1">Date From</label>
-                        <input type="date"
-                               name="date_from"
-                               value="{{ date_from }}"
-                               class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-500 mb-1">Date To</label>
-                        <input type="date"
-                               name="date_to"
-                               value="{{ date_to }}"
-                               class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-500 mb-1">Department</label>
-                        <select name="dept"
-                                id="deptSelect"
-                                class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg outline-none bg-white">
-                            <option value="">Select Department</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-500 mb-1">Preference</label>
-                        <select name="preference"
-                                class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg outline-none bg-white">
-                            <option value="">Any</option>
-                            <option value="1" {% if pref_filter == '1' %}selected{% endif %}>1st</option>
-                            <option value="2" {% if pref_filter == '2' %}selected{% endif %}>2nd</option>
-                            <option value="3" {% if pref_filter == '3' %}selected{% endif %}>3rd</option>
-                            <option value="3+" {% if pref_filter == '3+' %}selected{% endif %}>3+</option>
-                        </select>
-                    </div>
-                </div>
-                <!-- Row 4: Sort + Actions -->
-                <div class="flex flex-wrap items-end gap-3">
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-500 mb-1">Sort By</label>
-                        <select name="sort"
-                                class="px-3 py-2 text-sm border border-gray-300 rounded-lg outline-none bg-white">
-                            <option value="-created_at"
-                                    {% if sort_by == '-created_at' %}selected{% endif %}>Newest First</option>
-                            <option value="created_at"
-                                    {% if sort_by == 'created_at' %}selected{% endif %}>Oldest First</option>
-                            <option value="student_name"
-                                    {% if sort_by == 'student_name' %}selected{% endif %}>Name A-Z</option>
-                            <option value="-student_name"
-                                    {% if sort_by == '-student_name' %}selected{% endif %}>Name Z-A</option>
-                            <option value="-cutoff_marks"
-                                    {% if sort_by == '-cutoff_marks' %}selected{% endif %}>Cutoff ↓</option>
-                            <option value="cutoff_marks"
-                                    {% if sort_by == 'cutoff_marks' %}selected{% endif %}>Cutoff ↑</option>
-                        </select>
-                    </div>
-                    <button type="submit"
-                            class="px-5 py-2 text-sm font-semibold rounded-lg"
-                            style="background:#FF9F1C;
-                                   color:#fff">Apply Filters</button>
-                    <a href="{% url 'admission_form:admissions_list' %}"
-                       class="px-4 py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition"
-                       style="text-decoration:none">Clear All</a>
-                </div>
-            </div>
-        </form>
-        <!-- ═══════ TABLE ═══════ -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-            <div class="overflow-x-auto" id="tableWrapper" style="max-height:72vh;">
-                <table class="min-w-full text-sm" id="admissionTable">
-                    <thead class="sticky top-0 z-20">
-                        <tr class="bg-gradient-to-r from-gray-800 to-gray-700 text-white">
-                            <th class="px-3 py-3 text-left text-xs font-bold uppercase tracking-wider whitespace-nowrap sticky left-0 bg-gray-800 z-30"
-                                style="min-width:40px">#</th>
-                            {% for f in fields %}
-                                <th class="px-3 py-3 text-left text-xs font-bold uppercase tracking-wider whitespace-nowrap"
-                                    style="min-width:130px">{{ f.verbose }}</th>
-                            {% endfor %}
-                            <th class="px-3 py-3 text-left text-xs font-bold uppercase tracking-wider whitespace-nowrap"
-                                style="min-width:120px">Amount Paid</th>
-                            <th class="px-3 py-3 text-left text-xs font-bold uppercase tracking-wider whitespace-nowrap"
-                                style="min-width:140px">Trans. Date</th>
-                            <th class="px-3 py-3 text-left text-xs font-bold uppercase tracking-wider whitespace-nowrap"
-                                style="min-width:140px">Trans. ID</th>
-                            <th class="px-3 py-3 text-left text-xs font-bold uppercase tracking-wider whitespace-nowrap"
-                                style="min-width:200px">References</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-100">
-                        {% for admission in page_obj %}
-                            <tr class="hover:bg-amber-50/40 transition-colors group"
-                                data-pk="{{ admission.pk }}">
-                                <td class="px-3 py-2 text-xs text-gray-400 font-mono sticky left-0 bg-white group-hover:bg-amber-50/40 z-10 border-r border-gray-100">
-                                    {{ forloop.counter0|add:page_obj.start_index }}
-                                </td>
-                                {% for f in fields %}
-                                    <td class="px-1 py-1 relative"
-                                        data-field="{{ f.name }}"
-                                        data-input-type="{{ f.input_type }}"
-                                        data-step="{{ f.step }}"
-                                        data-class-name="{{ f.class_name }}">
-                                        {% if f.readonly %}
-                                            <input type="text"
-                                                   class="cell-input w-full px-2 py-1.5 text-sm border border-transparent rounded-md bg-gray-100 text-gray-500 cursor-not-allowed outline-none"
-                                                   value="{{ admission|get_field_value:f.name }}"
-                                                   readonly
-                                                   disabled
-                                                   data-pk="{{ admission.pk }}"
-                                                   data-field="{{ f.name }}">
-                                        {% elif f.input_type == 'boolean' %}
-                                            <select class="cell-input w-full px-2 py-1.5 text-sm border border-transparent rounded-md bg-transparent hover:border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition cursor-pointer"
-                                                    data-pk="{{ admission.pk }}"
-                                                    data-field="{{ f.name }}">
-                                                <option value="true"
-                                                        {% if admission|get_field_value:f.name %}selected{% endif %}>
-                                                    Yes
-                                                </option>
-                                                <option value="false"
-                                                        {% if not admission|get_field_value:f.name %}selected{% endif %}>
-                                                    No
-                                                </option>
-                                            </select>
-                                        {% elif f.input_type == 'select' %}
-                                            <select class="cell-input w-full px-2 py-1.5 text-sm border border-transparent rounded-md bg-transparent hover:border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition cursor-pointer"
-                                                    data-pk="{{ admission.pk }}"
-                                                    data-field="{{ f.name }}">
-                                                <option value="">---</option>
-                                                {% for opt in f.options %}
-                                                    {% if f.name == 'department_preferences' %}
-                                                        {# Special handling for JSON field comparison #}
-                                                        <option value="{{ opt.value }}"
-                                                                {% if opt.value == admission.department_preferences|jsonify %}selected{% endif %}>
-                                                            {{ opt.label }}
-                                                        </option>
-                                                    {% else %}
-                                                        <option value="{{ opt.value }}"
-                                                                {% if opt.value == admission|get_field_value:f.name %}selected{% endif %}>
-                                                            {{ opt.label }}
-                                                        </option>
-                                                    {% endif %}
-                                                {% endfor %}
-                                            </select>
-                                        {% elif f.input_type == 'date' %}
-                                            <input type="date"
-                                                   class="cell-input w-full px-2 py-1.5 text-sm border border-transparent rounded-md bg-transparent hover:border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition"
-                                                   value="{{ admission|get_field_value:f.name|date:'Y-m-d' }}"
-                                                   data-pk="{{ admission.pk }}"
-                                                   data-field="{{ f.name }}">
-                                        {% elif f.input_type == 'datetime-local' %}
-                                            <input type="datetime-local"
-                                                   class="cell-input w-full px-2 py-1.5 text-sm border border-transparent rounded-md bg-transparent hover:border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition"
-                                                   value="{{ admission|get_field_value:f.name|date:'Y-m-d\TH:i' }}"
-                                                   data-pk="{{ admission.pk }}"
-                                                   data-field="{{ f.name }}">
-                                        {% elif f.input_type == 'number' %}
-                                            <input type="number"
-                                                   class="cell-input w-full px-2 py-1.5 text-sm border border-transparent rounded-md bg-transparent hover:border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition"
-                                                   value="{{ admission|get_field_value:f.name }}"
-                                                   step="{{ f.step }}"
-                                                   data-pk="{{ admission.pk }}"
-                                                   data-field="{{ f.name }}">
-                                        {% else %}
-                                            <input type="{{ f.input_type }}"
-                                                   class="cell-input w-full px-2 py-1.5 text-sm border border-transparent rounded-md bg-transparent hover:border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition"
-                                                   value="{{ admission|get_field_value:f.name }}"
-                                                   data-pk="{{ admission.pk }}"
-                                                   data-field="{{ f.name }}">
-                                        {% endif %}
-                                        <!-- Save indicator -->
-                                        <span class="save-indicator absolute -top-1 right-1 text-[10px] font-bold px-1.5 py-0.5 rounded-full opacity-0 pointer-events-none transition-opacity duration-300"></span>
-                                    </td>
-                                {% endfor %}
-                                <!-- Payment Columns -->
-                                <!-- 1. Amount Paid -->
-                                <td class="px-3 py-2 text-xs text-gray-600 align-top">
-                                    {% if admission.paid_fee %}
-                                        <div class="mb-2 last:mb-0 h-[20px] font-medium whitespace-nowrap">₹ {{ admission.paid_fee }}</div>
-                                    {% endif %}
-                                    {% for payment in admission.fee_payments.all %}
-                                        <div class="mb-2 last:mb-0 h-[20px] font-medium whitespace-nowrap">₹ {{ payment.amount }}</div>
-                                    {% endfor %}
-                                    {% if not admission.paid_fee and not admission.fee_payments.all %}
-                                        <span class="text-gray-300 italic h-[20px] block">—</span>
-                                    {% endif %}
-                                </td>
-                                <!-- 2. Transaction Date -->
-                                <td class="px-3 py-2 text-xs text-gray-600 align-top">
-                                    {% if admission.paid_fee %}
-                                        <div class="mb-2 last:mb-0 h-[20px] whitespace-nowrap">{{ admission.transaction_date|date:"Y-m-d"|default:"—" }}</div>
-                                    {% endif %}
-                                    {% for payment in admission.fee_payments.all %}
-                                        <div class="mb-2 last:mb-0 h-[20px] whitespace-nowrap">{{ payment.payment_date|date:"Y-m-d"|default:"—" }}</div>
-                                    {% endfor %}
-                                    {% if not admission.paid_fee and not admission.fee_payments.all %}
-                                        <span class="text-gray-300 italic h-[20px] block">—</span>
-                                    {% endif %}
-                                </td>
-                                <!-- 3. Transaction ID -->
-                                <td class="px-3 py-2 text-xs text-gray-600 align-top">
-                                    {% if admission.paid_fee %}
-                                        <div class="mb-2 last:mb-0 h-[20px] whitespace-nowrap">{{ admission.transaction_id|default:"—" }}</div>
-                                    {% endif %}
-                                    {% for payment in admission.fee_payments.all %}
-                                        <div class="mb-2 last:mb-0 h-[20px] whitespace-nowrap">
-                                            {% if payment.payment_mode == 'cash' %}
-                                                Cash
-                                            {% else %}
-                                                {{ payment.transaction_id|default:"—" }}
-                                            {% endif %}
-                                        </div>
-                                    {% endfor %}
-                                    {% if not admission.paid_fee and not admission.fee_payments.all %}
-                                        <span class="text-gray-300 italic h-[20px] block">—</span>
-                                    {% endif %}
-                                </td>
-                                <!-- Read-only References Column -->
-                                <td class="px-3 py-2 text-xs text-gray-600 align-top">
-                                    {% for ref in admission.references.all %}
-                                        <div class="mb-4 last:mb-0">
-                                            <div class="font-medium truncate max-w-[180px]" title="{{ ref.name }}">{{ ref.name }}</div>
-                                            <div class="text-gray-400 text-[10px] truncate max-w-[180px]"
-                                                 title="{{ ref.relationship }} &bull; {{ ref.mobile }}">
-                                                {{ ref.relationship }} &bull; {{ ref.mobile }}
-                                            </div>
-                                        </div>
-                                    {% empty %}
-                                        <span class="text-gray-300 italic">No references</span>
-                                    {% endfor %}
-                                </td>
-                            </tr>
-                        {% empty %}
-                            <tr>
-                                <td colspan="{{ fields|length|add:2 }}" class="px-6 py-16 text-center">
-                                    <div class="flex flex-col items-center gap-2 text-gray-400">
-                                        <svg class="w-12 h-12"
-                                             fill="none"
-                                             stroke="currentColor"
-                                             viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-2.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
-                                        </svg>
-                                        <p class="text-sm font-medium">No records found</p>
-                                        <p class="text-xs">Try adjusting your filters</p>
-                                    </div>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+        <div class="flex items-center gap-2 text-sm">
+            <span
+                class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 font-medium border border-emerald-200">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                Live Editing
+            </span>
+            <span class="px-2.5 py-1 rounded-full bg-gray-100 text-gray-600 font-medium border border-gray-200">
+                {{ page_obj.paginator.count }} record{{ page_obj.paginator.count|pluralize }}
+            </span>
         </div>
-        <!-- ═══════ PAGINATION ═══════ -->
-        {% if page_obj.has_other_pages %}
-            <nav class="flex items-center justify-between bg-white rounded-xl shadow-sm border border-gray-200 px-5 py-3">
-                <p class="text-sm text-gray-500">
-                    Showing <span class="font-semibold text-gray-700">{{ page_obj.start_index }}</span>–<span class="font-semibold text-gray-700">{{ page_obj.end_index }}</span>
-                    of <span class="font-semibold text-gray-700">{{ page_obj.paginator.count }}</span>
-                </p>
-                <div class="flex items-center gap-1">
-                    {% if page_obj.has_previous %}
-                        <a href="?page=1{% for k,v in request.GET.items %}{% if k    !=    'page' %}&{{ k }}={{ v }}{% endif %}{% endfor %}"
-                           class="px-3 py-1.5 text-xs font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition"
-                           style="text-decoration:none">«</a>
-                        <a href="?page={{ page_obj.previous_page_number }}{% for k,v in request.GET.items %}{% if k    !=    'page' %}&{{ k }}={{ v }}{% endif %}{% endfor %}"
-                           class="px-3 py-1.5 text-xs font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition"
-                           style="text-decoration:none">‹ Prev</a>
-                    {% endif %}
-                    {% for num in page_obj.paginator.page_range %}
-                        {% if page_obj.number  ==  num %}
-                            <span class="px-3 py-1.5 text-xs font-bold text-white rounded-lg"
-                                  style="background:#FF9F1C">{{ num
-                            }}</span>
-                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-                            <a href="?page={{ num }}{% for k,v in request.GET.items %}{% if k    !=    'page' %}&{{ k }}={{ v }}{% endif %}{% endfor %}"
-                               class="px-3 py-1.5 text-xs font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition"
-                               style="text-decoration:none">{{ num }}</a>
-                        {% endif %}
-                    {% endfor %}
-                    {% if page_obj.has_next %}
-                        <a href="?page={{ page_obj.next_page_number }}{% for k,v in request.GET.items %}{% if k    !=    'page' %}&{{ k }}={{ v }}{% endif %}{% endfor %}"
-                           class="px-3 py-1.5 text-xs font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition"
-                           style="text-decoration:none">Next ›</a>
-                        <a href="?page={{ page_obj.paginator.num_pages }}{% for k,v in request.GET.items %}{% if k    !=    'page' %}&{{ k }}={{ v }}{% endif %}{% endfor %}"
-                           class="px-3 py-1.5 text-xs font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition"
-                           style="text-decoration:none">»</a>
-                    {% endif %}
-                </div>
-            </nav>
-        {% endif %}
     </div>
-    <!-- ═══════ INLINE EDIT JAVASCRIPT ═══════ -->
-    <script>
+    <!-- ═══════ FILTER BAR ═══════ -->
+    <form method="get" id="filterForm" class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <!-- Toggle button -->
+        <button type="button" onclick="toggleFilters()"
+            class="w-full flex items-center justify-between px-5 py-3 bg-gray-50 hover:bg-gray-100 transition text-sm font-semibold text-gray-700"
+            style="border-radius:0;
+                           background:rgb(249 250 251)">
+            <span class="flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                </svg>
+                Filters &amp; Search
+            </span>
+            <svg id="filterChevron" class="w-5 h-5 transition-transform" fill="none" stroke="currentColor"
+                viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+        </button>
+        <div id="filterPanel" class="hidden px-5 py-4 space-y-4">
+            <!-- Row 1: Basic Filters -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 mb-1">Search</label>
+                    <input type="text" name="search" value="{{ search_query }}" placeholder="Name, email, application #"
+                        class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 mb-1">Status</label>
+                    <select name="status"
+                        class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none bg-white">
+                        <option value="">All Statuses</option>
+                        <option value="enquired" {% if status_filter == 'enquired' %}selected{% endif %}>Enquired</option>
+                        <option value="admitted" {% if status_filter == 'admitted' %}selected{% endif %}>Admitted</option>
+                        <option value="discontinued" {% if status_filter == 'discontinued' %}selected{% endif %}>
+                            Discontinued</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 mb-1">Quota</label>
+                    <select name="quota"
+                        class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none bg-white">
+                        <option value="">All Quotas</option>
+                        <option value="Government" {% if quota_filter == 'Government' %}selected{% endif %}>Govt</option>
+                        <option value="Management" {% if quota_filter == 'Management' %}selected{% endif %}>Mgmt</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 mb-1">Level</label>
+                    <select name="level"
+                        class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none bg-white">
+                        <option value="">All Levels</option>
+                        <option value="UG" {% if level_filter == 'UG' %}selected{% endif %}>UG</option>
+                        <option value="PG" {% if level_filter == 'PG' %}selected{% endif %}>PG</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 mb-1">Fee Status</label>
+                    <select name="fee_status"
+                        class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none bg-white">
+                        <option value="">All</option>
+                        <option value="paid" {% if fee_status == 'paid' %}selected{% endif %}>Fully Paid</option>
+                        <option value="pending" {% if fee_status == 'pending' %}selected{% endif %}>Pending</option>
+                        <option value="has_unpaid" {% if fee_status == 'has_unpaid' %}selected{% endif %}>Has Unpaid
+                            Balance</option>
+                        <option value="has_concession" {% if fee_status == 'has_concession' %}selected{% endif %}>Has
+                            Concession</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Row 2: Location & Accommodation -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 mb-1">Country</label>
+                    <select name="country_filter" id="countrySelect"
+                        onchange="document.getElementById('filterForm').submit()"
+                        class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none bg-white">
+                        <option value="">All Countries</option>
+                        <option value="India" {% if country_filter == 'India' %}selected{% endif %}>India</option>
+                        <option value="Others" {% if country_filter == 'Others' %}selected{% endif %}>Others</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 mb-1">State</label>
+                    <select name="state_filter"
+                        class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg outline-none bg-white {% if country_filter != 'India' %}opacity-50{% endif %}"
+                        {% if country_filter != 'India' %}disabled{% endif %}>
+                        <option value="">All States</option>
+                        {% for s in states %}
+                        <option value="{{ s }}" {% if state_filter == s %}selected{% endif %}>{{ s }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 mb-1">District</label>
+                    <select name="district_filter"
+                        class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg outline-none bg-white {% if country_filter != 'India' %}opacity-50{% endif %}"
+                        {% if country_filter != 'India' %}disabled{% endif %}>
+                        <option value="">All Districts</option>
+                        {% for d in districts %}
+                        <option value="{{ d }}" {% if district_filter == d %}selected{% endif %}>{{ d }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 mb-1">Accommodation</label>
+                    <select name="accommodation_type"
+                        class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none bg-white">
+                        <option value="">All</option>
+                        <option value="hostel" {% if accommodation_type == 'hostel' %}selected{% endif %}>Hostel</option>
+                        <option value="transport" {% if accommodation_type == 'transport' %}selected{% endif %}>Transport
+                        </option>
+                        <option value="not_needed" {% if accommodation_type == 'not_needed' %}selected{% endif %}>Not
+                            Needed</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 mb-1">Bus Route</label>
+                    <input type="text" name="bus_route" value="{{ bus_route_filter }}" placeholder="e.g. Route 1"
+                        class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none">
+                </div>
+            </div>
+
+            <!-- Row 3: Demographics & Documents -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 mb-1">Board</label>
+                    <select name="board"
+                        class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none bg-white">
+                        <option value="">All Boards</option>
+                        <option value="State Board" {% if board_filter == 'State Board' %}selected{% endif %}>State Board
+                        </option>
+                        <option value="CBSE" {% if board_filter == 'CBSE' %}selected{% endif %}>CBSE</option>
+                        <option value="ICSE" {% if board_filter == 'ICSE' %}selected{% endif %}>ICSE</option>
+                        <option value="Others" {% if board_filter == 'Others' %}selected{% endif %}>Others</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 mb-1">Medium</label>
+                    <select name="medium"
+                        class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none bg-white">
+                        <option value="">All</option>
+                        <option value="Tamil" {% if medium_filter == 'Tamil' %}selected{% endif %}>Tamil</option>
+                        <option value="English" {% if medium_filter == 'English' %}selected{% endif %}>English</option>
+                        <option value="Others" {% if medium_filter == 'Others' %}selected{% endif %}>Others</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 mb-1">Gender</label>
+                    <select name="gender"
+                        class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none bg-white">
+                        <option value="">All</option>
+                        <option value="Male" {% if gender_filter == 'Male' %}selected{% endif %}>Male</option>
+                        <option value="Female" {% if gender_filter == 'Female' %}selected{% endif %}>Female</option>
+                        <option value="Transgender" {% if gender_filter == 'Transgender' %}selected{% endif %}>Trans
+                        </option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 mb-1">Religion</label>
+                    <select name="religion"
+                        class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none bg-white">
+                        <option value="">All</option>
+                        <option value="Hindu" {% if religion_filter == 'Hindu' %}selected{% endif %}>Hindu</option>
+                        <option value="Muslim" {% if religion_filter == 'Muslim' %}selected{% endif %}>Muslim</option>
+                        <option value="Christian" {% if religion_filter == 'Christian' %}selected{% endif %}>Christian
+                        </option>
+                        <option value="Others" {% if religion_filter == 'Others' %}selected{% endif %}>Others</option>
+                    </select>
+                </div>
+                <div class="lg:col-span-2">
+                    <label class="block text-xs font-semibold text-gray-500 mb-1">Missing Document</label>
+                    <select name="missing_doc"
+                        class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none bg-white">
+                        <option value="">None Checked</option>
+                        <option value="tc" {% if missing_doc == 'tc' %}selected{% endif %}>Missing TC</option>
+                        <option value="community_cert" {% if missing_doc == 'community_cert' %}selected{% endif %}>Missing
+                            Comm. Cert</option>
+                        <option value="tenth_marksheet" {% if missing_doc == 'tenth_marksheet' %}selected{% endif %}>
+                            Missing 10th</option>
+                        <option value="twelfth_marksheet" {% if missing_doc == 'twelfth_marksheet' %}selected{% endif %}>
+                            Missing 12th</option>
+                        <option value="allotment_order" {% if missing_doc == 'allotment_order' %}selected{% endif %}>
+                            Missing Allotment</option>
+                        <option value="income_cert" {% if missing_doc == 'income_cert' %}selected{% endif %}>Missing
+                            Income Cert</option>
+                        <option value="aadhaar" {% if missing_doc == 'aadhaar' %}selected{% endif %}>Missing Aadhaar
+                        </option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Row 4: Scholarships -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 border-t border-gray-100 pt-3 mt-1">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 mb-1">Community</label>
+                    <select name="community"
+                        class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none bg-white">
+                        <option value="">All Communities</option>
+                        <option value="OC" {% if community_filter == 'OC' %}selected{% endif %}>OC</option>
+                        <option value="BC" {% if community_filter == 'BC' %}selected{% endif %}>BC</option>
+                        <option value="MBC" {% if community_filter == 'MBC' %}selected{% endif %}>MBC</option>
+                        <option value="SC" {% if community_filter == 'SC' %}selected{% endif %}>SC</option>
+                        <option value="ST" {% if community_filter == 'ST' %}selected{% endif %}>ST</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 mb-1">7.5% Quota</label>
+                    <select name="seven_five"
+                        class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none bg-white">
+                        <option value="">All</option>
+                        <option value="yes" {% if seven_five_filter == 'yes' %}selected{% endif %}>Yes</option>
+                        <option value="no" {% if seven_five_filter == 'no' %}selected{% endif %}>No</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 mb-1">First Grad</label>
+                    <select name="is_fg"
+                        class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none bg-white">
+                        <option value="">All</option>
+                        <option value="yes" {% if is_fg_filter == 'yes' %}selected{% endif %}>Yes</option>
+                        <option value="no" {% if is_fg_filter == 'no' %}selected{% endif %}>No</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 mb-1">PMSS</label>
+                    <select name="pmss"
+                        class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none bg-white">
+                        <option value="">All</option>
+                        <option value="yes" {% if pmss_filter == 'yes' %}selected{% endif %}>Yes</option>
+                        <option value="no" {% if pmss_filter == 'no' %}selected{% endif %}>No</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Row 5: Criteria -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 mb-1">Cutoff From</label>
+                    <input type="number" name="cutoff_from" value="{{ cutoff_from }}" step="0.01" placeholder="Min"
+                        class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 mb-1">Cutoff To</label>
+                    <input type="number" name="cutoff_to" value="{{ cutoff_to }}" step="0.01" placeholder="Max"
+                        class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 mb-1">Date From</label>
+                    <input type="date" name="date_from" value="{{ date_from }}"
+                        class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 mb-1">Date To</label>
+                    <input type="date" name="date_to" value="{{ date_to }}"
+                        class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 mb-1">Department</label>
+                    <select name="dept" id="deptSelect"
+                        class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg outline-none bg-white">
+                        <option value="">Select Department</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 mb-1">Preference</label>
+                    <select name="preference"
+                        class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg outline-none bg-white">
+                        <option value="">Any</option>
+                        <option value="1" {% if pref_filter == '1' %}selected{% endif %}>1st</option>
+                        <option value="2" {% if pref_filter == '2' %}selected{% endif %}>2nd</option>
+                        <option value="3" {% if pref_filter == '3' %}selected{% endif %}>3rd</option>
+                        <option value="3+" {% if pref_filter == '3+' %}selected{% endif %}>3+</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Row 6: Sort + Actions -->
+            <div class="flex flex-wrap items-end gap-3 pt-2">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 mb-1">Sort By</label>
+                    <select name="sort"
+                        class="px-3 py-2 text-sm border border-gray-300 rounded-lg outline-none bg-white">
+                        <option value="-created_at" {% if sort_by == '-created_at' %}selected{% endif %}>Newest First
+                        </option>
+                        <option value="created_at" {% if sort_by == 'created_at' %}selected{% endif %}>Oldest First
+                        </option>
+                        <option value="student_name" {% if sort_by == 'student_name' %}selected{% endif %}>Name A-Z
+                        </option>
+                        <option value="-student_name" {% if sort_by == '-student_name' %}selected{% endif %}>Name Z-A
+                        </option>
+                        <option value="-cutoff_marks" {% if sort_by == '-cutoff_marks' %}selected{% endif %}>Cutoff ↓
+                        </option>
+                        <option value="cutoff_marks" {% if sort_by == 'cutoff_marks' %}selected{% endif %}>Cutoff ↑
+                        </option>
+                    </select>
+                </div>
+                <button type="submit" class="px-5 py-2 text-sm font-semibold rounded-lg" style="background:#FF9F1C;
+                                   color:#fff">Apply Filters</button>
+                <a href="{% url 'admission_form:admissions_list' %}"
+                    class="px-4 py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition"
+                    style="text-decoration:none">Clear All</a>
+            </div>
+        </div>
+    </form>
+    <!-- ═══════ TABLE ═══════ -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div class="overflow-x-auto" id="tableWrapper" style="max-height:72vh;">
+            <table class="min-w-full text-sm" id="admissionTable">
+                <thead class="sticky top-0 z-20">
+                    <tr class="bg-gradient-to-r from-gray-800 to-gray-700 text-white">
+                        <th class="px-3 py-3 text-left text-xs font-bold uppercase tracking-wider whitespace-nowrap sticky left-0 bg-gray-800 z-30"
+                            style="min-width:40px">#</th>
+                        {% for f in fields %}
+                        <th class="px-3 py-3 text-left text-xs font-bold uppercase tracking-wider whitespace-nowrap"
+                            style="min-width:130px">{{ f.verbose }}</th>
+                        {% endfor %}
+                        <th class="px-3 py-3 text-left text-xs font-bold uppercase tracking-wider whitespace-nowrap"
+                            style="min-width:120px">Amount Paid</th>
+                        <th class="px-3 py-3 text-left text-xs font-bold uppercase tracking-wider whitespace-nowrap"
+                            style="min-width:140px">Trans. Date</th>
+                        <th class="px-3 py-3 text-left text-xs font-bold uppercase tracking-wider whitespace-nowrap"
+                            style="min-width:140px">Trans. ID</th>
+                        <th class="px-3 py-3 text-left text-xs font-bold uppercase tracking-wider whitespace-nowrap"
+                            style="min-width:200px">References</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    {% for admission in page_obj %}
+                    <tr class="hover:bg-amber-50/40 transition-colors group" data-pk="{{ admission.pk }}">
+                        <td
+                            class="px-3 py-2 text-xs text-gray-400 font-mono sticky left-0 bg-white group-hover:bg-amber-50/40 z-10 border-r border-gray-100">
+                            {{ forloop.counter0|add:page_obj.start_index }}
+                        </td>
+                        {% for f in fields %}
+                        <td class="px-1 py-1 relative" data-field="{{ f.name }}" data-input-type="{{ f.input_type }}"
+                            data-step="{{ f.step }}" data-class-name="{{ f.class_name }}">
+                            {% if f.readonly %}
+                            <input type="text"
+                                class="cell-input w-full px-2 py-1.5 text-sm border border-transparent rounded-md bg-gray-100 text-gray-500 cursor-not-allowed outline-none"
+                                value="{{ admission|get_field_value:f.name }}" readonly disabled
+                                data-pk="{{ admission.pk }}" data-field="{{ f.name }}">
+                            {% elif f.input_type == 'boolean' %}
+                            <select
+                                class="cell-input w-full px-2 py-1.5 text-sm border border-transparent rounded-md bg-transparent hover:border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition cursor-pointer"
+                                data-pk="{{ admission.pk }}" data-field="{{ f.name }}">
+                                <option value="true" {% if admission|get_field_value:f.name %}selected{% endif %}>
+                                    Yes
+                                </option>
+                                <option value="false" {% if not admission|get_field_value:f.name %}selected{% endif %}>
+                                    No
+                                </option>
+                            </select>
+                            {% elif f.input_type == 'select' %}
+                            <select
+                                class="cell-input w-full px-2 py-1.5 text-sm border border-transparent rounded-md bg-transparent hover:border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition cursor-pointer"
+                                data-pk="{{ admission.pk }}" data-field="{{ f.name }}">
+                                <option value="">---</option>
+                                {% for opt in f.options %}
+                                {% if f.name == 'department_preferences' %}
+                                {# Special handling for JSON field comparison #}
+                                <option value="{{ opt.value }}" {% if opt.value == admission.department_preferences|jsonify %}selected{% endif %}>
+                                    {{ opt.label }}
+                                </option>
+                                {% else %}
+                                <option value="{{ opt.value }}" {% if opt.value == admission|get_field_value:f.name %}selected{% endif %}>
+                                    {{ opt.label }}
+                                </option>
+                                {% endif %}
+                                {% endfor %}
+                            </select>
+                            {% elif f.input_type == 'date' %}
+                            <input type="date"
+                                class="cell-input w-full px-2 py-1.5 text-sm border border-transparent rounded-md bg-transparent hover:border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition"
+                                value="{{ admission|get_field_value:f.name|date:'Y-m-d' }}" data-pk="{{ admission.pk }}"
+                                data-field="{{ f.name }}">
+                            {% elif f.input_type == 'datetime-local' %}
+                            <input type="datetime-local"
+                                class="cell-input w-full px-2 py-1.5 text-sm border border-transparent rounded-md bg-transparent hover:border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition"
+                                value="{{ admission|get_field_value:f.name|date:'Y-m-d\TH:i' }}"
+                                data-pk="{{ admission.pk }}" data-field="{{ f.name }}">
+                            {% elif f.input_type == 'number' %}
+                            <input type="number"
+                                class="cell-input w-full px-2 py-1.5 text-sm border border-transparent rounded-md bg-transparent hover:border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition"
+                                value="{{ admission|get_field_value:f.name }}" step="{{ f.step }}"
+                                data-pk="{{ admission.pk }}" data-field="{{ f.name }}">
+                            {% else %}
+                            <input type="{{ f.input_type }}"
+                                class="cell-input w-full px-2 py-1.5 text-sm border border-transparent rounded-md bg-transparent hover:border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition"
+                                value="{{ admission|get_field_value:f.name }}" data-pk="{{ admission.pk }}"
+                                data-field="{{ f.name }}">
+                            {% endif %}
+                            <!-- Save indicator -->
+                            <span
+                                class="save-indicator absolute -top-1 right-1 text-[10px] font-bold px-1.5 py-0.5 rounded-full opacity-0 pointer-events-none transition-opacity duration-300"></span>
+                        </td>
+                        {% endfor %}
+                        <!-- Payment Columns -->
+                        <!-- 1. Amount Paid -->
+                        <td class="px-3 py-2 text-xs text-gray-600 align-top">
+                            {% if admission.paid_fee %}
+                            <div class="mb-2 last:mb-0 h-[20px] font-medium whitespace-nowrap">₹ {{ admission.paid_fee
+                                }}</div>
+                            {% endif %}
+                            {% for payment in admission.fee_payments.all %}
+                            <div class="mb-2 last:mb-0 h-[20px] font-medium whitespace-nowrap">₹ {{ payment.amount }}
+                            </div>
+                            {% endfor %}
+                            {% if not admission.paid_fee and not admission.fee_payments.all %}
+                            <span class="text-gray-300 italic h-[20px] block">—</span>
+                            {% endif %}
+                        </td>
+                        <!-- 2. Transaction Date -->
+                        <td class="px-3 py-2 text-xs text-gray-600 align-top">
+                            {% if admission.paid_fee %}
+                            <div class="mb-2 last:mb-0 h-[20px] whitespace-nowrap">{{
+                                admission.transaction_date|date:"Y-m-d"|default:"—" }}</div>
+                            {% endif %}
+                            {% for payment in admission.fee_payments.all %}
+                            <div class="mb-2 last:mb-0 h-[20px] whitespace-nowrap">{{
+                                payment.payment_date|date:"Y-m-d"|default:"—" }}</div>
+                            {% endfor %}
+                            {% if not admission.paid_fee and not admission.fee_payments.all %}
+                            <span class="text-gray-300 italic h-[20px] block">—</span>
+                            {% endif %}
+                        </td>
+                        <!-- 3. Transaction ID -->
+                        <td class="px-3 py-2 text-xs text-gray-600 align-top">
+                            {% if admission.paid_fee %}
+                            <div class="mb-2 last:mb-0 h-[20px] whitespace-nowrap">{{
+                                admission.transaction_id|default:"—" }}</div>
+                            {% endif %}
+                            {% for payment in admission.fee_payments.all %}
+                            <div class="mb-2 last:mb-0 h-[20px] whitespace-nowrap">
+                                {% if payment.payment_mode == 'cash' %}
+                                Cash
+                                {% else %}
+                                {{ payment.transaction_id|default:"—" }}
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                            {% if not admission.paid_fee and not admission.fee_payments.all %}
+                            <span class="text-gray-300 italic h-[20px] block">—</span>
+                            {% endif %}
+                        </td>
+                        <!-- Read-only References Column -->
+                        <td class="px-3 py-2 text-xs text-gray-600 align-top">
+                            {% for ref in admission.references.all %}
+                            <div class="mb-4 last:mb-0">
+                                <div class="font-medium truncate max-w-[180px]" title="{{ ref.name }}">{{ ref.name }}
+                                </div>
+                                <div class="text-gray-400 text-[10px] truncate max-w-[180px]"
+                                    title="{{ ref.relationship }} &bull; {{ ref.mobile }}">
+                                    {{ ref.relationship }} &bull; {{ ref.mobile }}
+                                </div>
+                            </div>
+                            {% empty %}
+                            <span class="text-gray-300 italic">No references</span>
+                            {% endfor %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="{{ fields|length|add:2 }}" class="px-6 py-16 text-center">
+                            <div class="flex flex-col items-center gap-2 text-gray-400">
+                                <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                        d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-2.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                                </svg>
+                                <p class="text-sm font-medium">No records found</p>
+                                <p class="text-xs">Try adjusting your filters</p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!-- ═══════ PAGINATION ═══════ -->
+    {% if page_obj.has_other_pages %}
+    <nav class="flex items-center justify-between bg-white rounded-xl shadow-sm border border-gray-200 px-5 py-3">
+        <p class="text-sm text-gray-500">
+            Showing <span class="font-semibold text-gray-700">{{ page_obj.start_index }}</span>–<span
+                class="font-semibold text-gray-700">{{ page_obj.end_index }}</span>
+            of <span class="font-semibold text-gray-700">{{ page_obj.paginator.count }}</span>
+        </p>
+        <div class="flex items-center gap-1">
+            {% if page_obj.has_previous %}
+            <a href="?page=1{% for k,v in request.GET.items %}{% if k != 'page' %}&{{ k }}={{ v }}{% endif %}{% endfor %}"
+                class="px-3 py-1.5 text-xs font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition"
+                style="text-decoration:none">«</a>
+            <a href="?page={{ page_obj.previous_page_number }}{% for k,v in request.GET.items %}{% if k != 'page' %}&{{ k }}={{ v }}{% endif %}{% endfor %}"
+                class="px-3 py-1.5 text-xs font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition"
+                style="text-decoration:none">‹ Prev</a>
+            {% endif %}
+            {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+            <span class="px-3 py-1.5 text-xs font-bold text-white rounded-lg" style="background:#FF9F1C">{{ num
+                }}</span>
+            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %} <a
+                href="?page={{ num }}{% for k,v in request.GET.items %}{% if k != 'page' %}&{{ k }}={{ v }}{% endif %}{% endfor %}"
+                class="px-3 py-1.5 text-xs font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition"
+                style="text-decoration:none">{{ num }}</a>
+                {% endif %}
+                {% endfor %}
+                {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}{% for k,v in request.GET.items %}{% if k != 'page' %}&{{ k }}={{ v }}{% endif %}{% endfor %}"
+                    class="px-3 py-1.5 text-xs font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition"
+                    style="text-decoration:none">Next ›</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}{% for k,v in request.GET.items %}{% if k != 'page' %}&{{ k }}={{ v }}{% endif %}{% endfor %}"
+                    class="px-3 py-1.5 text-xs font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition"
+                    style="text-decoration:none">»</a>
+                {% endif %}
+        </div>
+    </nav>
+    {% endif %}
+</div>
+<!-- ═══════ INLINE EDIT JAVASCRIPT ═══════ -->
+<script>
     (function () {
         'use strict';
 
@@ -602,7 +681,7 @@
     // Auto-open filter panel if any filter is active
     (function () {
         const params = new URLSearchParams(window.location.search);
-        const filterKeys = ['search', 'status', 'level', 'board', 'community', 'country_filter', 'state_filter', 'district_filter', 'accommodation_type', 'cutoff_from', 'cutoff_to', 'date_from', 'date_to', 'dept', 'preference'];
+        const filterKeys = ['search', 'status', 'level', 'board', 'community', 'country_filter', 'state_filter', 'district_filter', 'accommodation_type', 'cutoff_from', 'cutoff_to', 'date_from', 'date_to', 'dept', 'preference', 'quota', 'fee_status', 'seven_five', 'is_fg', 'pmss', 'gender', 'religion', 'medium', 'bus_route', 'missing_doc'];
         for (const k of filterKeys) {
             if (params.get(k)) {
                 document.getElementById('filterPanel').classList.remove('hidden');
@@ -685,8 +764,8 @@
             updateDeptDropdown();
         }
     })();
-    </script>
-    <style>
+</script>
+<style>
     /* Override base button styles inside this page */
     #filterForm button[type="button"],
     .cell-input {
@@ -728,5 +807,5 @@
     .save-indicator {
         transition: opacity 0.3s ease;
     }
-    </style>
+</style>
 {% endblock %}
