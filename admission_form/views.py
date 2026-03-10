@@ -337,6 +337,11 @@ def admission_form_view(request, pk=None):
                 'diploma_major': data.get('diploma_major') or None,
                 'diploma_college': data.get('diploma_college') or None,
                 'diploma_year_passing': data.get('diploma_year_passing') or None,
+                'ug_total': data.get('ug_total') or None,
+                'ug_percentage': data.get('ug_percentage') or None,
+                'ug_major': data.get('ug_major') or None,
+                'ug_college': data.get('ug_college') or None,
+                'ug_year_passing': data.get('ug_year_passing') or None,
                 # Academic
                 'last_school': last_school or None,
                 'board': board or None,

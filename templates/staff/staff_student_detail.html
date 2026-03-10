@@ -138,7 +138,7 @@
                                 <td>{{ admission.tenth_percentage|default:"N/A" }}%</td>
                             </tr>
                             <!-- 12th Details -->
-                            {% if admission.qualification == "12th" %}
+                            {% if admission.level in 'ug,le,pg' %}
                             <tr>
                                 <td class="bg-light">
                                     <strong>12th Total</strong>
@@ -161,7 +161,7 @@
                             </tr>
                             {% endif %}
                             <!-- Diploma Details -->
-                            {% if admission.qualification == "Diploma" %}
+                            {% if admission.level in 'le,pg' %}
                             <tr>
                                 <td class="bg-light">
                                     <strong>Diploma Total</strong>
@@ -181,6 +181,37 @@
                                     <strong>Cutoff Marks</strong>
                                 </td>
                                 <td>{{ admission.cutoff_marks|default:"N/A" }}</td>
+                            </tr>
+                            {% endif %}
+                            <!-- UG Details -->
+                            {% if admission.level == 'pg' %}
+                            <tr>
+                                <td class="bg-light">
+                                    <strong>UG Total</strong>
+                                </td>
+                                <td>{{ admission.ug_total|default:"N/A" }}</td>
+                                <td class="bg-light">
+                                    <strong>UG Percentage</strong>
+                                </td>
+                                <td>{{ admission.ug_percentage|default:"N/A" }}%</td>
+                            </tr>
+                            <tr>
+                                <td class="bg-light">
+                                    <strong>UG Major</strong>
+                                </td>
+                                <td>{{ admission.ug_major|default:"N/A" }}</td>
+                                <td class="bg-light">
+                                    <strong>UG College</strong>
+                                </td>
+                                <td>{{ admission.ug_college|default:"N/A" }}</td>
+                            </tr>
+                            <tr>
+                                <td class="bg-light">
+                                    <strong>UG Year of Passing</strong>
+                                </td>
+                                <td>{{ admission.ug_year_passing|default:"N/A" }}</td>
+                                <td></td>
+                                <td></td>
                             </tr>
                             {% endif %}
                             <!-- No Qualification Selected -->

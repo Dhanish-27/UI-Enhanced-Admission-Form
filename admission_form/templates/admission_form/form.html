@@ -550,6 +550,10 @@
             display: none;
         }
 
+        .marks-ug {
+            display: none;
+        }
+
         .fg-row {
             display: none;
             max-width: 300px;
@@ -1160,6 +1164,47 @@
                                            min="2000"
                                            max="2030">
                                 </div>
+                                <!-- UG fields – shown for PG -->
+                                <div class="fg marks-ug">
+                                    <label>UG Total Marks</label>
+                                    <input type="text"
+                                           name="ug_total"
+                                           value="{{ admission.ug_total|default:'' }}"
+                                           placeholder="e.g. 3500">
+                                </div>
+                                <div class="fg marks-ug">
+                                    <label>UG Percentage</label>
+                                    <input type="number"
+                                           name="ug_percentage"
+                                           value="{{ admission.ug_percentage|default:'' }}"
+                                           placeholder="e.g. 82.5"
+                                           step="0.01"
+                                           min="0"
+                                           max="100">
+                                </div>
+                                <div class="fg marks-ug">
+                                    <label>UG Major / Degree</label>
+                                    <input type="text"
+                                           name="ug_major"
+                                           value="{{ admission.ug_major|default:'' }}"
+                                           placeholder="e.g. B.Sc. Computer Science">
+                                </div>
+                                <div class="fg marks-ug">
+                                    <label>UG College Name</label>
+                                    <input type="text"
+                                           name="ug_college"
+                                           value="{{ admission.ug_college|default:'' }}"
+                                           placeholder="Name of UG college">
+                                </div>
+                                <div class="fg marks-ug">
+                                    <label>UG Year of Passing</label>
+                                    <input type="number"
+                                           name="ug_year_passing"
+                                           value="{{ admission.ug_year_passing|default:'' }}"
+                                           placeholder="e.g. 2024"
+                                           min="2000"
+                                           max="2030">
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1736,7 +1781,7 @@
                                                     {% if admission.fg_bonafide %}<p class="file-note">✓ {{ admission.fg_bonafide.name }}</p>{% endif %}
                                                 </div>
                                                 <!-- Diploma Multiple Marksheets -->
-                                                <div class="fg span-2">
+                                                <div class="fg span-2 marks-diploma">
                                                     <label>Number of Diploma Marksheets (Fill number to upload multiple)</label>
                                                     <input type="number"
                                                            name="num_dip_marksheets"
@@ -1745,7 +1790,7 @@
                                                            min="0"
                                                            placeholder="Enter number of marksheets">
                                                 </div>
-                                                <div class="span-2"
+                                                <div class="span-2 marks-diploma"
                                                      id="dip_marksheets_container"
                                                      style="display:flex;
                                                             flex-direction:column;
@@ -1759,7 +1804,7 @@
                                                                 flex-direction:column;
                                                                 gap:10px"></div>
                                                 </div>
-                                                <div class="fg">
+                                                <div class="fg marks-diploma">
                                                     <label>Diploma Provisional Certificate</label>
                                                     <input type="file" name="dip_provisional" accept=".pdf,.jpg,.jpeg,.png">
                                                     {% if admission.dip_provisional %}
@@ -1769,9 +1814,9 @@
                                                         </p>
                                                     {% endif %}
                                                 </div>
-                                                <div class="fg"></div>
+                                                <div class="fg marks-diploma"></div>
                                                 <!-- UG Multiple Marksheets -->
-                                                <div class="fg span-2">
+                                                <div class="fg span-2 marks-ug">
                                                     <label>Number of UG Marksheets (Fill number to upload multiple)</label>
                                                     <input type="number"
                                                            name="num_ug_marksheets"
@@ -1780,7 +1825,7 @@
                                                            min="0"
                                                            placeholder="Enter number of marksheets">
                                                 </div>
-                                                <div class="span-2"
+                                                <div class="span-2 marks-ug"
                                                      id="ug_marksheets_container"
                                                      style="display:flex;
                                                             flex-direction:column;
@@ -1794,7 +1839,7 @@
                                                                 flex-direction:column;
                                                                 gap:10px"></div>
                                                 </div>
-                                                <div class="fg">
+                                                <div class="fg marks-ug">
                                                     <label>UG Provisional Certificate</label>
                                                     <input type="file" name="ug_provisional" accept=".pdf,.jpg,.jpeg,.png">
                                                     {% if admission.ug_provisional %}
@@ -1804,7 +1849,7 @@
                                                         </p>
                                                     {% endif %}
                                                 </div>
-                                                <div class="fg">
+                                                <div class="fg marks-ug">
                                                     <label>UG Migration Certificate</label>
                                                     <input type="file" name="ug_migration" accept=".pdf,.jpg,.jpeg,.png">
                                                     {% if admission.ug_migration %}<p class="file-note">✓ {{ admission.ug_migration.name }}</p>{% endif %}
@@ -1994,19 +2039,28 @@
 
             // Marks section
             const hint = document.getElementById('marksHint');
-            if (level === 'ug' || level === 'pg') {
+            if (level === 'ug') {
                 document.querySelectorAll('.marks-12th').forEach(el => el.style.display = 'flex');
                 document.querySelectorAll('.marks-diploma').forEach(el => el.style.display = 'none');
+                document.querySelectorAll('.marks-ug').forEach(el => el.style.display = 'none');
                 document.getElementById('qualHidden').value = '12th';
                 if (hint) hint.style.display = 'none';
             } else if (level === 'le') {
+                document.querySelectorAll('.marks-12th').forEach(el => el.style.display = 'flex');
                 document.querySelectorAll('.marks-diploma').forEach(el => el.style.display = 'flex');
-                document.querySelectorAll('.marks-12th').forEach(el => el.style.display = 'none');
+                document.querySelectorAll('.marks-ug').forEach(el => el.style.display = 'none');
                 document.getElementById('qualHidden').value = 'Diploma';
+                if (hint) hint.style.display = 'none';
+            } else if (level === 'pg') {
+                document.querySelectorAll('.marks-12th').forEach(el => el.style.display = 'flex');
+                document.querySelectorAll('.marks-diploma').forEach(el => el.style.display = 'flex');
+                document.querySelectorAll('.marks-ug').forEach(el => el.style.display = 'flex');
+                document.getElementById('qualHidden').value = 'UG';
                 if (hint) hint.style.display = 'none';
             } else {
                 document.querySelectorAll('.marks-12th').forEach(el => el.style.display = 'none');
                 document.querySelectorAll('.marks-diploma').forEach(el => el.style.display = 'none');
+                document.querySelectorAll('.marks-ug').forEach(el => el.style.display = 'none');
                 if (hint) hint.style.display = 'block';
             }
 

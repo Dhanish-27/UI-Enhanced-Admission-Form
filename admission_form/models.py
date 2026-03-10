@@ -137,6 +137,12 @@ class Admission(models.Model):
     diploma_percentage = models.CharField(max_length=50, blank=True, null=True)
     diploma_major = models.CharField(max_length=255, blank=True, null=True)
 
+    ug_total = models.CharField(max_length=50, blank=True, null=True)
+    ug_percentage = models.CharField(max_length=50, blank=True, null=True)
+    ug_major = models.CharField(max_length=255, blank=True, null=True)
+    ug_college = models.CharField(max_length=255, blank=True, null=True)
+    ug_year_passing = models.IntegerField(blank=True, null=True)
+
     board = models.CharField(max_length=50, blank=True, null=True, db_index=True)
     year_passing = models.IntegerField(blank=True, null=True)
     medium = models.CharField(max_length=50, blank=True, null=True)
